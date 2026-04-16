@@ -1,0 +1,23 @@
+#!/bin/bash
+set -o pipefail
+(
+    echo "Unzipping environment"
+    unzip -q -P password -o "$2/simnibs_env.zip" -d "$2"
+    
+    echo "Removing zip archieve"
+    rm -rf "$2/simnibs_env.zip"
+
+    echo "Running conda-unpack"
+    # Fix entrypoints shebangs
+    "$2/simnibs_env/bin/conda-unpack"
+
+    echo "Running fix_entrypoints"
+    "$2/simnibs_env/bin/python" "$2/simnibs_env/fix_entrypoints.py" "$2/simnibs_env/bin" "$2/simnibs_env/bin"
+
+    echo "Running postinstall"
+    if [[ -n $COMMAND_LINE_INSTALL ]]; then
+        "$2/simnibs_env/bin/postinstall_simnibs" -d "$2" --setup-links --silent --force
+    else
+        "$2/simnibs_env/bin/postinstall_simnibs" -d "$2" --setup-links
+    fi
+) 2>&1 | tee "$2/install.log"

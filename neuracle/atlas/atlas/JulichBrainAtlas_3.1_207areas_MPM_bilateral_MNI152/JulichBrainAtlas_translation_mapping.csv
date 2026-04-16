@@ -1,0 +1,208 @@
+label_base_en,label_base_zh
+"AM (Thalamus, anteromedial Nucleus)",AM区（丘脑、前内侧核）
+"AV (Thalamus, anteroventral Nucleus)",AV区（丘脑、前腹核）
+"AcbL (Ventral Striatum, Lateral Accumbens)",AcbL区（腹侧纹状体、外侧伏隔核）
+"AcbM (Ventral Striatum, Medial Accumbens)",AcbM区（腹侧纹状体、内侧伏隔核）
+Area 1 (PostCG),1区（中央后回）
+Area 2 (PostCS),2区（中央后沟）
+Area 25 (sACC),25区（胼胝体下前扣带皮层）
+Area 33 (ACC),33区（前扣带皮层）
+Area 3a (PostCG),3a区（中央后回）
+Area 3b (PostCG),3b区（中央后回）
+Area 44 (IFG),44区（额下回）
+Area 45 (IFG),45区（额下回）
+Area 4a (PreCG),4a区（中央前回）
+Area 4p (PreCG),4p区（中央前回）
+Area 5Ci (SPL),5Ci区（顶上小叶）
+Area 5L (SPL),5L区（顶上小叶）
+Area 5M (SPL),5M区（顶上小叶）
+Area 6d1 (PreCG),6d1区（中央前回）
+Area 6d2 (PreCG),6d2区（中央前回）
+Area 6d3 (SFS),6d3区（额上沟）
+"Area 6ma (preSMA, mesial SFG)",6ma区（前辅助运动区、额上回内侧部）
+"Area 6mp (SMA, mesial SFG)",6mp区（辅助运动区、额上回内侧部）
+Area 6r1 (PreCG),6r1区（中央前回）
+Area 6v1 (PreCG),6v1区（中央前回）
+Area 6v2 (PreCG),6v2区（中央前回）
+Area 6v3 (PreCG),6v3区（中央前回）
+Area 7A (SPL),7A区（顶上小叶）
+Area 7M (SPL),7M区（顶上小叶）
+Area 7P (SPL),7P区（顶上小叶）
+Area 7PC (SPL),7PC区（顶上小叶）
+Area 8d1 (SFG),8d1区（额上回）
+Area 8d2 (SFG),8d2区（额上回）
+Area 8v1 (MFG),8v1区（额中回）
+Area 8v2 (MFG),8v2区（额中回）
+Area CoS1 (CoS),CoS1区（侧副沟）
+"Area EC (Hippocampal Region, Entorhinal Cortex)",EC区（海马区、内嗅皮层）
+Area FG1 (FusG),FG1区（梭状回）
+Area FG2 (FusG),FG2区（梭状回）
+Area FG3 (FusG),FG3区（梭状回）
+Area FG4 (FusG),FG4区（梭状回）
+Area FG5 (FusG),FG5区（梭状回）
+Area Fo1 (OFC),Fo1区（眶额皮层）
+Area Fo2 (OFC),Fo2区（眶额皮层）
+Area Fo3 (OFC),Fo3区（眶额皮层）
+Area Fo4 (OFC),Fo4区（眶额皮层）
+Area Fo5 (OFC),Fo5区（眶额皮层）
+Area Fo6 (OFC),Fo6区（眶额皮层）
+Area Fo7 (OFC),Fo7区（眶额皮层）
+Area Fp1 (FPole),Fp1区（额极）
+Area Fp2 (FPole),Fp2区（额极）
+"Area IFJ1 (IFS, PreCS)",IFJ1区（额下沟、中央前沟）
+"Area IFJ2 (IFS, PreCS)",IFJ2区（额下沟、中央前沟）
+Area IFS1 (IFS),IFS1区（额下沟）
+Area IFS2 (IFS),IFS2区（额下沟）
+Area IFS3 (IFS),IFS3区（额下沟）
+Area IFS4 (IFS),IFS4区（额下沟）
+Area Ia1 (Insula),Ia1区（脑岛）
+Area Ia2 (Insula),Ia2区（脑岛）
+Area Ia3 (Insula),Ia3区（脑岛）
+Area Id1 (Insula),Id1区（脑岛）
+Area Id10 (Insula),Id10区（脑岛）
+Area Id2 (Insula),Id2区（脑岛）
+Area Id3 (Insula),Id3区（脑岛）
+Area Id4 (Insula),Id4区（脑岛）
+Area Id5 (Insula),Id5区（脑岛）
+Area Id6 (Insula),Id6区（脑岛）
+Area Id7 (Insula),Id7区（脑岛）
+Area Id8 (Insula),Id8区（脑岛）
+Area Id9 (Insula),Id9区（脑岛）
+Area Ig1 (Insula),Ig1区（脑岛）
+Area Ig2 (Insula),Ig2区（脑岛）
+Area Ig3 (Insula),Ig3区（脑岛）
+Area MFG1 (MFG),MFG1区（额中回）
+Area MFG2 (MFG),MFG2区（额中回）
+Area MFG4 (MFG),MFG4区（额中回）
+"Area MFG5 (MFG, IFG)",MFG5区（额中回、额下回）
+Area OTS1 (OTS),OTS1区（枕颞沟）
+Area Op1 (POperc),Op1区（顶叶盖）
+Area Op10 (Frontal Operculum),Op10区（额盖）
+Area Op2 (POperc),Op2区（顶叶盖）
+Area Op3 (POperc),Op3区（顶叶盖）
+Area Op4 (POperc),Op4区（顶叶盖）
+Area Op5 (Frontal Operculum),Op5区（额盖）
+Area Op6 (Frontal Operculum),Op6区（额盖）
+Area Op7 (Frontal Operculum),Op7区（额盖）
+Area Op8 (Frontal Operculum),Op8区（额盖）
+Area Op9 (Frontal Operculum),Op9区（额盖）
+Area PF (IPL),PF区（顶下小叶）
+Area PFcm (IPL),PFcm区（顶下小叶）
+Area PFm (IPL),PFm区（顶下小叶）
+Area PFop (IPL),PFop区（顶下小叶）
+Area PFt (IPL),PFt区（顶下小叶）
+Area PGa (IPL),PGa区（顶下小叶）
+Area PGp (IPL),PGp区（顶下小叶）
+Area Ph1 (PhG),Ph1区（海马旁回）
+Area Ph2 (PhG),Ph2区（海马旁回）
+Area Ph3 (PhG),Ph3区（海马旁回）
+"Area PirT (PiriformCortexMesial, temporal)",PirT区（内侧梨状皮层、颞部）
+"Area PirTB (PiriformCortexMesial, temporobasal)",PirTB区（内侧梨状皮层、颞底部）
+Area SFG2 (SFG),SFG2区（额上回）
+Area SFG3 (SFG),SFG3区（额上回）
+Area SFG4 (SFG),SFG4区（额上回）
+Area SFS1 (SFS),SFS1区（额上沟）
+Area SFS2 (SFS),SFS2区（额上沟）
+Area STS1 (STS),STS1区（颞上沟）
+Area STS2 (STS),STS2区（颞上沟）
+Area TI (STG),TI区（颞上回）
+"Area TPJ (STG, SMG)",TPJ区（颞上回、缘上回）
+Area Te 1.0 (HESCHL),Te 1.0区（赫氏回）
+Area Te 1.1 (HESCHL),Te 1.1区（赫氏回）
+Area Te 1.2 (HESCHL),Te 1.2区（赫氏回）
+Area Te 2.1 (STG),Te 2.1区（颞上回）
+Area Te 2.2 (STG),Te 2.2区（颞上回）
+Area Te 3 (STG),Te 3区（颞上回）
+Area TeI (STG),TeI区（颞上回）
+Area hIP1 (IPS),hIP1区（顶内沟）
+Area hIP2 (IPS),hIP2区（顶内沟）
+Area hIP3 (IPS),hIP3区（顶内沟）
+Area hIP4 (IPS),hIP4区（顶内沟）
+Area hIP5 (IPS),hIP5区（顶内沟）
+Area hIP6 (IPS),hIP6区（顶内沟）
+Area hIP7 (IPS),hIP7区（顶内沟）
+Area hIP8 (IPS),hIP8区（顶内沟）
+"Area hOc1 (V1, 17, CalcS)",hOc1区（V1区、17区、距状沟）
+"Area hOc2 (V2, 18)",hOc2区（V2区、18区）
+Area hOc3d (Cuneus),hOc3d区（楔叶）
+Area hOc3v (LingG),hOc3v区（舌回）
+Area hOc4d (Cuneus),hOc4d区（楔叶）
+Area hOc4la (LOC),hOc4la区（外侧枕皮层）
+Area hOc4lp (LOC),hOc4lp区（外侧枕皮层）
+Area hOc4v (LingG),hOc4v区（舌回）
+Area hOc5 (LOC),hOc5区（外侧枕皮层）
+Area hOc6 (POS),hOc6区（顶枕沟）
+Area hPO1 (POS),hPO1区（顶枕沟）
+Area p24ab (pACC),p24ab区（前扣带皮层前部）
+Area p24c (pACC),p24c区（前扣带皮层前部）
+Area p32 (pACC),p32区（前扣带皮层前部）
+Area s24 (sACC),s24区（胼胝体下前扣带皮层）
+Area s32 (sACC),s32区（胼胝体下前扣带皮层）
+Astr (Amygdala),Astr区（杏仁核）
+"BST (Basal Forebrain, Bed Nucleus)",BST区（基底前脑、床核）
+CA1 (Hippocampus),CA1区（海马）
+CA2 (Hippocampus),CA2区（海马）
+CA3 (Hippocampus),CA3区（海马）
+CGL (Metathalamus),CGL区（后丘脑）
+CGM (Metathalamus),CGM区（后丘脑）
+"CL (Thalamus, anterior intralaminar nuclei)",CL区（丘脑、前板内核群）
+CM (Amygdala),CM区（杏仁核）
+"CM (Thalamus, centromedian Nucleus)",CM区（丘脑、中央中核）
+Ch 123 (Basal Forebrain),Ch 123区（基底前脑）
+Ch 4 (Basal Forebrain),Ch 4区（基底前脑）
+DG (Hippocampus),DG区（海马）
+Frontal-I.1 (GapMap),Frontal-I.1区（间隙图）
+Frontal-I.2 (GapMap),Frontal-I.2区（间隙图）
+Frontal-II (GapMap),Frontal-II区（间隙图）
+Frontal-to-Occipital (GapMap),Frontal-to-Occipital区（间隙图）
+Frontal-to-Temporal-I (GapMap),Frontal-to-Temporal-I区（间隙图）
+Frontal-to-Temporal-II (GapMap),Frontal-to-Temporal-II区（间隙图）
+"FuCd (Ventral Striatum, Fundus of Caudate Nucleus)",FuCd区（腹侧纹状体、尾状核底部）
+"FuP (Ventral Striatum, Fundus of Putamen)",FuP区（腹侧纹状体、壳核底部）
+HATA (Hippocampus),HATA区（海马）
+IF (Amygdala),IF区（杏仁核）
+LB (Amygdala),LB区（杏仁核）
+"LD (Thalamus, lateral dorsal Nucleus)",LD区（丘脑、外侧背核）
+"LP (Thalamus, lateral posterior Nucleus)",LP区（丘脑、外侧后核）
+"Li (Thalamus, limitans Nucleus)",Li区（丘脑、界核）
+"MD (Thalamus, mediodorsal Nucleus)",MD区（丘脑、内背核）
+MF (Amygdala),MF区（杏仁核）
+"MV (Thalamus, medioventral Nucleus)",MV区（丘脑、内侧腹核）
+"NRm (Midbrain, Nucleus Ruber, magnocellular part)",NRm区（中脑、红核、大细胞部）
+"NRp (Midbrain, Nucleus Ruber, parvocellular part)",NRp区（中脑、红核、小细胞部）
+"Ndentd (Cerebellum, Dorsal Dentate Nucleus)",Ndentd区（小脑、背侧齿状核）
+"Ndentv (Cerebellum, Ventral Dentate Nucleus)",Ndentv区（小脑、腹侧齿状核）
+"Nfast (Cerebellum, Fastigial Nucleus)",Nfast区（小脑、顶核）
+"Ninterp (Cerebellum, Interposed Nucleus)",Ninterp区（小脑、中间核）
+"PUa (Thalamus, anterior pulvinar)",PUa区（丘脑、前丘脑枕）
+"PUi (Thalamus, inferior pulvinar)",PUi区（丘脑、下丘脑枕）
+"PUl (Thalamus, lateral pulvinar)",PUl区（丘脑、外侧丘脑枕）
+"PUm (Thalamus, medial pulvinar)",PUm区（丘脑、内侧丘脑枕）
+"Pf (Thalamus, parafascicular Nucleus)",Pf区（丘脑、束旁核）
+"Po (Thalamus, posterior Nucleus)",Po区（丘脑、后核）
+"Pv (Thalamus, paraventricular Nucleus)",Pv区（丘脑、室旁核）
+"Rt (Thalamus, reticular Nucleus)",Rt区（丘脑、网状核）
+SF (Amygdala),SF区（杏仁核）
+"SNC (Midbrain, Substantia Nigra pars compacta)",SNC区（中脑、黑质致密部）
+"SNR (Midbrain, Substantia Nigra pars reticulata)",SNR区（中脑、黑质网状部）
+STN (Subthalamus),STN区（底丘脑）
+"Sg (Thalamus, suprageniculate Nucleus)",Sg区（丘脑、膝上核）
+"Subc (Hippocampus, Subicular complex)",Subc区（海马、下托复合体）
+Temporal-to-Parietal (GapMap),Temporal-to-Parietal区（间隙图）
+"TrS (Hippocampus, Transsubiculum)",TrS区（海马、前下托）
+"Tu (Basal Forebrain, Tuberculum)",Tu区（基底前脑、结节）
+"TuTi (Basal Forebrain, Terminal islands)",TuTi区（基底前脑、终纹岛）
+"VA (Thalamus, ventral anterior Nucleus (ventral))",VA区（丘脑、腹前核腹侧部）
+"VAmc (Thalamus, ventral anterior Nucleus, magnocellular part)",VAmc区（丘脑、腹前核大细胞部）
+"VIM (Thalamus, ventral intermediate Nucleus)",VIM区（丘脑、腹中间核）
+"VLA (Thalamus, ventral lateral anterior Nucleus)",VLA区（丘脑、腹外侧前核）
+"VLP (Thalamus, ventral lateral posterior Nucleus)",VLP区（丘脑、腹外侧后核）
+"VM (Thalamus, ventral medial Nucleus)",VM区（丘脑、腹内侧核）
+VP (Ventral Pallidum),VP区（腹侧苍白球）
+"VPL (Thalamus, ventral posterior lateral Nucleus)",VPL区（丘脑、腹后外侧核）
+"VPM (Thalamus, ventral posterior medial Nucleus)",VPM区（丘脑、腹后内侧核）
+"VPMpc (Thalamus, ventral posterior medial Nucleus, parvocellular part)",VPMpc区（丘脑、腹后内侧核小细胞部）
+"VPi (Thalamus, ventroposterior inferior Nucleus)",VPi区（丘脑、腹后下核）
+VTM (Amygdala),VTM区（杏仁核）
+"ZI (Thalamus, zona incerta)",ZI区（丘脑、不确定带）
+"sPf (Thalamus, subparafascicular Nucleus)",sPf区（丘脑、束旁下核）

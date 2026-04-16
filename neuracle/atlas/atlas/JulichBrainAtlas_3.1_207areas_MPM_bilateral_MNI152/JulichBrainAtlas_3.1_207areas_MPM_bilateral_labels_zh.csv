@@ -1,0 +1,415 @@
+index,label_en,label_zh,r,g,b,a
+1,Area 3b (PostCG)_lh,Area 3b (PostCG)（左半球）,242,84,84,255
+3,Area PF (IPL)_lh,Area PF (IPL)（左半球）,242,89,84,255
+2,Area hOc4la (LOC)_lh,Area hOc4la (LOC)（左半球）,242,87,84,255
+4,Area CoS1 (CoS)_lh,Area CoS1 (CoS)（左半球）,242,91,84,255
+5,Astr (Amygdala)_lh,Astr (Amygdala)（左半球）,242,93,84,255
+6,Area Id8 (Insula)_lh,Area Id8 (Insula)（左半球）,242,96,84,255
+7,Area SFG4 (SFG)_lh,Area SFG4 (SFG)（左半球）,242,98,84,255
+8,Area 1 (PostCG)_lh,Area 1 (PostCG)（左半球）,242,100,84,255
+9,"Po (Thalamus, posterior Nucleus)_lh","Po (Thalamus, posterior Nucleus)（左半球）",242,103,84,255
+10,Area Te 1.0 (HESCHL)_lh,Area Te 1.0 (HESCHL)（左半球）,242,105,84,255
+11,Area STS2 (STS)_lh,Area STS2 (STS)（左半球）,242,107,84,255
+12,"LD (Thalamus, lateral dorsal Nucleus)_lh","LD (Thalamus, lateral dorsal Nucleus)（左半球）",242,109,84,255
+13,"Area 6mp (SMA, mesial SFG)_lh","Area 6mp (SMA, mesial SFG)（左半球）",242,112,84,255
+14,Area Id3 (Insula)_lh,Area Id3 (Insula)（左半球）,242,114,84,255
+15,"ZI (Thalamus, zona incerta)_lh","ZI (Thalamus, zona incerta)（左半球）",242,116,84,255
+16,CGM (Metathalamus)_lh,CGM (Metathalamus)（左半球）,242,119,84,255
+17,"Area PirTB (PiriformCortexMesial, temporobasal)_lh","Area PirTB (PiriformCortexMesial, temporobasal)（左半球）",242,121,84,255
+18,"NRp (Midbrain, Nucleus Ruber, parvocellular part)_lh","NRp (Midbrain, Nucleus Ruber, parvocellular part)（左半球）",242,123,84,255
+21,Area TI (STG)_lh,Area TI (STG)（左半球）,242,130,84,255
+20,Area p24ab (pACC)_lh,Area p24ab (pACC)（左半球）,242,128,84,255
+19,Area PFt (IPL)_lh,Area PFt (IPL)（左半球）,242,125,84,255
+22,Area FG5 (FusG)_lh,Area FG5 (FusG)（左半球）,242,132,84,255
+24,"PUi (Thalamus, inferior pulvinar)_lh","PUi (Thalamus, inferior pulvinar)（左半球）",242,137,84,255
+23,"PUm (Thalamus, medial pulvinar)_lh","PUm (Thalamus, medial pulvinar)（左半球）",242,134,84,255
+25,Area Te 3 (STG)_lh,Area Te 3 (STG)（左半球）,242,139,84,255
+27,Frontal-to-Occipital (GapMap)_lh,Frontal-to-Occipital (GapMap)（左半球）,242,144,84,255
+26,Area MFG1 (MFG)_lh,Area MFG1 (MFG)（左半球）,242,141,84,255
+28,Area 7P (SPL)_lh,Area 7P (SPL)（左半球）,242,146,84,255
+29,Area 6r1 (PreCG)_lh,Area 6r1 (PreCG)（左半球）,242,148,84,255
+30,Area 6d1 (PreCG)_lh,Area 6d1 (PreCG)（左半球）,242,150,84,255
+31,"VA (Thalamus, ventral anterior Nucleus (ventral))_lh","VA (Thalamus, ventral anterior Nucleus (ventral))（左半球）",242,153,84,255
+32,Area hIP4 (IPS)_lh,Area hIP4 (IPS)（左半球）,242,155,84,255
+33,Area Op6 (Frontal Operculum)_lh,Area Op6 (Frontal Operculum)（左半球）,242,157,84,255
+34,Area FG2 (FusG)_lh,Area FG2 (FusG)（左半球）,242,160,84,255
+35,Area hIP6 (IPS)_lh,Area hIP6 (IPS)（左半球）,242,162,84,255
+38,"BST (Basal Forebrain, Bed Nucleus)_lh","BST (Basal Forebrain, Bed Nucleus)（左半球）",242,169,84,255
+37,"Area TPJ (STG, SMG)_lh","Area TPJ (STG, SMG)（左半球）",242,166,84,255
+36,Area Fo5 (OFC)_lh,Area Fo5 (OFC)（左半球）,242,164,84,255
+39,"AM (Thalamus, anteromedial Nucleus)_lh","AM (Thalamus, anteromedial Nucleus)（左半球）",242,171,84,255
+40,Area Op7 (Frontal Operculum)_lh,Area Op7 (Frontal Operculum)（左半球）,242,173,84,255
+41,Area hOc6 (POS)_lh,Area hOc6 (POS)（左半球）,242,176,84,255
+42,Area Ia3 (Insula)_lh,Area Ia3 (Insula)（左半球）,242,178,84,255
+43,Area Ig2 (Insula)_lh,Area Ig2 (Insula)（左半球）,242,180,84,255
+44,CA2 (Hippocampus)_lh,CA2 (Hippocampus)（左半球）,242,182,84,255
+46,Area Fp2 (FPole)_lh,Area Fp2 (FPole)（左半球）,242,187,84,255
+45,"VLP (Thalamus, ventral lateral posterior Nucleus)_lh","VLP (Thalamus, ventral lateral posterior Nucleus)（左半球）",242,185,84,255
+47,"Li (Thalamus, limitans Nucleus)_lh","Li (Thalamus, limitans Nucleus)（左半球）",242,189,84,255
+48,"Area EC (Hippocampal Region, Entorhinal Cortex)_lh","Area EC (Hippocampal Region, Entorhinal Cortex)（左半球）",242,192,84,255
+49,Area Id4 (Insula)_lh,Area Id4 (Insula)（左半球）,242,194,84,255
+51,"Tu (Basal Forebrain, Tuberculum)_lh","Tu (Basal Forebrain, Tuberculum)（左半球）",242,198,84,255
+50,Area Op1 (POperc)_lh,Area Op1 (POperc)（左半球）,242,196,84,255
+53,Area Id6 (Insula)_lh,Area Id6 (Insula)（左半球）,242,203,84,255
+52,"Rt (Thalamus, reticular Nucleus)_lh","Rt (Thalamus, reticular Nucleus)（左半球）",242,201,84,255
+54,Area IFS4 (IFS)_lh,Area IFS4 (IFS)（左半球）,242,205,84,255
+55,Area 6d3 (SFS)_lh,Area 6d3 (SFS)（左半球）,242,208,84,255
+56,"Ndentv (Cerebellum, Ventral Dentate Nucleus)_lh","Ndentv (Cerebellum, Ventral Dentate Nucleus)（左半球）",242,210,84,255
+57,Area 6v1 (PreCG)_lh,Area 6v1 (PreCG)（左半球）,242,212,84,255
+58,Area hIP2 (IPS)_lh,Area hIP2 (IPS)（左半球）,242,214,84,255
+59,Area 44 (IFG)_lh,Area 44 (IFG)（左半球）,242,217,84,255
+60,Area Fo7 (OFC)_lh,Area Fo7 (OFC)（左半球）,242,219,84,255
+61,"Pv (Thalamus, paraventricular Nucleus)_lh","Pv (Thalamus, paraventricular Nucleus)（左半球）",242,221,84,255
+62,Area PGa (IPL)_lh,Area PGa (IPL)（左半球）,242,223,84,255
+63,"PUa (Thalamus, anterior pulvinar)_lh","PUa (Thalamus, anterior pulvinar)（左半球）",242,226,84,255
+64,Area 8d2 (SFG)_lh,Area 8d2 (SFG)（左半球）,242,228,84,255
+65,Area Ia1 (Insula)_lh,Area Ia1 (Insula)（左半球）,242,230,84,255
+66,VTM (Amygdala)_lh,VTM (Amygdala)（左半球）,242,233,84,255
+67,Area Op8 (Frontal Operculum)_lh,Area Op8 (Frontal Operculum)（左半球）,242,235,84,255
+69,"Area IFJ2 (IFS, PreCS)_lh","Area IFJ2 (IFS, PreCS)（左半球）",242,239,84,255
+68,"FuP (Ventral Striatum, Fundus of Putamen)_lh","FuP (Ventral Striatum, Fundus of Putamen)（左半球）",242,237,84,255
+71,Area 25 (sACC)_lh,Area 25 (sACC)（左半球）,239,242,84,255
+70,Area 7M (SPL)_lh,Area 7M (SPL)（左半球）,242,242,84,255
+73,Area PFm (IPL)_lh,Area PFm (IPL)（左半球）,235,242,84,255
+72,Area Op5 (Frontal Operculum)_lh,Area Op5 (Frontal Operculum)（左半球）,237,242,84,255
+74,"MD (Thalamus, mediodorsal Nucleus)_lh","MD (Thalamus, mediodorsal Nucleus)（左半球）",233,242,84,255
+75,LB (Amygdala)_lh,LB (Amygdala)（左半球）,230,242,84,255
+76,Area 4a (PreCG)_lh,Area 4a (PreCG)（左半球）,228,242,84,255
+77,Area 5M (SPL)_lh,Area 5M (SPL)（左半球）,226,242,84,255
+78,Area Op10 (Frontal Operculum)_lh,Area Op10 (Frontal Operculum)（左半球）,223,242,84,255
+79,"Pf (Thalamus, parafascicular Nucleus)_lh","Pf (Thalamus, parafascicular Nucleus)（左半球）",221,242,84,255
+80,Area Fp1 (FPole)_lh,Area Fp1 (FPole)（左半球）,219,242,84,255
+81,"PUl (Thalamus, lateral pulvinar)_lh","PUl (Thalamus, lateral pulvinar)（左半球）",217,242,84,255
+82,Area MFG2 (MFG)_lh,Area MFG2 (MFG)（左半球）,214,242,84,255
+84,Area 3a (PostCG)_lh,Area 3a (PostCG)（左半球）,210,242,84,255
+83,Area Ph1 (PhG)_lh,Area Ph1 (PhG)（左半球）,212,242,84,255
+86,Area Id7 (Insula)_lh,Area Id7 (Insula)（左半球）,205,242,84,255
+85,Area FG4 (FusG)_lh,Area FG4 (FusG)（左半球）,208,242,84,255
+87,"Ninterp (Cerebellum, Interposed Nucleus)_lh","Ninterp (Cerebellum, Interposed Nucleus)（左半球）",203,242,84,255
+88,STN (Subthalamus)_lh,STN (Subthalamus)（左半球）,201,242,84,255
+89,Area Fo6 (OFC)_lh,Area Fo6 (OFC)（左半球）,198,242,84,255
+90,Area p32 (pACC)_lh,Area p32 (pACC)（左半球）,196,242,84,255
+92,CGL (Metathalamus)_lh,CGL (Metathalamus)（左半球）,192,242,84,255
+91,"Area hOc1 (V1, 17, CalcS)_lh","Area hOc1 (V1, 17, CalcS)（左半球）",194,242,84,255
+95,Area 8v1 (MFG)_lh,Area 8v1 (MFG)（左半球）,185,242,84,255
+94,Area Ph3 (PhG)_lh,Area Ph3 (PhG)（左半球）,187,242,84,255
+93,"SNC (Midbrain, Substantia Nigra pars compacta)_lh","SNC (Midbrain, Substantia Nigra pars compacta)（左半球）",189,242,84,255
+97,Area SFG2 (SFG)_lh,Area SFG2 (SFG)（左半球）,180,242,84,255
+96,Area hOc4lp (LOC)_lh,Area hOc4lp (LOC)（左半球）,182,242,84,255
+98,Area Fo3 (OFC)_lh,Area Fo3 (OFC)（左半球）,178,242,84,255
+99,Area Te 1.1 (HESCHL)_lh,Area Te 1.1 (HESCHL)（左半球）,176,242,84,255
+100,"Area MFG5 (MFG, IFG)_lh","Area MFG5 (MFG, IFG)（左半球）",173,242,84,255
+101,"Area hOc2 (V2, 18)_lh","Area hOc2 (V2, 18)（左半球）",171,242,84,255
+102,Area MFG4 (MFG)_lh,Area MFG4 (MFG)（左半球）,169,242,84,255
+103,"LP (Thalamus, lateral posterior Nucleus)_lh","LP (Thalamus, lateral posterior Nucleus)（左半球）",166,242,84,255
+104,Area 6d2 (PreCG)_lh,Area 6d2 (PreCG)（左半球）,164,242,84,255
+105,Area Ig3 (Insula)_lh,Area Ig3 (Insula)（左半球）,162,242,84,255
+106,Area hOc4d (Cuneus)_lh,Area hOc4d (Cuneus)（左半球）,160,242,84,255
+107,Area SFG3 (SFG)_lh,Area SFG3 (SFG)（左半球）,157,242,84,255
+108,Area 6v3 (PreCG)_lh,Area 6v3 (PreCG)（左半球）,155,242,84,255
+109,"NRm (Midbrain, Nucleus Ruber, magnocellular part)_lh","NRm (Midbrain, Nucleus Ruber, magnocellular part)（左半球）",153,242,84,255
+110,Area Fo4 (OFC)_lh,Area Fo4 (OFC)（左半球）,150,242,84,255
+111,Area IFS1 (IFS)_lh,Area IFS1 (IFS)（左半球）,148,242,84,255
+112,Area Op4 (POperc)_lh,Area Op4 (POperc)（左半球）,146,242,84,255
+113,Ch 4 (Basal Forebrain)_lh,Ch 4 (Basal Forebrain)（左半球）,144,242,84,255
+114,Area hPO1 (POS)_lh,Area hPO1 (POS)（左半球）,141,242,84,255
+115,"Ndentd (Cerebellum, Dorsal Dentate Nucleus)_lh","Ndentd (Cerebellum, Dorsal Dentate Nucleus)（左半球）",139,242,84,255
+116,Area IFS3 (IFS)_lh,Area IFS3 (IFS)（左半球）,137,242,84,255
+117,Area Op2 (POperc)_lh,Area Op2 (POperc)（左半球）,134,242,84,255
+118,Area 8v2 (MFG)_lh,Area 8v2 (MFG)（左半球）,132,242,84,255
+119,"AcbM (Ventral Striatum, Medial Accumbens)_lh","AcbM (Ventral Striatum, Medial Accumbens)（左半球）",130,242,84,255
+120,DG (Hippocampus)_lh,DG (Hippocampus)（左半球）,128,242,84,255
+121,Area PGp (IPL)_lh,Area PGp (IPL)（左半球）,125,242,84,255
+122,"Area 6ma (preSMA, mesial SFG)_lh","Area 6ma (preSMA, mesial SFG)（左半球）",123,242,84,255
+123,Area Ig1 (Insula)_lh,Area Ig1 (Insula)（左半球）,121,242,84,255
+124,Area Id10 (Insula)_lh,Area Id10 (Insula)（左半球）,119,242,84,255
+125,"VM (Thalamus, ventral medial Nucleus)_lh","VM (Thalamus, ventral medial Nucleus)（左半球）",116,242,84,255
+126,Area p24c (pACC)_lh,Area p24c (pACC)（左半球）,114,242,84,255
+127,Area hOc3v (LingG)_lh,Area hOc3v (LingG)（左半球）,112,242,84,255
+128,Area PFcm (IPL)_lh,Area PFcm (IPL)（左半球）,109,242,84,255
+130,"Area PirT (PiriformCortexMesial, temporal)_lh","Area PirT (PiriformCortexMesial, temporal)（左半球）",105,242,84,255
+129,Area SFS2 (SFS)_lh,Area SFS2 (SFS)（左半球）,107,242,84,255
+132,Area hIP5 (IPS)_lh,Area hIP5 (IPS)（左半球）,100,242,84,255
+131,"CM (Thalamus, centromedian Nucleus)_lh","CM (Thalamus, centromedian Nucleus)（左半球）",103,242,84,255
+133,Area SFS1 (SFS)_lh,Area SFS1 (SFS)（左半球）,98,242,84,255
+135,Frontal-to-Temporal-I (GapMap)_lh,Frontal-to-Temporal-I (GapMap)（左半球）,93,242,84,255
+134,Area FG1 (FusG)_lh,Area FG1 (FusG)（左半球）,96,242,84,255
+136,"FuCd (Ventral Striatum, Fundus of Caudate Nucleus)_lh","FuCd (Ventral Striatum, Fundus of Caudate Nucleus)（左半球）",91,242,84,255
+138,"MV (Thalamus, medioventral Nucleus)_lh","MV (Thalamus, medioventral Nucleus)（左半球）",87,242,84,255
+137,"VAmc (Thalamus, ventral anterior Nucleus, magnocellular part)_lh","VAmc (Thalamus, ventral anterior Nucleus, magnocellular part)（左半球）",89,242,84,255
+140,Frontal-I.2 (GapMap)_lh,Frontal-I.2 (GapMap)（左半球）,84,242,87,255
+139,Area hIP3 (IPS)_lh,Area hIP3 (IPS)（左半球）,84,242,84,255
+141,CM (Amygdala)_lh,CM (Amygdala)（左半球）,84,242,89,255
+142,Area 4p (PreCG)_lh,Area 4p (PreCG)（左半球）,84,242,91,255
+143,Area 33 (ACC)_lh,Area 33 (ACC)（左半球）,84,242,93,255
+144,Area OTS1 (OTS)_lh,Area OTS1 (OTS)（左半球）,84,242,96,255
+145,Area Id2 (Insula)_lh,Area Id2 (Insula)（左半球）,84,242,98,255
+146,CA1 (Hippocampus)_lh,CA1 (Hippocampus)（左半球）,84,242,100,255
+147,Frontal-I.1 (GapMap)_lh,Frontal-I.1 (GapMap)（左半球）,84,242,103,255
+148,Area hIP8 (IPS)_lh,Area hIP8 (IPS)（左半球）,84,242,105,255
+150,Area Op9 (Frontal Operculum)_lh,Area Op9 (Frontal Operculum)（左半球）,84,242,109,255
+149,IF (Amygdala)_lh,IF (Amygdala)（左半球）,84,242,107,255
+152,Temporal-to-Parietal (GapMap)_lh,Temporal-to-Parietal (GapMap)（左半球）,84,242,114,255
+151,"VIM (Thalamus, ventral intermediate Nucleus)_lh","VIM (Thalamus, ventral intermediate Nucleus)（左半球）",84,242,112,255
+153,HATA (Hippocampus)_lh,HATA (Hippocampus)（左半球）,84,242,116,255
+154,"TuTi (Basal Forebrain, Terminal islands)_lh","TuTi (Basal Forebrain, Terminal islands)（左半球）",84,242,119,255
+155,Area 45 (IFG)_lh,Area 45 (IFG)（左半球）,84,242,121,255
+160,Area Id1 (Insula)_lh,Area Id1 (Insula)（左半球）,84,242,132,255
+159,Area Ia2 (Insula)_lh,Area Ia2 (Insula)（左半球）,84,242,130,255
+158,Frontal-to-Temporal-II (GapMap)_lh,Frontal-to-Temporal-II (GapMap)（左半球）,84,242,128,255
+157,Area 5Ci (SPL)_lh,Area 5Ci (SPL)（左半球）,84,242,125,255
+156,"CL (Thalamus, anterior intralaminar nuclei)_lh","CL (Thalamus, anterior intralaminar nuclei)（左半球）",84,242,123,255
+162,Area Id5 (Insula)_lh,Area Id5 (Insula)（左半球）,84,242,137,255
+161,Area Te 1.2 (HESCHL)_lh,Area Te 1.2 (HESCHL)（左半球）,84,242,134,255
+163,Area hIP1 (IPS)_lh,Area hIP1 (IPS)（左半球）,84,242,139,255
+164,Area 2 (PostCS)_lh,Area 2 (PostCS)（左半球）,84,242,141,255
+167,Area Te 2.1 (STG)_lh,Area Te 2.1 (STG)（左半球）,84,242,148,255
+166,Ch 123 (Basal Forebrain)_lh,Ch 123 (Basal Forebrain)（左半球）,84,242,146,255
+165,Area hOc3d (Cuneus)_lh,Area hOc3d (Cuneus)（左半球）,84,242,144,255
+171,Area Op3 (POperc)_lh,Area Op3 (POperc)（左半球）,84,242,157,255
+170,Area 7A (SPL)_lh,Area 7A (SPL)（左半球）,84,242,155,255
+169,"Sg (Thalamus, suprageniculate Nucleus)_lh","Sg (Thalamus, suprageniculate Nucleus)（左半球）",84,242,153,255
+168,"VPL (Thalamus, ventral posterior lateral Nucleus)_lh","VPL (Thalamus, ventral posterior lateral Nucleus)（左半球）",84,242,150,255
+172,"Subc (Hippocampus, Subicular complex)_lh","Subc (Hippocampus, Subicular complex)（左半球）",84,242,160,255
+173,"TrS (Hippocampus, Transsubiculum)_lh","TrS (Hippocampus, Transsubiculum)（左半球）",84,242,162,255
+174,CA3 (Hippocampus)_lh,CA3 (Hippocampus)（左半球）,84,242,164,255
+175,Frontal-II (GapMap)_lh,Frontal-II (GapMap)（左半球）,84,242,166,255
+176,"VLA (Thalamus, ventral lateral anterior Nucleus)_lh","VLA (Thalamus, ventral lateral anterior Nucleus)（左半球）",84,242,169,255
+177,Area STS1 (STS)_lh,Area STS1 (STS)（左半球）,84,242,171,255
+180,Area Id9 (Insula)_lh,Area Id9 (Insula)（左半球）,84,242,178,255
+179,Area 5L (SPL)_lh,Area 5L (SPL)（左半球）,84,242,176,255
+178,"VPM (Thalamus, ventral posterior medial Nucleus)_lh","VPM (Thalamus, ventral posterior medial Nucleus)（左半球）",84,242,173,255
+181,"SNR (Midbrain, Substantia Nigra pars reticulata)_lh","SNR (Midbrain, Substantia Nigra pars reticulata)（左半球）",84,242,180,255
+183,Area IFS2 (IFS)_lh,Area IFS2 (IFS)（左半球）,84,242,185,255
+182,Area FG3 (FusG)_lh,Area FG3 (FusG)（左半球）,84,242,182,255
+184,"AV (Thalamus, anteroventral Nucleus)_lh","AV (Thalamus, anteroventral Nucleus)（左半球）",84,242,187,255
+185,VP (Ventral Pallidum)_lh,VP (Ventral Pallidum)（左半球）,84,242,189,255
+187,"Nfast (Cerebellum, Fastigial Nucleus)_lh","Nfast (Cerebellum, Fastigial Nucleus)（左半球）",84,242,194,255
+186,Area s32 (sACC)_lh,Area s32 (sACC)（左半球）,84,242,192,255
+188,MF (Amygdala)_lh,MF (Amygdala)（左半球）,84,242,196,255
+189,Area hOc5 (LOC)_lh,Area hOc5 (LOC)（左半球）,84,242,198,255
+190,"sPf (Thalamus, subparafascicular Nucleus)_lh","sPf (Thalamus, subparafascicular Nucleus)（左半球）",84,242,201,255
+192,Area Fo1 (OFC)_lh,Area Fo1 (OFC)（左半球）,84,242,205,255
+191,SF (Amygdala)_lh,SF (Amygdala)（左半球）,84,242,203,255
+197,Area s24 (sACC)_lh,Area s24 (sACC)（左半球）,84,242,217,255
+196,"Area IFJ1 (IFS, PreCS)_lh","Area IFJ1 (IFS, PreCS)（左半球）",84,242,214,255
+195,Area 8d1 (SFG)_lh,Area 8d1 (SFG)（左半球）,84,242,212,255
+194,"VPi (Thalamus, ventroposterior inferior Nucleus)_lh","VPi (Thalamus, ventroposterior inferior Nucleus)（左半球）",84,242,210,255
+193,"VPMpc (Thalamus, ventral posterior medial Nucleus, parvocellular part)_lh","VPMpc (Thalamus, ventral posterior medial Nucleus, parvocellular part)（左半球）",84,242,208,255
+199,Area PFop (IPL)_lh,Area PFop (IPL)（左半球）,84,242,221,255
+198,Area hOc4v (LingG)_lh,Area hOc4v (LingG)（左半球）,84,242,219,255
+201,Area Ph2 (PhG)_lh,Area Ph2 (PhG)（左半球）,84,242,226,255
+200,Area 6v2 (PreCG)_lh,Area 6v2 (PreCG)（左半球）,84,242,223,255
+203,Area Fo2 (OFC)_lh,Area Fo2 (OFC)（左半球）,84,242,230,255
+202,"AcbL (Ventral Striatum, Lateral Accumbens)_lh","AcbL (Ventral Striatum, Lateral Accumbens)（左半球）",84,242,228,255
+205,Area hIP7 (IPS)_lh,Area hIP7 (IPS)（左半球）,84,242,235,255
+204,Area Te 2.2 (STG)_lh,Area Te 2.2 (STG)（左半球）,84,242,233,255
+206,Area 7PC (SPL)_lh,Area 7PC (SPL)（左半球）,84,242,237,255
+207,Area TeI (STG)_lh,Area TeI (STG)（左半球）,84,242,239,255
+208,Area 3b (PostCG)_rh,Area 3b (PostCG)（右半球）,84,242,242,255
+210,Area PF (IPL)_rh,Area PF (IPL)（右半球）,84,237,242,255
+209,Area hOc4la (LOC)_rh,Area hOc4la (LOC)（右半球）,84,239,242,255
+211,Area CoS1 (CoS)_rh,Area CoS1 (CoS)（右半球）,84,235,242,255
+212,Astr (Amygdala)_rh,Astr (Amygdala)（右半球）,84,233,242,255
+213,Area Id8 (Insula)_rh,Area Id8 (Insula)（右半球）,84,230,242,255
+214,Area SFG4 (SFG)_rh,Area SFG4 (SFG)（右半球）,84,228,242,255
+215,Area 1 (PostCG)_rh,Area 1 (PostCG)（右半球）,84,226,242,255
+216,"Po (Thalamus, posterior Nucleus)_rh","Po (Thalamus, posterior Nucleus)（右半球）",84,223,242,255
+217,Area Te 1.0 (HESCHL)_rh,Area Te 1.0 (HESCHL)（右半球）,84,221,242,255
+218,Area STS2 (STS)_rh,Area STS2 (STS)（右半球）,84,219,242,255
+219,"LD (Thalamus, lateral dorsal Nucleus)_rh","LD (Thalamus, lateral dorsal Nucleus)（右半球）",84,217,242,255
+220,"Area 6mp (SMA, mesial SFG)_rh","Area 6mp (SMA, mesial SFG)（右半球）",84,214,242,255
+221,Area Id3 (Insula)_rh,Area Id3 (Insula)（右半球）,84,212,242,255
+222,"ZI (Thalamus, zona incerta)_rh","ZI (Thalamus, zona incerta)（右半球）",84,210,242,255
+223,CGM (Metathalamus)_rh,CGM (Metathalamus)（右半球）,84,208,242,255
+224,"Area PirTB (PiriformCortexMesial, temporobasal)_rh","Area PirTB (PiriformCortexMesial, temporobasal)（右半球）",84,205,242,255
+225,"NRp (Midbrain, Nucleus Ruber, parvocellular part)_rh","NRp (Midbrain, Nucleus Ruber, parvocellular part)（右半球）",84,203,242,255
+228,Area TI (STG)_rh,Area TI (STG)（右半球）,84,196,242,255
+227,Area p24ab (pACC)_rh,Area p24ab (pACC)（右半球）,84,198,242,255
+226,Area PFt (IPL)_rh,Area PFt (IPL)（右半球）,84,201,242,255
+229,Area FG5 (FusG)_rh,Area FG5 (FusG)（右半球）,84,194,242,255
+231,"PUi (Thalamus, inferior pulvinar)_rh","PUi (Thalamus, inferior pulvinar)（右半球）",84,189,242,255
+230,"PUm (Thalamus, medial pulvinar)_rh","PUm (Thalamus, medial pulvinar)（右半球）",84,192,242,255
+232,Area Te 3 (STG)_rh,Area Te 3 (STG)（右半球）,84,187,242,255
+234,Frontal-to-Occipital (GapMap)_rh,Frontal-to-Occipital (GapMap)（右半球）,84,182,242,255
+233,Area MFG1 (MFG)_rh,Area MFG1 (MFG)（右半球）,84,185,242,255
+235,Area 7P (SPL)_rh,Area 7P (SPL)（右半球）,84,180,242,255
+236,Area 6r1 (PreCG)_rh,Area 6r1 (PreCG)（右半球）,84,178,242,255
+237,Area 6d1 (PreCG)_rh,Area 6d1 (PreCG)（右半球）,84,176,242,255
+238,"VA (Thalamus, ventral anterior Nucleus (ventral))_rh","VA (Thalamus, ventral anterior Nucleus (ventral))（右半球）",84,173,242,255
+239,Area hIP4 (IPS)_rh,Area hIP4 (IPS)（右半球）,84,171,242,255
+240,Area Op6 (Frontal Operculum)_rh,Area Op6 (Frontal Operculum)（右半球）,84,169,242,255
+241,Area FG2 (FusG)_rh,Area FG2 (FusG)（右半球）,84,166,242,255
+242,Area hIP6 (IPS)_rh,Area hIP6 (IPS)（右半球）,84,164,242,255
+245,"BST (Basal Forebrain, Bed Nucleus)_rh","BST (Basal Forebrain, Bed Nucleus)（右半球）",84,157,242,255
+244,"Area TPJ (STG, SMG)_rh","Area TPJ (STG, SMG)（右半球）",84,160,242,255
+243,Area Fo5 (OFC)_rh,Area Fo5 (OFC)（右半球）,84,162,242,255
+246,"AM (Thalamus, anteromedial Nucleus)_rh","AM (Thalamus, anteromedial Nucleus)（右半球）",84,155,242,255
+247,Area Op7 (Frontal Operculum)_rh,Area Op7 (Frontal Operculum)（右半球）,84,153,242,255
+248,Area hOc6 (POS)_rh,Area hOc6 (POS)（右半球）,84,150,242,255
+249,Area Ia3 (Insula)_rh,Area Ia3 (Insula)（右半球）,84,148,242,255
+250,Area Ig2 (Insula)_rh,Area Ig2 (Insula)（右半球）,84,146,242,255
+251,CA2 (Hippocampus)_rh,CA2 (Hippocampus)（右半球）,84,144,242,255
+253,Area Fp2 (FPole)_rh,Area Fp2 (FPole)（右半球）,84,139,242,255
+252,"VLP (Thalamus, ventral lateral posterior Nucleus)_rh","VLP (Thalamus, ventral lateral posterior Nucleus)（右半球）",84,141,242,255
+254,"Li (Thalamus, limitans Nucleus)_rh","Li (Thalamus, limitans Nucleus)（右半球）",84,137,242,255
+255,"Area EC (Hippocampal Region, Entorhinal Cortex)_rh","Area EC (Hippocampal Region, Entorhinal Cortex)（右半球）",84,134,242,255
+256,Area Id4 (Insula)_rh,Area Id4 (Insula)（右半球）,84,132,242,255
+258,"Tu (Basal Forebrain, Tuberculum)_rh","Tu (Basal Forebrain, Tuberculum)（右半球）",84,128,242,255
+257,Area Op1 (POperc)_rh,Area Op1 (POperc)（右半球）,84,130,242,255
+260,Area Id6 (Insula)_rh,Area Id6 (Insula)（右半球）,84,123,242,255
+259,"Rt (Thalamus, reticular Nucleus)_rh","Rt (Thalamus, reticular Nucleus)（右半球）",84,125,242,255
+261,Area IFS4 (IFS)_rh,Area IFS4 (IFS)（右半球）,84,121,242,255
+262,Area 6d3 (SFS)_rh,Area 6d3 (SFS)（右半球）,84,119,242,255
+263,"Ndentv (Cerebellum, Ventral Dentate Nucleus)_rh","Ndentv (Cerebellum, Ventral Dentate Nucleus)（右半球）",84,116,242,255
+264,Area 6v1 (PreCG)_rh,Area 6v1 (PreCG)（右半球）,84,114,242,255
+265,Area hIP2 (IPS)_rh,Area hIP2 (IPS)（右半球）,84,112,242,255
+266,Area 44 (IFG)_rh,Area 44 (IFG)（右半球）,84,109,242,255
+267,Area Fo7 (OFC)_rh,Area Fo7 (OFC)（右半球）,84,107,242,255
+268,"Pv (Thalamus, paraventricular Nucleus)_rh","Pv (Thalamus, paraventricular Nucleus)（右半球）",84,105,242,255
+269,Area PGa (IPL)_rh,Area PGa (IPL)（右半球）,84,103,242,255
+270,"PUa (Thalamus, anterior pulvinar)_rh","PUa (Thalamus, anterior pulvinar)（右半球）",84,100,242,255
+271,Area 8d2 (SFG)_rh,Area 8d2 (SFG)（右半球）,84,98,242,255
+272,Area Ia1 (Insula)_rh,Area Ia1 (Insula)（右半球）,84,96,242,255
+273,VTM (Amygdala)_rh,VTM (Amygdala)（右半球）,84,93,242,255
+274,Area Op8 (Frontal Operculum)_rh,Area Op8 (Frontal Operculum)（右半球）,84,91,242,255
+276,"Area IFJ2 (IFS, PreCS)_rh","Area IFJ2 (IFS, PreCS)（右半球）",84,87,242,255
+275,"FuP (Ventral Striatum, Fundus of Putamen)_rh","FuP (Ventral Striatum, Fundus of Putamen)（右半球）",84,89,242,255
+278,Area 25 (sACC)_rh,Area 25 (sACC)（右半球）,87,84,242,255
+277,Area 7M (SPL)_rh,Area 7M (SPL)（右半球）,84,84,242,255
+280,Area PFm (IPL)_rh,Area PFm (IPL)（右半球）,91,84,242,255
+279,Area Op5 (Frontal Operculum)_rh,Area Op5 (Frontal Operculum)（右半球）,89,84,242,255
+281,"MD (Thalamus, mediodorsal Nucleus)_rh","MD (Thalamus, mediodorsal Nucleus)（右半球）",93,84,242,255
+282,LB (Amygdala)_rh,LB (Amygdala)（右半球）,96,84,242,255
+283,Area 4a (PreCG)_rh,Area 4a (PreCG)（右半球）,98,84,242,255
+284,Area 5M (SPL)_rh,Area 5M (SPL)（右半球）,100,84,242,255
+285,Area Op10 (Frontal Operculum)_rh,Area Op10 (Frontal Operculum)（右半球）,103,84,242,255
+286,"Pf (Thalamus, parafascicular Nucleus)_rh","Pf (Thalamus, parafascicular Nucleus)（右半球）",105,84,242,255
+287,Area Fp1 (FPole)_rh,Area Fp1 (FPole)（右半球）,107,84,242,255
+288,"PUl (Thalamus, lateral pulvinar)_rh","PUl (Thalamus, lateral pulvinar)（右半球）",109,84,242,255
+289,Area MFG2 (MFG)_rh,Area MFG2 (MFG)（右半球）,112,84,242,255
+291,Area 3a (PostCG)_rh,Area 3a (PostCG)（右半球）,116,84,242,255
+290,Area Ph1 (PhG)_rh,Area Ph1 (PhG)（右半球）,114,84,242,255
+293,Area Id7 (Insula)_rh,Area Id7 (Insula)（右半球）,121,84,242,255
+292,Area FG4 (FusG)_rh,Area FG4 (FusG)（右半球）,119,84,242,255
+294,"Ninterp (Cerebellum, Interposed Nucleus)_rh","Ninterp (Cerebellum, Interposed Nucleus)（右半球）",123,84,242,255
+295,STN (Subthalamus)_rh,STN (Subthalamus)（右半球）,125,84,242,255
+296,Area Fo6 (OFC)_rh,Area Fo6 (OFC)（右半球）,128,84,242,255
+297,Area p32 (pACC)_rh,Area p32 (pACC)（右半球）,130,84,242,255
+299,CGL (Metathalamus)_rh,CGL (Metathalamus)（右半球）,134,84,242,255
+298,"Area hOc1 (V1, 17, CalcS)_rh","Area hOc1 (V1, 17, CalcS)（右半球）",132,84,242,255
+302,Area 8v1 (MFG)_rh,Area 8v1 (MFG)（右半球）,141,84,242,255
+301,Area Ph3 (PhG)_rh,Area Ph3 (PhG)（右半球）,139,84,242,255
+300,"SNC (Midbrain, Substantia Nigra pars compacta)_rh","SNC (Midbrain, Substantia Nigra pars compacta)（右半球）",137,84,242,255
+304,Area SFG2 (SFG)_rh,Area SFG2 (SFG)（右半球）,146,84,242,255
+303,Area hOc4lp (LOC)_rh,Area hOc4lp (LOC)（右半球）,144,84,242,255
+305,Area Fo3 (OFC)_rh,Area Fo3 (OFC)（右半球）,148,84,242,255
+306,Area Te 1.1 (HESCHL)_rh,Area Te 1.1 (HESCHL)（右半球）,150,84,242,255
+307,"Area MFG5 (MFG, IFG)_rh","Area MFG5 (MFG, IFG)（右半球）",153,84,242,255
+308,"Area hOc2 (V2, 18)_rh","Area hOc2 (V2, 18)（右半球）",155,84,242,255
+309,Area MFG4 (MFG)_rh,Area MFG4 (MFG)（右半球）,157,84,242,255
+310,"LP (Thalamus, lateral posterior Nucleus)_rh","LP (Thalamus, lateral posterior Nucleus)（右半球）",160,84,242,255
+311,Area 6d2 (PreCG)_rh,Area 6d2 (PreCG)（右半球）,162,84,242,255
+312,Area Ig3 (Insula)_rh,Area Ig3 (Insula)（右半球）,164,84,242,255
+313,Area hOc4d (Cuneus)_rh,Area hOc4d (Cuneus)（右半球）,166,84,242,255
+314,Area SFG3 (SFG)_rh,Area SFG3 (SFG)（右半球）,169,84,242,255
+315,Area 6v3 (PreCG)_rh,Area 6v3 (PreCG)（右半球）,171,84,242,255
+316,"NRm (Midbrain, Nucleus Ruber, magnocellular part)_rh","NRm (Midbrain, Nucleus Ruber, magnocellular part)（右半球）",173,84,242,255
+317,Area Fo4 (OFC)_rh,Area Fo4 (OFC)（右半球）,176,84,242,255
+318,Area IFS1 (IFS)_rh,Area IFS1 (IFS)（右半球）,178,84,242,255
+319,Area Op4 (POperc)_rh,Area Op4 (POperc)（右半球）,180,84,242,255
+320,Ch 4 (Basal Forebrain)_rh,Ch 4 (Basal Forebrain)（右半球）,182,84,242,255
+321,Area hPO1 (POS)_rh,Area hPO1 (POS)（右半球）,185,84,242,255
+322,"Ndentd (Cerebellum, Dorsal Dentate Nucleus)_rh","Ndentd (Cerebellum, Dorsal Dentate Nucleus)（右半球）",187,84,242,255
+323,Area IFS3 (IFS)_rh,Area IFS3 (IFS)（右半球）,189,84,242,255
+324,Area Op2 (POperc)_rh,Area Op2 (POperc)（右半球）,192,84,242,255
+325,Area 8v2 (MFG)_rh,Area 8v2 (MFG)（右半球）,194,84,242,255
+326,"AcbM (Ventral Striatum, Medial Accumbens)_rh","AcbM (Ventral Striatum, Medial Accumbens)（右半球）",196,84,242,255
+327,DG (Hippocampus)_rh,DG (Hippocampus)（右半球）,198,84,242,255
+328,Area PGp (IPL)_rh,Area PGp (IPL)（右半球）,201,84,242,255
+329,"Area 6ma (preSMA, mesial SFG)_rh","Area 6ma (preSMA, mesial SFG)（右半球）",203,84,242,255
+330,Area Ig1 (Insula)_rh,Area Ig1 (Insula)（右半球）,205,84,242,255
+331,Area Id10 (Insula)_rh,Area Id10 (Insula)（右半球）,208,84,242,255
+332,"VM (Thalamus, ventral medial Nucleus)_rh","VM (Thalamus, ventral medial Nucleus)（右半球）",210,84,242,255
+333,Area p24c (pACC)_rh,Area p24c (pACC)（右半球）,212,84,242,255
+334,Area hOc3v (LingG)_rh,Area hOc3v (LingG)（右半球）,214,84,242,255
+335,Area PFcm (IPL)_rh,Area PFcm (IPL)（右半球）,217,84,242,255
+337,"Area PirT (PiriformCortexMesial, temporal)_rh","Area PirT (PiriformCortexMesial, temporal)（右半球）",221,84,242,255
+336,Area SFS2 (SFS)_rh,Area SFS2 (SFS)（右半球）,219,84,242,255
+339,Area hIP5 (IPS)_rh,Area hIP5 (IPS)（右半球）,226,84,242,255
+338,"CM (Thalamus, centromedian Nucleus)_rh","CM (Thalamus, centromedian Nucleus)（右半球）",223,84,242,255
+340,Area SFS1 (SFS)_rh,Area SFS1 (SFS)（右半球）,228,84,242,255
+342,Frontal-to-Temporal-I (GapMap)_rh,Frontal-to-Temporal-I (GapMap)（右半球）,233,84,242,255
+341,Area FG1 (FusG)_rh,Area FG1 (FusG)（右半球）,230,84,242,255
+343,"FuCd (Ventral Striatum, Fundus of Caudate Nucleus)_rh","FuCd (Ventral Striatum, Fundus of Caudate Nucleus)（右半球）",235,84,242,255
+345,"MV (Thalamus, medioventral Nucleus)_rh","MV (Thalamus, medioventral Nucleus)（右半球）",239,84,242,255
+344,"VAmc (Thalamus, ventral anterior Nucleus, magnocellular part)_rh","VAmc (Thalamus, ventral anterior Nucleus, magnocellular part)（右半球）",237,84,242,255
+347,Frontal-I.2 (GapMap)_rh,Frontal-I.2 (GapMap)（右半球）,242,84,239,255
+346,Area hIP3 (IPS)_rh,Area hIP3 (IPS)（右半球）,242,84,242,255
+348,CM (Amygdala)_rh,CM (Amygdala)（右半球）,242,84,237,255
+349,Area 4p (PreCG)_rh,Area 4p (PreCG)（右半球）,242,84,235,255
+350,Area 33 (ACC)_rh,Area 33 (ACC)（右半球）,242,84,233,255
+351,Area OTS1 (OTS)_rh,Area OTS1 (OTS)（右半球）,242,84,230,255
+352,Area Id2 (Insula)_rh,Area Id2 (Insula)（右半球）,242,84,228,255
+353,CA1 (Hippocampus)_rh,CA1 (Hippocampus)（右半球）,242,84,226,255
+354,Frontal-I.1 (GapMap)_rh,Frontal-I.1 (GapMap)（右半球）,242,84,223,255
+355,Area hIP8 (IPS)_rh,Area hIP8 (IPS)（右半球）,242,84,221,255
+357,Area Op9 (Frontal Operculum)_rh,Area Op9 (Frontal Operculum)（右半球）,242,84,217,255
+356,IF (Amygdala)_rh,IF (Amygdala)（右半球）,242,84,219,255
+359,Temporal-to-Parietal (GapMap)_rh,Temporal-to-Parietal (GapMap)（右半球）,242,84,212,255
+358,"VIM (Thalamus, ventral intermediate Nucleus)_rh","VIM (Thalamus, ventral intermediate Nucleus)（右半球）",242,84,214,255
+360,HATA (Hippocampus)_rh,HATA (Hippocampus)（右半球）,242,84,210,255
+361,"TuTi (Basal Forebrain, Terminal islands)_rh","TuTi (Basal Forebrain, Terminal islands)（右半球）",242,84,208,255
+362,Area 45 (IFG)_rh,Area 45 (IFG)（右半球）,242,84,205,255
+367,Area Id1 (Insula)_rh,Area Id1 (Insula)（右半球）,242,84,194,255
+366,Area Ia2 (Insula)_rh,Area Ia2 (Insula)（右半球）,242,84,196,255
+365,Frontal-to-Temporal-II (GapMap)_rh,Frontal-to-Temporal-II (GapMap)（右半球）,242,84,198,255
+364,Area 5Ci (SPL)_rh,Area 5Ci (SPL)（右半球）,242,84,201,255
+363,"CL (Thalamus, anterior intralaminar nuclei)_rh","CL (Thalamus, anterior intralaminar nuclei)（右半球）",242,84,203,255
+369,Area Id5 (Insula)_rh,Area Id5 (Insula)（右半球）,242,84,189,255
+368,Area Te 1.2 (HESCHL)_rh,Area Te 1.2 (HESCHL)（右半球）,242,84,192,255
+370,Area hIP1 (IPS)_rh,Area hIP1 (IPS)（右半球）,242,84,187,255
+371,Area 2 (PostCS)_rh,Area 2 (PostCS)（右半球）,242,84,185,255
+374,Area Te 2.1 (STG)_rh,Area Te 2.1 (STG)（右半球）,242,84,178,255
+373,Ch 123 (Basal Forebrain)_rh,Ch 123 (Basal Forebrain)（右半球）,242,84,180,255
+372,Area hOc3d (Cuneus)_rh,Area hOc3d (Cuneus)（右半球）,242,84,182,255
+378,Area Op3 (POperc)_rh,Area Op3 (POperc)（右半球）,242,84,169,255
+377,Area 7A (SPL)_rh,Area 7A (SPL)（右半球）,242,84,171,255
+376,"Sg (Thalamus, suprageniculate Nucleus)_rh","Sg (Thalamus, suprageniculate Nucleus)（右半球）",242,84,173,255
+375,"VPL (Thalamus, ventral posterior lateral Nucleus)_rh","VPL (Thalamus, ventral posterior lateral Nucleus)（右半球）",242,84,176,255
+379,"Subc (Hippocampus, Subicular complex)_rh","Subc (Hippocampus, Subicular complex)（右半球）",242,84,166,255
+380,"TrS (Hippocampus, Transsubiculum)_rh","TrS (Hippocampus, Transsubiculum)（右半球）",242,84,164,255
+381,CA3 (Hippocampus)_rh,CA3 (Hippocampus)（右半球）,242,84,162,255
+382,Frontal-II (GapMap)_rh,Frontal-II (GapMap)（右半球）,242,84,160,255
+383,"VLA (Thalamus, ventral lateral anterior Nucleus)_rh","VLA (Thalamus, ventral lateral anterior Nucleus)（右半球）",242,84,157,255
+384,Area STS1 (STS)_rh,Area STS1 (STS)（右半球）,242,84,155,255
+387,Area Id9 (Insula)_rh,Area Id9 (Insula)（右半球）,242,84,148,255
+386,Area 5L (SPL)_rh,Area 5L (SPL)（右半球）,242,84,150,255
+385,"VPM (Thalamus, ventral posterior medial Nucleus)_rh","VPM (Thalamus, ventral posterior medial Nucleus)（右半球）",242,84,153,255
+388,"SNR (Midbrain, Substantia Nigra pars reticulata)_rh","SNR (Midbrain, Substantia Nigra pars reticulata)（右半球）",242,84,146,255
+390,Area IFS2 (IFS)_rh,Area IFS2 (IFS)（右半球）,242,84,141,255
+389,Area FG3 (FusG)_rh,Area FG3 (FusG)（右半球）,242,84,144,255
+391,"AV (Thalamus, anteroventral Nucleus)_rh","AV (Thalamus, anteroventral Nucleus)（右半球）",242,84,139,255
+392,VP (Ventral Pallidum)_rh,VP (Ventral Pallidum)（右半球）,242,84,137,255
+394,"Nfast (Cerebellum, Fastigial Nucleus)_rh","Nfast (Cerebellum, Fastigial Nucleus)（右半球）",242,84,132,255
+393,Area s32 (sACC)_rh,Area s32 (sACC)（右半球）,242,84,134,255
+395,MF (Amygdala)_rh,MF (Amygdala)（右半球）,242,84,130,255
+396,Area hOc5 (LOC)_rh,Area hOc5 (LOC)（右半球）,242,84,128,255
+397,"sPf (Thalamus, subparafascicular Nucleus)_rh","sPf (Thalamus, subparafascicular Nucleus)（右半球）",242,84,125,255
+399,Area Fo1 (OFC)_rh,Area Fo1 (OFC)（右半球）,242,84,121,255
+398,SF (Amygdala)_rh,SF (Amygdala)（右半球）,242,84,123,255
+404,Area s24 (sACC)_rh,Area s24 (sACC)（右半球）,242,84,109,255
+403,"Area IFJ1 (IFS, PreCS)_rh","Area IFJ1 (IFS, PreCS)（右半球）",242,84,112,255
+402,Area 8d1 (SFG)_rh,Area 8d1 (SFG)（右半球）,242,84,114,255
+401,"VPi (Thalamus, ventroposterior inferior Nucleus)_rh","VPi (Thalamus, ventroposterior inferior Nucleus)（右半球）",242,84,116,255
+400,"VPMpc (Thalamus, ventral posterior medial Nucleus, parvocellular part)_rh","VPMpc (Thalamus, ventral posterior medial Nucleus, parvocellular part)（右半球）",242,84,119,255
+406,Area PFop (IPL)_rh,Area PFop (IPL)（右半球）,242,84,105,255
+405,Area hOc4v (LingG)_rh,Area hOc4v (LingG)（右半球）,242,84,107,255
+408,Area Ph2 (PhG)_rh,Area Ph2 (PhG)（右半球）,242,84,100,255
+407,Area 6v2 (PreCG)_rh,Area 6v2 (PreCG)（右半球）,242,84,103,255
+410,Area Fo2 (OFC)_rh,Area Fo2 (OFC)（右半球）,242,84,96,255
+409,"AcbL (Ventral Striatum, Lateral Accumbens)_rh","AcbL (Ventral Striatum, Lateral Accumbens)（右半球）",242,84,98,255
+412,Area hIP7 (IPS)_rh,Area hIP7 (IPS)（右半球）,242,84,91,255
+411,Area Te 2.2 (STG)_rh,Area Te 2.2 (STG)（右半球）,242,84,93,255
+413,Area 7PC (SPL)_rh,Area 7PC (SPL)（右半球）,242,84,89,255
+414,Area TeI (STG)_rh,Area TeI (STG)（右半球）,242,84,87,255

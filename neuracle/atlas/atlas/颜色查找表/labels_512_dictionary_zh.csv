@@ -1,0 +1,513 @@
+index,label_en,label_zh,r,g,b,a
+1,Superior occipital sulcus inferior LH,上枕沟下部左侧,242,92,92,255
+2,Superior occipital gyrus,上枕回,242,93,92,255
+3,Insula antero-inferior,脑岛前下部,242,95,92,255
+4,Middle frontal gyrus middle RH,额中回中部右侧,242,97,92,255
+5,Calcarine cortex posterior LH,距状皮层后部左侧,242,99,92,255
+6,Lateral fissure posterior ramus RH,外侧裂后支右侧,242,100,92,255
+7,Superior occipital gyrus superior LH,上枕回上部左侧,242,102,92,255
+8,Angular gyrus inferior LH,角回下部左侧,242,104,92,255
+9,Calcarine sulcus anterior LH,距状沟前部左侧,242,106,92,255
+10,Frontal pole inferior RH,额极下部右侧,242,107,92,255
+11,Midbrain superior,中脑上部,242,109,92,255
+12,Occipitotemporal gyrus mid-posterior RH,颞叶回后部,242,111,92,255
+13,Insula postero-inferior medial,脑岛后下内侧,242,113,92,255
+14,Cerebellum VI RH,小脑右侧,242,114,92,255
+15,Fusiform gyrus anterior LH,梭状回前部左侧,242,116,92,255
+16,Cerebellum Crus I anterior RH,小脑Crus I前部右侧,242,118,92,255
+17,Supramarginal gyrus antero-superior LH,缘上回前上部左侧,242,120,92,255
+18,Angular sulcus superior LH,角沟上部左侧,242,121,92,255
+19,Paracingulate sulcus LH,扣带回旁沟左侧,242,123,92,255
+20,Superior frontal gyrus superior,上额回上部,242,125,92,255
+21,Pars triangularis LH,三角部左侧,242,127,92,255
+22,Superior longitudinal fasciculus II LH,上纵束II左侧,242,129,92,255
+23,Corona radiata antero-superior,放射冠前上部,242,130,92,255
+24,Dorsomedial prefrontal cortex antero-superior LH,内侧前额叶皮层前上部左侧,242,132,92,255
+25,Superior longitudinal fasciculus III anterior LH,上纵束III前部左侧,242,134,92,255
+26,Cuneus antero-inferior,楔叶前下部,242,136,92,255
+27,Anterior vertical ramus of the lateral fissure LH,外侧裂前垂直支左侧,242,137,92,255
+28,Corpus callosum isthmus anterior,胼胝体峡部前部,242,139,92,255
+29,Internal capsule posterior limb RH,内囊后肢右侧,242,141,92,255
+30,Cingulate gyrus middle inferior,扣带回中部下部,242,143,92,255
+31,Caudate RH,尾状核右侧,242,144,92,255
+32,Superior frontal sulcus anterior RH,上额沟前部右侧,242,146,92,255
+33,Pars orbitalis RH,眶部右侧,242,148,92,255
+34,Cerebellum VIIb,小脑VIIb,242,150,92,255
+35,Intraparietal sulcus anterior LH,顶内沟前部左侧,242,151,92,255
+36,Superior longitudinal fasciculus I posterior RH,上纵束I后部右侧,242,153,92,255
+37,Superior longitudinal fasciculus II middle RH,上纵束II中部右侧,242,155,92,255
+38,Angular gyrus postero-inferior RH,角回后下部右侧,242,157,92,255
+39,Cerebrospinal fluid (between middle frontal gyrus and skull),额中回与颅骨之间的脑脊液,242,158,92,255
+40,Cerebellum III anterior,小脑III前部,242,160,92,255
+41,Central sulcus middle RH,中央沟中部右侧,242,162,92,255
+42,Cerebrospinal fluid (between interhemispheric fissure and superior frontal gyrus superior),(裂和额上回),242,164,92,255
+43,Superior frontal gyrus superior RH,上额回上部右侧,242,165,92,255
+44,Frontal pole superior RH,额极上部右侧,242,167,92,255
+45,Postcentral sulcus LH,中央后沟左侧,242,169,92,255
+46,Frontomarginal gyrus,额缘回,242,171,92,255
+47,Paracingulate sulcus posterior RH,扣带回旁沟后部右侧,242,173,92,255
+48,Middle frontal gyrus mid-anterior LH,额中回中前部左侧,242,174,92,255
+49,Middle frontal gyrus posterior lateral RH,额中回后外侧右侧,242,176,92,255
+50,Intraparietal sulcus superior LH,顶内沟上部左侧,242,178,92,255
+51,Ventromedial prefrontal cortex,腹内侧前额叶皮层,242,180,92,255
+52,Lingual gyrus posterior,舌回后部,242,181,92,255
+53,Insula antero-superior RH,脑岛前上部右侧,242,183,92,255
+54,Caudate superior,尾状核上部,242,185,92,255
+55,Parieto-occipital sulcus mid-posterior,顶枕沟中后部,242,187,92,255
+56,Globus pallidus anterior,苍白球前部,242,188,92,255
+57,Superior longitudinal fasciculus I anterior LH,上纵束I前部左侧,242,190,92,255
+58,Superior longitudinal fasciculus I anterior RH,上纵束I前部右侧,242,192,92,255
+59,Precentral sulcus mid-inferior LH,中央前沟中部下部左侧,242,194,92,255
+60,Cerebellum VI superior medial,小脑VI上部内侧,242,195,92,255
+61,Postcentral sulcus inferior RH,中央后沟下部右侧,242,197,92,255
+62,Cuneus middle posterior RH,楔叶中部后部右侧,242,199,92,255
+63,Cerebrospinal fluid (between middle frontal gyrus superior and skull LH),额中回上部与颅骨左侧之间的脑脊液,242,201,92,255
+64,Paracingulate gyrus posterior LH,扣带回旁回后部左侧,242,202,92,255
+65,Precentral gyrus mid-superior,中央前回中部上部,242,204,92,255
+66,Superior temporal gyrus mid-anterior LH,上颞回中部前左侧,242,206,92,255
+67,Fusiform gyrus anterior,梭状回前部,242,208,92,255
+68,Superior frontal gyrus medial anterior,上额回内侧前部,242,209,92,255
+69,Superior frontal gyrus mid-posterior,上额回中部后,242,211,92,255
+70,Cerebellum IX,小脑IX,242,213,92,255
+71,Thalamus posterior,丘脑后部,242,215,92,255
+72,Globus pallidus RH,苍白球右侧,242,217,92,255
+73,Postcentral sulcus RH,中央后沟右侧,242,218,92,255
+74,Thalamus superior,丘脑上部,242,220,92,255
+75,Superior occipital sulcus superior LH,上枕沟上部左侧,242,222,92,255
+76,Supramarginal gyrus posterior LH,缘上回后部左侧,242,224,92,255
+77,Gyrus rectus,直回,242,225,92,255
+78,Anterior occipital sulcus RH,枕前沟右侧,242,227,92,255
+79,Lateral fissure anterior,外侧裂前部,242,229,92,255
+80,Corona radiata posterior LH,放射冠后部左侧,242,231,92,255
+81,Cerebellum V anterior,小脑V前部,242,232,92,255
+82,Parieto-occipital sulcus mid-anterior,顶枕沟中前部,242,234,92,255
+83,Hippocampus anterior,海马前部,242,236,92,255
+84,Superior frontal gyrus mid-anterior LH,上额回中部前左侧,242,238,92,255
+85,Cerebellum Crus II anterior LH,小脑Crus II前部左侧,242,239,92,255
+86,Intraparietal sulcus middle RH,顶内沟中部右侧,242,241,92,255
+87,Parieto-occipital sulcus posterior lateral,顶枕沟后部外侧,241,242,92,255
+88,Occipital pole LH,枕极左侧,239,242,92,255
+89,Corticospinal tract superior,皮质脊髓束上部,237,242,92,255
+90,Cingulate gyrus middle superior,扣带回中部上部,235,242,92,255
+91,Parieto-occipital sulcus anterior,顶枕沟前部,234,242,92,255
+92,Cererbrospinal fluid (between callosomarginal sulcus and skull LH),(沟和左侧),232,242,92,255
+93,Occipitotemporal gyrus posterior RH,颞枕回后部右侧,230,242,92,255
+94,Insula postero-superior lateral LH,脑岛后上外侧左侧,228,242,92,255
+95,Superior frontal gyrus posterior LH,上额回后部左侧,226,242,92,255
+96,Inferior frontal sulcus middle RH,额下沟中部右侧,225,242,92,255
+97,Postcentral gyrus middle LH,中央后回中部左侧,223,242,92,255
+98,Arcuate fasciculus postero-inferior LH,弓状束后下部左侧,221,242,92,255
+99,Angular gyrus anterior RH,角回前部右侧,219,242,92,255
+100,Angular sulcus inferior RH,角沟下部右侧,218,242,92,255
+101,Temporal pole LH,颞极左侧,216,242,92,255
+102,Paracentral lobule inferior LH,旁中央小叶下部左侧,214,242,92,255
+103,Precentral sulcus medial,中央前沟内侧,212,242,92,255
+104,Dorsomedial prefrontal cortex LH,内侧前额叶皮层左侧,211,242,92,255
+105,Amygdala inferior,杏仁核下部,209,242,92,255
+106,Perirhinal cortex,嗅皮层,207,242,92,255
+107,Cuneus middle,楔叶中部,205,242,92,255
+108,Callosomarginal sulcus middle,胼胝体边缘沟中部,204,242,92,255
+109,Lunate sulcus RH,月状沟右侧,202,242,92,255
+110,Putamen superior,壳核上部,200,242,92,255
+111,Putamen LH,壳核左侧,198,242,92,255
+112,Frontal pole,额极,197,242,92,255
+113,Forceps minor,小钳,195,242,92,255
+114,Superior temporal gyrus medial anterior,上颞回内侧前部,193,242,92,255
+115,Middle frontal gyrus anterior RH,额中回前部右侧,191,242,92,255
+116,Planum polare superior,颞极平面上部,190,242,92,255
+117,Dorsomedial prefrontal cortex posterior,内侧前额叶皮层后部,188,242,92,255
+118,Superior frontal gyrus postero-superior LH,上额回后上部左侧,186,242,92,255
+119,Supramarginal gyrus postero-superior RH,缘上回后上部右侧,184,242,92,255
+120,Amygdala,杏仁核,182,242,92,255
+121,Cerebellum VI medial RH,小脑VI内侧右侧,181,242,92,255
+122,Lingual gyrus medial,舌回内侧,179,242,92,255
+123,Cuneus anterior RH,楔叶前部右侧,177,242,92,255
+124,Superior frontal sulcus middle LH,上额沟中部左侧,175,242,92,255
+125,Cerebellum IX inferior,小脑IX下部,174,242,92,255
+126,Cingulum anterior,扣带束前回,172,242,92,255
+127,Inferior temporal sulcus mid-posterior RH,颞下沟中后部右侧,170,242,92,255
+128,Cerebellum VI superior LH,小脑VI上部左侧,168,242,92,255
+129,Optic radiation LH,视辐射左侧,167,242,92,255
+130,Corpus callosum genu inferior,胼胝体膝部下部,165,242,92,255
+131,Precuneus mid-superior LH,楔前叶中部上部左侧,163,242,92,255
+132,Postcentral gyrus mid-inferior,中央后回中部下部,161,242,92,255
+133,Inferior frontal sulcus posterior LH,额下沟后部左侧,160,242,92,255
+134,Lateral occipital cortex posterior LH,枕外侧皮质后部左侧,158,242,92,255
+135,Angular gyrus mid-posterior RH,角回中部后侧右侧,156,242,92,255
+136,Temporal pole,颞极,154,242,92,255
+137,Cerebellum Crus II posterior LH,小脑Crus II后部左侧,153,242,92,255
+138,Superior temporal sulcus posterior LH,上颞沟后部左侧,151,242,92,255
+139,Cerebrospinal fluid (between superior precentral gyrus and skull),中央前回上部与颅骨之间的脑脊液,149,242,92,255
+140,Lunate sulcus LH,月状沟左侧,147,242,92,255
+141,Cerebellum Crus I medial RH,小脑Crus I内侧右侧,146,242,92,255
+142,Posterior cingulate cortex LH,后扣带皮层左侧,144,242,92,255
+143,Precuneus anterior,楔前叶前部,142,242,92,255
+144,Intraparietal sulcus middle LH,顶内沟中部左侧,140,242,92,255
+145,Lingual gyrus middle,舌回中部,138,242,92,255
+146,Superior temporal gyrus posterior RH,上颞回后部右侧,137,242,92,255
+147,Lateral orbital cortex,眶外侧皮质,135,242,92,255
+148,Pons antero-superior,脑桥前上部,133,242,92,255
+149,Middle frontal sulcus anterior,额中沟前部,131,242,92,255
+150,Occipital pole superior LH,枕极上部左侧,130,242,92,255
+151,Lingual gyrus mid-posterior LH,舌回中后部左侧,128,242,92,255
+152,Posterior cingulate cortex superior,后扣带皮层上部,126,242,92,255
+153,Inferior frontal sulcus posterior RH,额下沟后部右侧,124,242,92,255
+154,Cerebrospinal fluid (between angular gyrus and skull LH),角回与颅骨左侧之间的脑脊液,123,242,92,255
+155,Intraparietal sulcus mid-anterior LH,顶内沟中前部左侧,121,242,92,255
+156,Arcuate fasciculus postero-inferior RH,弓状束后下部右侧,119,242,92,255
+157,Frontal pole lateral RH,额极外侧右侧,117,242,92,255
+158,Cerebellum VIIIb inferior,小脑VIIIb下部,116,242,92,255
+159,Parieto-occipital sulcus middle superior LH,顶枕沟中部上部左侧,114,242,92,255
+160,Anterior rami of the lateral fissure RH,前部的外侧裂右侧,112,242,92,255
+161,Cingulate gyrus mid-posterior,扣带回中后部,110,242,92,255
+162,Superior frontal sulcus posterior LH,上额沟后部左侧,109,242,92,255
+163,Superior longitudinal fasciculus I posterior LH,上纵束I后部左侧,107,242,92,255
+164,Cerebellum IV inferior,小脑IV下部,105,242,92,255
+165,Corona radiata superior,放射冠上部,103,242,92,255
+166,Insula postero-superior lateral,脑岛后上外侧,102,242,92,255
+167,Middle frontal gyrus posterior LH,额中回后部左侧,100,242,92,255
+168,Third ventricle,第三脑室,98,242,92,255
+169,Precentral gyrus middle LH,中央前回中部左侧,96,242,92,255
+170,Callosal sulcus posterior,胼胝体沟后部,94,242,92,255
+171,Angular gyrus superior LH,角回上部左侧,93,242,92,255
+172,Superior occipital gyrus LH,上枕回左侧,92,242,92,255
+173,Superior longitudinal fasciculus II posterior RH,上纵束II后部右侧,92,242,94,255
+174,Superior frontal gyrus anterior,上额回前部,92,242,96,255
+175,Cuneus posterior RH,楔叶后部右侧,92,242,97,255
+176,Superior parts of central and postcentral sulci,中央沟和中央后沟上部,92,242,99,255
+177,Calcarine sulcus mid-anterior,距状沟中部前侧,92,242,101,255
+178,Middle temporal gyrus medial LH,颞中回内侧左侧,92,242,103,255
+179,Occipital pole lateral LH,枕极外侧左侧,92,242,104,255
+180,Fusiform gyrus middle superior RH,梭状回中上部右侧,92,242,106,255
+181,Cerebrospinal fluid (between superior parietal lobule and skull RH),顶上小叶与颅骨右侧之间的脑脊液,92,242,108,255
+182,Cerebrospinal fluid (between superior frontal gyrus and skull),额上回与颅骨之间的脑脊液,92,242,110,255
+183,Planum temporale,颞平面,92,242,112,255
+184,Subcentral gyrus RH,中央下回右侧,92,242,113,255
+185,Middle frontal sulcus anterior LH,额中沟前部左侧,92,242,115,255
+186,Anterior cingulate cortex,前扣带皮层,92,242,117,255
+187,Inferior occipital gyrus,枕下回,92,242,119,255
+188,Cerebrospinal fluid (between superior frontal gyrus lateral RH and skull),额上回外侧右侧与颅骨之间的脑脊液,92,242,120,255
+189,Arcuate fasciculus postero-superior,弓状束后上部,92,242,122,255
+190,Superior frontal sulcus anterior LH,上额沟前部左侧,92,242,124,255
+191,Cingulum middle,扣带束中部,92,242,126,255
+192,Frontal pole medial,额极内侧,92,242,127,255
+193,Supramarginal gyrus inferior LH,缘上回下部左侧,92,242,129,255
+194,Cerebrospinal fluid (between superior cerebellum and limbic lobe),上部小脑与边缘叶之间的脑脊液,92,242,131,255
+195,Occipital pole,枕极,92,242,133,255
+196,Angular gyrus anterior LH,角回前部左侧,92,242,134,255
+197,Corpus callosum genu,胼胝体膝部,92,242,136,255
+198,Cerebellum VI antero-inferior LH,小脑VI前下部左侧,92,242,138,255
+199,Precentral gyrus superior RH,中央前回上部右侧,92,242,140,255
+200,Occipital pole superior,枕极上部,92,242,141,255
+201,Precentral sulcus mid-superior LH,中央前沟中部上部左侧,92,242,143,255
+202,Superior occipito-frontal fasciculus middle,上枕额束中部,92,242,145,255
+203,Middle frontal gyrus mid-posterior RH,额中回中后部右侧,92,242,147,255
+204,Pons,脑桥,92,242,148,255
+205,Middle frontal gyrus anterior lateral RH,额中回前外侧右侧,92,242,150,255
+206,Postcentral sulcus superior RH,中央后沟上部右侧,92,242,152,255
+207,Superior temporal sulcus posterior RH,上颞沟后部右侧,92,242,154,255
+208,Corpus callosum genu superior,胼胝体膝部上部,92,242,156,255
+209,Fourth ventricle,第四脑室,92,242,157,255
+210,Calcarine sulcus middle,距状沟中部,92,242,159,255
+211,Postcentral sulcus superior LH,中央后沟上部左侧,92,242,161,255
+212,Precentral gyrus superior LH,中央前回上部左侧,92,242,163,255
+213,Precentral sulcus mid-superior RH,中央前沟中部上部右侧,92,242,164,255
+214,Intraparietal sulcus anterior RH,顶内沟前部右侧,92,242,166,255
+215,Superior temporal gyrus medial anterior RH,上颞回内侧前部右侧,92,242,168,255
+216,Precuneus postero-inferior RH,楔前叶后下部右侧,92,242,170,255
+217,Parieto-occipital sulcus postero-superior,顶枕沟后上部,92,242,171,255
+218,Cerebellum III inferior,小脑III下部,92,242,173,255
+219,Superior parietal lobule medial RH,上顶叶内侧右侧,92,242,175,255
+220,Anterior cingulate cortex superior,前扣带皮层上部,92,242,177,255
+221,Middle frontal gyrus postero-inferior LH,额中回后下部左侧,92,242,178,255
+222,Inferior longitudinal fasciculus,下纵束,92,242,180,255
+223,Cingulate sulcus middle,扣带沟中部,92,242,182,255
+224,Subthalamic nuclei,丘脑底核,92,242,184,255
+225,Caudate inferior,尾状核下部,92,242,185,255
+226,Parietal operculum posterior RH,顶叶盖后部右侧,92,242,187,255
+227,Collateral sulcus posterior RH,外侧沟后部右侧,92,242,189,255
+228,Cuneus postero-superior,楔叶后上部,92,242,191,255
+229,Paracentral sulcus,旁中央沟,92,242,192,255
+230,Middle temporal gyrus middle posterior LH,颞中回后部,92,242,194,255
+231,Inferior temporal sulcus posterior LH,颞下沟后部左侧,92,242,196,255
+232,Occipital pole lateral RH,枕极外侧右侧,92,242,198,255
+233,Medulla oblongata,延髓,92,242,200,255
+234,Cerebellum Crus II posterior,小脑Crus II后部,92,242,201,255
+235,Superior temporal sulcus middle-superior RH,上颞沟中部上部右侧,92,242,203,255
+236,Anterior limb of internal capsule,前部的内囊,92,242,205,255
+237,Middle temporal gyrus mid-posterior RH,颞中回中后部右侧,92,242,207,255
+238,Lateral occipital cortex superior LH,枕外侧皮质上部左侧,92,242,208,255
+239,Pars triangularis RH,三角部右侧,92,242,210,255
+240,Cuneus superior,楔叶上部,92,242,212,255
+241,Superior parietal lobule postero-inferior posterior,上顶叶后下部后,92,242,214,255
+242,Superior parietal sulcus LH,上顶沟左侧,92,242,215,255
+243,Middle temporal gyrus posterior LH,颞中回后部左侧,92,242,217,255
+244,Precuneus antero-inferior,楔前叶前下部,92,242,219,255
+245,Cerebrospinal fluid (between middle frontal gyrus posterior and skull RH),额中回后部与颅骨右侧之间的脑脊液,92,242,221,255
+246,Superior occipital sulcus middle RH,上枕沟中部右侧,92,242,222,255
+247,Supramarginal gyrus anterior RH,缘上回前部右侧,92,242,224,255
+248,Posterior cingulate cortex inferior,后扣带皮层下部,92,242,226,255
+249,Lateral fissure anterior LH,外侧裂前部左侧,92,242,228,255
+250,Retrosplenial cortex superior,压后皮质上部,92,242,229,255
+251,Middle frontal gyrus mid-posterior LH,额中回中后部左侧,92,242,231,255
+252,Superior temporal gyrus superior RH,上颞回上部右侧,92,242,233,255
+253,Precuneus middle,楔前叶中部,92,242,235,255
+254,Subsplenial area,压部下区,92,242,236,255
+255,Inferior temporal sulcus posterior RH,颞下沟后部右侧,92,242,238,255
+256,Cingulum mid-anterior,扣带束中前部,92,242,240,255
+257,Cerebellum VI antero-superior LH,小脑VI前上部左侧,92,242,242,255
+258,Superior parietal lobule LH,上顶叶左侧,92,240,242,255
+259,Cerebellum III superior,小脑III上部,92,238,242,255
+260,Cerebellum VI posterior,小脑VI后部,92,236,242,255
+261,Caudate,尾状核,92,235,242,255
+262,Parahippocampal gyrus anterior,旁海马回前部,92,233,242,255
+263,Central operculum posterior RH,中央岛盖后部右侧,92,231,242,255
+264,Middle temporal gyrus mid-anterior LH,颞中回中前部左侧,92,229,242,255
+265,Fusiform gyrus posterior RH,梭状回后部右侧,92,228,242,255
+266,Frontal operculum RH,额叶岛盖右侧,92,226,242,255
+267,Superior frontal gyrus middle LH,上额回中部左侧,92,224,242,255
+268,Middle temporal gyrus posterior RH,颞中回后部右侧,92,222,242,255
+269,Precentral gyrus inferior LH,中央前回下部左侧,92,221,242,255
+270,Hippocampus,海马,92,219,242,255
+271,Paracingulate gyrus mid-anterior LH,扣带回旁回中前部左侧,92,217,242,255
+272,Cerebellum VIIIb medial,小脑VIIIb内侧,92,215,242,255
+273,Central sulcus mid-superior RH,中央沟中部上侧右侧,92,214,242,255
+274,Cerebellum VIIIb anterior,小脑VIIIb前部,92,212,242,255
+275,Cerebrospinal fluid (between superior frontal gyrus superior and skull),额上回上部与颅骨之间的脑脊液,92,210,242,255
+276,Superior parietal lobule postero-superior LH,上顶叶后上部左侧,92,208,242,255
+277,Superior frontal sulcus mid-posterior RH,上额沟中部后右侧,92,207,242,255
+278,Middle occipital sulcus LH,枕中沟左侧,92,205,242,255
+279,Internal capsule posterior RH,内囊后部右侧,92,203,242,255
+280,Occipitotemporal gyrus posterior LH,颞枕回后部左侧,92,201,242,255
+281,Inferior occipital sulcus,枕下沟,92,200,242,255
+282,Middle frontal gyrus anterior LH,额中回前部左侧,92,198,242,255
+283,Lateral occipital cortex antero-superior RH,枕外侧皮质前上部右侧,92,196,242,255
+284,Cerebellum VI superior lateral,小脑VI上部外侧,92,194,242,255
+285,Cerebral peduncles,大脑脚,92,192,242,255
+286,Occipital pole inferior,枕极下部,92,191,242,255
+287,Ventromedial prefrontal cortex LH,左腹内侧前额叶皮层,92,189,242,255
+288,Calcarine sulcus anterior,距状沟前部,92,187,242,255
+289,Cerebellum Crus I posterior RH,小脑Crus I后部右侧,92,185,242,255
+290,Precentral sulcus mid-inferior RH,中央前沟中部下部右侧,92,184,242,255
+291,Dorsomedial prefrontal cortex anterior,内侧前额叶皮层前部,92,182,242,255
+292,Inferior temporal sulcus middle RH,颞下沟中部右侧,92,180,242,255
+293,Heschl's gyrus LH,’回,92,178,242,255
+294,Middle frontal gyrus posterior RH,额中回后部右侧,92,177,242,255
+295,Parietal operculum LH,顶叶盖左侧,92,175,242,255
+296,Calcarine cortex mid-posterior LH,距状皮层中部后侧左侧,92,173,242,255
+297,Postcentral sulcus superior,中央后沟上部,92,171,242,255
+298,Thalamus middle,丘脑中部,92,170,242,255
+299,Superior frontal gyrus medial middle,上额回内侧中部,92,168,242,255
+300,Inferior frontal gyrus posterior LH,额下回后部左侧,92,166,242,255
+301,Parieto-occipital sulcus middle inferior LH,顶枕沟中部下部左侧,92,164,242,255
+302,Subparietal sulcus LH,顶下沟左侧,92,163,242,255
+303,Internal capsule anterior limb RH,内囊前肢右侧,92,161,242,255
+304,Precuneus mid-posterior,楔前叶后中部,92,159,242,255
+305,Angular gyrus superior RH,角回上部右侧,92,157,242,255
+306,Central sulcus middle LH,中央沟中部左侧,92,156,242,255
+307,Superior frontal sulcus middle,上额沟中部,92,154,242,255
+308,Globus pallidus,苍白球,92,152,242,255
+309,Central sulcus inferior RH,中央沟下部右侧,92,150,242,255
+310,Middle frontal gyrus middle,额中回中部,92,148,242,255
+311,Cerebrospinal fluid (between supramarginal gyrus and skull LH),缘上回与颅骨左侧之间的脑脊液,92,147,242,255
+312,Superior frontal gyrus middle RH,上额回中部右侧,92,145,242,255
+313,Corticospinal tract middle RH,皮质脊髓束中部右侧,92,143,242,255
+314,Cingulate sulcus posterior RH,扣带沟后部右侧,92,141,242,255
+315,Lateral occipital cortex superior RH,枕外侧皮质上部右侧,92,140,242,255
+316,Putamen postero-inferior,壳核后下部,92,138,242,255
+317,Cerebellum horizontal fissure medial,小脑水平裂内侧,92,136,242,255
+318,Superior parietal sulcus RH,上顶沟右侧,92,134,242,255
+319,Calcarine cortex anterior,距状皮层前部,92,133,242,255
+320,Precentral sulcus superior,中央前沟上部,92,131,242,255
+321,Cuneus posterior,楔叶后部,92,129,242,255
+322,Precentral sulcus inferior LH,中央前沟下部左侧,92,127,242,255
+323,Superior longitudinal fasciculus II posterior LH,上纵束II后部左侧,92,126,242,255
+324,Superior parietal lobule postero-superior RH,上顶叶后上部右侧,92,124,242,255
+325,Anterior horizontal ramus of the lateral fissure LH,外侧裂前水平支左侧,92,122,242,255
+326,Parieto-occipital sulcus mid-anterior RH,顶枕沟中前部右侧,92,120,242,255
+327,Cingulate sulcus mid-anterior RH,扣带沟中前部右侧,92,119,242,255
+328,Caudate LH,尾状核左侧,92,117,242,255
+329,Orbital H-shaped sulcus,H形眶沟,92,115,242,255
+330,Central operculum LH,中央岛盖左侧,92,113,242,255
+331,Parieto-occipital sulcus middle,顶枕沟中部,92,112,242,255
+332,Putamen anterior,壳核前部,92,110,242,255
+333,Cerebrospinal fluid (between middle frontal gyrus and skull LH),额中回与颅骨左侧之间的脑脊液,92,108,242,255
+334,Precentral gyrus mid-superior LH,中央前回中部上部左侧,92,106,242,255
+335,Thalamus anterior,丘脑前部,92,104,242,255
+336,Posterior cingulate cortex anterior,后扣带皮层前部,92,103,242,255
+337,Superior temporal gyrus posterior LH,上颞回后部左侧,92,101,242,255
+338,Central sulcus middle,中央沟中部,92,99,242,255
+339,Cerebellum IX and cerebellar peduncle,小脑IX和小脑脚,92,97,242,255
+340,Calcarine sulcus anterior RH,距状沟前部右侧,92,96,242,255
+341,Cerebellum VI medial,小脑VI内侧,92,94,242,255
+342,Cerebellum V superior,小脑V上部,92,92,242,255
+343,Collateral sulcus anterior,外侧沟前部,93,92,242,255
+344,Cerebellar peduncles,,94,92,242,255
+345,Cerebrospinal fluid (between middle frontal gyrus anterior and skull RH),额中回前部与颅骨右侧之间的脑脊液,96,92,242,255
+346,Cerebellum secondary fissure,小脑次裂,98,92,242,255
+347,Superior occipital gyrus inferior RH,上枕回下部右侧,100,92,242,255
+348,Central sulcus superior,中央沟上部,102,92,242,255
+349,Inferior occipital gyrus anterior LH,枕下回前部左侧,103,92,242,255
+350,Superior parietal lobule posterior,上顶叶后部,105,92,242,255
+351,Superior temporal sulcus mid-posterior LH,上颞沟中部后左侧,107,92,242,255
+352,Lateral occipital cortex anterior LH,枕外侧皮质前部左侧,109,92,242,255
+353,Planum polare inferior,颞极平面下部,110,92,242,255
+354,Paracingulate gyrus anterior LH,扣带回旁回前部左侧,112,92,242,255
+355,Paracingulate sulcus posterior,扣带回旁沟后部,114,92,242,255
+356,Inferior frontal gyrus anterior LH,额下回前部左侧,116,92,242,255
+357,Angular sulcus inferior LH,角沟下部左侧,117,92,242,255
+358,Subparietal sulcus RH,顶下沟右侧,119,92,242,255
+359,Circular sulcus of the insula anterior,脑岛前环状沟,121,92,242,255
+360,Middle temporal gyrus mid-anterior RH,颞中回中前部右侧,123,92,242,255
+361,Cerebrospinal fluid (between intraparietal sulcus and skull LH),顶内沟与颅骨左侧之间的脑脊液,124,92,242,255
+362,Precuneus posterior,楔前叶后部,126,92,242,255
+363,Inferior occipital gyrus posterior LH,枕下回后部左侧,128,92,242,255
+364,Lingual gyrus inferior,舌回下部,130,92,242,255
+365,Angular gyrus postero-inferior LH,角回后下部左侧,131,92,242,255
+366,Inferior frontal gyrus anterior RH,额下回前部右侧,133,92,242,255
+367,Paracingulate sulcus mid-posterior,扣带回旁沟中后部,135,92,242,255
+368,Frontomarginal gyrus LH,额缘回左侧,137,92,242,255
+369,Middle occipital sulcus RH,枕中沟右侧,138,92,242,255
+370,Inferior occipital gyrus RH,枕下回右侧,140,92,242,255
+371,Inferior frontal sulcus anterior RH,额下沟前部右侧,142,92,242,255
+372,Postcentral sulcus inferior LH,中央后沟下部左侧,144,92,242,255
+373,Middle temporal gyrus postero-inferior LH,颞中回后下部左侧,146,92,242,255
+374,Superior parietal sulcus superior,上顶沟上部,147,92,242,255
+375,Cerebellum VI lateral RH,小脑VI外侧右侧,149,92,242,255
+376,Cerebellum V RH,小脑V右侧,151,92,242,255
+377,Internal capsule middle LH,内囊中部左侧,153,92,242,255
+378,Cingulate sulcus antero-inferior,扣带沟前下部,154,92,242,255
+379,Middle temporal gyrus middle anterior LH,颞中回前部,156,92,242,255
+380,Cerebrospinal fluid (between central sulcus and skull LH),中央沟与颅骨左侧之间的脑脊液,158,92,242,255
+381,Cerebellum VI,小脑VI,160,92,242,255
+382,Cerebrospinal fluid (between central sulcus and skull RH),中央沟与颅骨右侧之间的脑脊液,161,92,242,255
+383,Corona radiata anterior LH,放射冠前部左侧,163,92,242,255
+384,Superior occipital sulcus superior RH,上枕沟上部右侧,165,92,242,255
+385,Intermediate primus of Jensen LH,简森中间初级区左侧,167,92,242,255
+386,Lateral occipital cortex antero-superior LH,枕外侧皮质前上部左侧,168,92,242,255
+387,Supramarginal gyrus inferior RH,缘上回下部右侧,170,92,242,255
+388,Insula antero-superior LH,脑岛前上部左侧,172,92,242,255
+389,Callosomarginal sulcus mid-inferior,胼胝体边缘沟中部下侧,174,92,242,255
+390,Insula postero-inferior,脑岛后下部,175,92,242,255
+391,Middle temporal gyrus middle RH,颞中回中部右侧,177,92,242,255
+392,Retrosplenial cortex inferior,压后皮质下部,179,92,242,255
+393,Suborbital sulcus,眶下沟,181,92,242,255
+394,Cingulate sulcus anterior RH,扣带沟前部右侧,182,92,242,255
+395,Precuneus postero-superior,楔前叶后上部,184,92,242,255
+396,Superior longitudinal fasciculus I posterior,上纵束I后部,186,92,242,255
+397,Middle frontal gyrus anterior lateral LH,额中回前外侧左侧,188,92,242,255
+398,Cerebrospinal fluid (between callosomarginal sulcus and skull RH),胼胝体缘沟与颅骨右侧之间的脑脊液,190,92,242,255
+399,Angular sulcus superior RH,角沟上部右侧,191,92,242,255
+400,Collateral sulcus middle,外侧沟中部,193,92,242,255
+401,Pars opercularis LH,岛盖部左侧,195,92,242,255
+402,Superior temporal gyrus middle LH,上颞回中部左侧,197,92,242,255
+403,Occipitotemporal sulcus posterior LH,颞枕沟后部左侧,198,92,242,255
+404,Cerebellum Crus I posterior,小脑Crus I后部,200,92,242,255
+405,Lateral fissure posterior limb RH,外侧裂后肢右侧,202,92,242,255
+406,Caudate nucleus,,204,92,242,255
+407,Lateral ventricles posterior horns,侧脑室后角,205,92,242,255
+408,Callosal sulcus mid-posterior,胼胝体沟中部后侧,207,92,242,255
+409,Supramarginal gyrus antero-inferior LH,缘上回前下部左侧,209,92,242,255
+410,Callosomarginal sulcus superior,胼胝体边缘沟上部,211,92,242,255
+411,Angular gyrus antero-inferior LH,角回前下部左侧,212,92,242,255
+412,Superior parts of central and postcentral sulci LH,中央沟和中央后沟上部左侧,214,92,242,255
+413,Precuneus RH,楔前叶右侧,216,92,242,255
+414,Superior parts of central and postcentral sulci RH,中央沟和中央后沟上部右侧,218,92,242,255
+415,Thalamus LH,丘脑左侧,219,92,242,255
+416,Angular gyrus postero-superior LH,角回后上部左侧,221,92,242,255
+417,Paracentral lobule superior,旁中央小叶上部,223,92,242,255
+418,Angular gyrus posterior RH,角回后部右侧,225,92,242,255
+419,Calcarine sulcus posterior medial,距状沟后部内侧,226,92,242,255
+420,Paracingulate sulcus posterior LH,扣带回旁沟后部左侧,228,92,242,255
+421,Thalamus medial,丘脑内侧部,230,92,242,255
+422,Fusiform gyrus middle inferior RH,梭状回中下部右侧,232,92,242,255
+423,Caudate nucleus tail,尾状核尾部,234,92,242,255
+424,Parieto-occipital sulcus postero-inferior RH,顶枕沟后下部右侧,235,92,242,255
+425,Cerebellum Crus I superior,小脑Crus I上部,237,92,242,255
+426,Temporal pole RH,颞极右侧,239,92,242,255
+427,Lingual gyrus anterior,舌回前部,241,92,242,255
+428,Cerebrospinal fluid (between postcentral gyrus and skull),中央后回与颅骨之间的脑脊液,242,92,241,255
+429,Cerebellum Crus II RH,小脑Crus II右侧,242,92,239,255
+430,Corpus callosum anterior body,胼胝体前部,242,92,238,255
+431,Superior occipital gyrus RH,上枕回右侧,242,92,236,255
+432,Subparietal sulcus inferior LH,顶下沟下部左侧,242,92,234,255
+433,Intraparietal sulcus mid-posterior RH,顶内沟中后部右侧,242,92,232,255
+434,Hippocampus posterior,海马后部,242,92,231,255
+435,Cuneus anterior,楔叶前部,242,92,229,255
+436,Precuneus antero-superior,楔前叶前上部,242,92,227,255
+437,Central sulcus inferior,中央沟下部,242,92,225,255
+438,Central sulcus mid-inferior RH,中央沟中部下侧右侧,242,92,224,255
+439,Precentral sulcus inferior RH,中央前沟下部右侧,242,92,222,255
+440,Superior longitudinal fasciculus I,上纵束I,242,92,220,255
+441,Middle frontal gyrus anterior medial RH,额中回前内侧右侧,242,92,218,255
+442,Cerebellum Crus I posterior LH,小脑Crus I后部左侧,242,92,217,255
+443,Superior temporal sulcus middle LH,上颞沟中部左侧,242,92,215,255
+444,Cerebrospinal fluid (between intraparietal sulcus and skull RH),顶内沟与颅骨右侧之间的脑脊液,242,92,213,255
+445,Forceps minor RH,小钳右侧,242,92,211,255
+446,Forceps major,大钳,242,92,209,255
+447,Superior temporal sulcus middle-inferior RH,上颞沟中部下部右侧,242,92,208,255
+448,Lingual gyrus mid-anterior LH,舌回中前部左侧,242,92,206,255
+449,Middle frontal gyrus mid-posterior lateral LH,额中回中后外侧左侧,242,92,204,255
+450,Cerebellum superior posterior fissure LH,小脑上后裂左侧,242,92,202,255
+451,Fusiform gyrus middle RH,梭状回中部右侧,242,92,201,255
+452,Medulla oblongata superior,延髓上部,242,92,199,255
+453,Superior occipital gyrus superior RH,上枕回上部右侧,242,92,197,255
+454,Superior longitudinal fasciculus III posterior RH,上纵束III后部右侧,242,92,195,255
+455,Frontomarginal sulcus,额缘沟,242,92,194,255
+456,Superior longitudinal fasciculus III middle RH,上纵束III中部右侧,242,92,192,255
+457,Inferior frontal sulcus mid-anterior LH,额下沟中前部左侧,242,92,190,255
+458,Cerebrospinal fluid (between superior frontal gyrus middle superior and skull),额上回中部上部与颅骨之间的脑脊液,242,92,188,255
+459,Central sulcus LH,中央沟左侧,242,92,187,255
+460,Intraparietal sulcus posterior RH,顶内沟后部右侧,242,92,185,255
+461,Precuneus inferior,楔前叶下部,242,92,183,255
+462,Heschl's gyrus RH,’回,242,92,181,255
+463,Intraparietal sulcus posterior LH,顶内沟后部左侧,242,92,180,255
+464,Lateral ventricles anterior horns,侧脑室前角,242,92,178,255
+465,Cerebrospinal fluid (between postcentral sulcus and skull RH),中央后沟与颅骨右侧之间的脑脊液,242,92,176,255
+466,Central sulcus superior LH,中央沟上部左侧,242,92,174,255
+467,External capsule middle LH,外囊中部左侧,242,92,173,255
+468,Putamen RH,壳核右侧,242,92,171,255
+469,Cerebrospinal fluid (between superior parietal lobule posterior and skull RH),顶上小叶后部与颅骨右侧之间的脑脊液,242,92,169,255
+470,Insula superior,脑岛上部,242,92,167,255
+471,Heschl's gyrus posterior RH,’回后部,242,92,165,255
+472,Optic radiation RH,视辐射右侧,242,92,164,255
+473,Anterior parts of occipitotemporal and collateral sulci LH,枕颞沟和侧副沟前部左侧,242,92,162,255
+474,Cingulate sulcus mid-posterior,扣带沟中后部,242,92,160,255
+475,Middle frontal sulcus mid-anterior LH,额中沟中前部左侧,242,92,158,255
+476,Ventromedial prefrontal cortex posterior,腹内侧前额叶皮层后部,242,92,157,255
+477,Cerebrospinal fluid (between superior parietal lobule and skull LH),顶上小叶与颅骨左侧之间的脑脊液,242,92,155,255
+478,Cerebellum VI posterior LH,小脑VI后部左侧,242,92,153,255
+479,Ventromedial prefrontal cortex anterior,腹内侧前额叶皮层前部,242,92,151,255
+480,Putamen postero-superior,壳核后上部,242,92,150,255
+481,Cerebellum VI LH,小脑VI左侧,242,92,148,255
+482,Cerebellum Crus I superior RH,小脑Crus I上部右侧,242,92,146,255
+483,Superior longitudinal fasciculus III anterior RH,上纵束III前部右侧,242,92,144,255
+484,Midbrain inferior,中脑下部,242,92,143,255
+485,Postcentral gyrus middle RH,中央后回中部右侧,242,92,141,255
+486,Paracingulate sulcus mid-posterior RH,扣带回旁沟中后部右侧,242,92,139,255
+487,Fusiform gyrus posterior LH,梭状回后部左侧,242,92,137,255
+488,Hippocampus middle,海马中部,242,92,136,255
+489,Corpus callosum rostrum,胼胝体嘴部,242,92,134,255
+490,Orbitofrontal cortex,眶额皮层,242,92,132,255
+491,Cerebellum Crus II medial RH,小脑Crus II内侧右侧,242,92,130,255
+492,Cerebellum IV superior,小脑IV上部,242,92,129,255
+493,Cingulate sulcus posterior LH,扣带沟后部左侧,242,92,127,255
+494,Superior parietal lobule superior,上顶叶上部,242,92,125,255
+495,Lingual gyrus middle RH,舌回中部右侧,242,92,123,255
+496,Corpus callosum isthmus posterior,胼胝体峡部后部,242,92,121,255
+497,Precuneus superior,楔前叶上部,242,92,120,255
+498,Inferior occipital gyrus posterior RH,枕下回后部右侧,242,92,118,255
+499,Callosomarginal sulcus inferior,胼胝体边缘沟下部,242,92,116,255
+500,Superior frontal sulcus posterior RH,上额沟后部右侧,242,92,114,255
+501,Inferior fronto-occipital fasciculus posterior LH,额枕束后部左侧,242,92,113,255
+502,Central sulcus mid-superior,中央沟中部上侧,242,92,111,255
+503,Cerebrospinal fluid (between inferior frontal sulcus and skull LH),额下沟与颅骨左侧之间的脑脊液,242,92,109,255
+504,Cerebellum Crus I anterior LH,小脑Crus I前部左侧,242,92,107,255
+505,Central operculum anterior RH,中央岛盖前部右侧,242,92,106,255
+506,Corpus callosum splenium,胼胝体压部,242,92,104,255
+507,Superior occipital sulcus RH,上枕沟右侧,242,92,102,255
+508,Superior temporal gyrus superior LH,上颞回上部左侧,242,92,100,255
+509,Middle temporal gyrus mid-posterior LH,颞中回中后部左侧,242,92,99,255
+510,Insula postero-inferior RH,脑岛后下部右侧,242,92,97,255
+511,Parieto-occipital sulcus middle LH,顶枕沟中部左侧,242,92,95,255
+512,Precentral sulcus superior RH,中央前沟上部右侧,242,92,93,255

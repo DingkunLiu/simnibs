@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>ANT visor &#8212; SimNIBS 4.6.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=27fed22d" />
+    <script src="../../_static/documentation_options.js?v=cc8a4273"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="icon" href="../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Output Files" href="../output_files.html" />
+    <link rel="prev" title="Softaxic" href="softaxic.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+              <div class="related top">
+                &nbsp;
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="softaxic.html" title="Previous document">Softaxic</a>
+        </li>
+        <li>
+          <a href="../output_files.html" title="Next document">Output Files</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+              </div>
+          
+
+          <div class="body" role="main">
+            
+  <section id="ant-visor">
+<span id="ant-doc"></span><h1>ANT visor<a class="headerlink" href="#ant-visor" title="Link to this heading">¶</a></h1>
+<p>This module provides import and export functions for <a class="reference external" href="https://www.ant-neuro.com/products/visor2">ANT visor2</a> (version 2.8 or newer).</p>
+<section id="id1">
+<h2>ANT visor2<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
+<p>Information provided by ANT</p>
+<p>In ANT visor2, the patient must have been created using the same NIfTI MR image that you provided as T1 image to SimNIBS <cite>charm</cite> for generating the m2m-folder. Already existing patients created in prior visor2 versions (&lt; v2.8) cannot be used. Furthermore, neuronavigation needs to be performed with a coil type for which a SimNIBS coil model exists.</p>
+<section id="import">
+<h3>Import<a class="headerlink" href="#import" title="Link to this heading">¶</a></h3>
+<p>To import targets from a SimNIBS-created .mrk-file, enter the <cite>Session Planning</cite> workflow, go to <cite>Target Import</cite> and switch the file format to <cite>Image Markers (*.mrk)</cite>. Then, save the imported targets:</p>
+<figure class="align-default">
+<img alt="../../_images/ANT_import.jpg" src="../../_images/ANT_import.jpg" />
+</figure>
+</section>
+<section id="export">
+<h3>Export<a class="headerlink" href="#export" title="Link to this heading">¶</a></h3>
+<p>You can export stimuli of a TMS session in a SimNIBS compatible format in the usual <cite>Session Review</cite> workflow. Select <cite>Export Data</cite> and set the <cite>Export Format</cite> to <cite>Marker File (*.mrk)</cite>, set the tool compatibility to <cite>SimNIBS</cite> and click <cite>Export to marker file</cite>:</p>
+<figure class="align-default">
+<img alt="../../_images/ANT_export.jpg" src="../../_images/ANT_export.jpg" />
+</figure>
+</section>
+</section>
+<section id="simnibs">
+<h2>SimNIBS<a class="headerlink" href="#simnibs" title="Link to this heading">¶</a></h2>
+<section id="id2">
+<h3>Import<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h3>
+<p><code class="code docutils literal notranslate"><span class="pre">simnibs.ant.read(fn)</span></code> reads .mrk files and returns a list of <code class="code docutils literal notranslate"><span class="pre">simnibs.TMSLIST()</span></code> objects and a dict with some information about the NIfTI MRI used by ANT visor2 for neuronavigation.</p>
+<div class="literal-block-wrapper docutils container" id="id4">
+<div class="code-block-caption"><span class="caption-text">Import a ANT visor2 .mrk-file</span><a class="headerlink" href="#id4" title="Link to this code">¶</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">simnibs</span><span class="w"> </span><span class="kn">import</span> <span class="n">sim_struct</span><span class="p">,</span> <span class="n">ant</span>
+
+<span class="n">fn</span> <span class="o">=</span> <span class="s2">&quot;my_positions.mrk&quot;</span>
+<span class="n">tms_lists</span><span class="p">,</span> <span class="n">imageinfo</span> <span class="o">=</span> <span class="n">ant</span><span class="p">()</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">return_imageinfo</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">s</span> <span class="o">=</span> <span class="n">sim_struct</span><span class="o">.</span><span class="n">SESSION</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">tms_lists</span><span class="p">:</span>
+    <span class="n">s</span><span class="o">.</span><span class="n">add_tmslist</span><span class="p">(</span><span class="n">l</span><span class="p">)</span>
+
+<span class="n">s</span><span class="o">.</span><span class="n">poslists</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">pos</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">didt</span>  <span class="c1"># &lt;- defaults to 1 A/µs and needs to be updated by hand.</span>
+<span class="n">s</span><span class="o">.</span><span class="n">poslists</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">pos</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">name</span>  <span class="c1"># &lt;- name is filled with data from .mrk if available or defaults to &#39;&#39;.</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="id3">
+<h3>Export<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h3>
+<p><code class="code docutils literal notranslate"><span class="pre">simnibs.ant.write(obj,</span> <span class="pre">fn)</span></code> writes an .mrk file for import into ANT visor2. Note: ANT visor2 wants to have the “imageinfo” dict to cross-check whether the positions were created for the same NIfTI MRI that is used for neuronavigation. SimNIBS will provide that automatically when you define the m2m-folder of the subject.</p>
+<div class="literal-block-wrapper docutils container" id="id5">
+<div class="code-block-caption"><span class="caption-text">Export a .mrk-file for precomputed positions/orientations</span><a class="headerlink" href="#id5" title="Link to this code">¶</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">simnibs</span><span class="w"> </span><span class="kn">import</span> <span class="n">sim_struct</span><span class="p">,</span> <span class="n">ant</span>
+<span class="n">fn</span> <span class="o">=</span> <span class="s2">&quot;precomuted_coilpositions.mrk&quot;</span>
+<span class="n">subpath</span><span class="o">=</span><span class="s1">&#39;m2m_mysubject&#39;</span>
+
+<span class="c1">### export from TMSLIST</span>
+<span class="n">tmslist</span> <span class="o">=</span> <span class="n">sim_struct</span><span class="o">.</span><span class="n">TMSLIST</span><span class="p">()</span>
+<span class="n">tmslist</span><span class="o">.</span><span class="n">add_position</span><span class="p">()</span>
+<span class="c1"># ... define (multiple) positions ...</span>
+<span class="n">ant</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">tmslist</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">subpath</span><span class="o">=</span><span class="n">subpath</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+<section id="notes">
+<h2>Notes<a class="headerlink" href="#notes" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><a class="reference download internal" download="" href="../../_downloads/eeb8255418027b08fb40f286b3930e07/ANT_mrk_notes.pdf"><code class="xref download docutils literal notranslate"><span class="pre">see</span> <span class="pre">here</span> <span class="pre">for</span> <span class="pre">details</span> <span class="pre">on</span> <span class="pre">the</span> <span class="pre">.mrk-file</span> <span class="pre">format</span></code></a></p></li>
+</ul>
+<p></p>
+</section>
+</section>
+
+
+          </div>
+              <div class="related bottom">
+                &nbsp;
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="softaxic.html" title="Previous document">Softaxic</a>
+        </li>
+        <li>
+          <a href="../output_files.html" title="Next document">Output Files</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+              </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../../index.html">
+    <img class="logo" src="../../_static/logo.png" alt="Logo" />
+    
+  </a>
+</p>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../installation/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../dataset.html">Datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial/tutorial.html">Tutorial</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../documentation.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../gui.html">Graphical User Interface Documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../command_line/command_line.html">Command Line Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sim_struct/sim_struct.html">Simulation Data Structures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../opt_struct/opt_struct.html">Optimization Data Structures</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="neuronavigation.html">Neuronavigation Data Import/Export</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../output_files.html">Output Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../file_formats.html">File Formats in SimNIBS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../coordinates.html">Coordinates in SimNIBS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../conductivity.html">Standard Conductivity Values</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../coils.html">Coil Models Included in SimNIBS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../python_lib/python_lib.html">Python Library Documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../gallery.html">Gallery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributors.html">Contributors and Funding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../publications.html">Publications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../external_packages.html">See also</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../documentation.html">Documentation</a><ul>
+  <li><a href="neuronavigation.html">Neuronavigation Data Import/Export</a><ul>
+      <li>Previous: <a href="softaxic.html" title="previous chapter">Softaxic</a></li>
+      <li>Next: <a href="../output_files.html" title="next chapter">Output Files</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2020, SimNIBS Developers.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../../_sources/documentation/neuronavigation/ant.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

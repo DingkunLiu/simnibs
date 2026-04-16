@@ -1,0 +1,124 @@
+abbr,full_name_en,full_name_zh
+A1/2/3ll,area1/2/3 (lower limb region),1/2/3区（下肢区）
+A1/2/3tonIa,area 1/2/3(tongue and larynx region),1/2/3区（舌和喉部）
+A1/2/3tru,area1/2/3(trunk region),1/2/3区（躯干区）
+A1/2/3ulhf,"area 1/2/3(upper limb, head and face region)",1/2/3区（上肢、头面部）
+A10l,lateral area10,10区外侧部
+A10m,medial area 10,10区内侧部
+A11l,lateral area 11,11区外侧部
+A11m,medial area 11,11区内侧部
+A12/47l,lateral area 12/47,12/47区外侧部
+A12/47o,orbital area 12/47,12/47区眶部
+A13,area 13,13区
+A14m,medial area 14,14区内侧部
+A2,area 2,2区
+A20cl,caudolateral of area 20,20区尾侧外侧部
+A20cv,caudoventral of area 20,20区尾侧腹侧部
+A20il,intermediate lateral area 20,20区中间外侧部
+A20iv,intermediate ventral area 20,20区中间腹侧部
+A20r,rostral area 20,20区嘴侧部
+A20rv,rostroventral area 20,20区嘴侧腹侧部
+A21c,caudal area 21,21区尾侧部
+A21r,rostral area 21,21区嘴侧部
+A22c,caudal area 22,22区尾侧部
+A22r,rostral area 22,22区嘴侧部
+A23c,caudal area 23,23区尾侧部
+A23d,dorsal area 23,23区背侧部
+A23v,ventral area 23,23区腹侧部
+A24cd,caudodorsal area 24,24区尾侧背侧部
+A24rv,rostroventral area 24,24区嘴侧腹侧部
+A28/34,"area 28/34 (EC, entorhinal cortex)",28/34区（内嗅皮层）
+A31,area 31 (Lc1),31区
+A32p,pregenual area 32,32区前膝部
+A32sg,subgenual area 32,32区胼胝体下部
+A35/36c,caudal area 35/36,35/36区尾侧部
+A35/36r,rostral area 35/36,35/36区嘴侧部
+A37dl,dorsolateral area37,37区背外侧部
+A37elv,extreme lateroventral area37,37区极外侧腹侧部
+A37lv,lateroventral area37,37区外侧腹侧部
+A37mv,medioventral area37,37区内侧腹侧部
+A37vl,ventrolateral area 37,37区腹外侧部
+A38l,lateral area 38,38区外侧部
+A38m,medial area 38,38区内侧部
+A39c,caudal area 39(PGp),39区尾侧部
+A39rd,rostrodorsal area 39(Hip3),39区嘴侧背侧部
+A39rv,rostroventral area 39(PGa),39区嘴侧腹侧部
+A40c,caudal area 40(PFm),40区尾侧部
+A40rd,rostrodorsal area 40(PFt),40区嘴侧背侧部
+A40rv,rostroventral area 40(PFop),40区嘴侧腹侧部
+A41/42,area 41/42,41/42区
+A44d,dorsal area 44,44区背侧部
+A44op,opercular area 44,44区盖部
+A44v,ventral area 44,44区腹侧部
+A45c,caudal area 45,45区尾侧部
+A45r,rostral area 45,45区嘴侧部
+A46,area 46,46区
+A4hf,area 4(head and face region),4区（头面部）
+A4ll,"area 4, (lower limb region)",4区（下肢区）
+A4t,area 4(trunk region),4区（躯干区）
+A4tl,area 4(tongue and larynx region),4区（舌和喉部）
+A4ul,area 4(upper limb region),4区（上肢区）
+A5l,lateral area 5,5区外侧部
+A5m,medial area 5(PEm),5区内侧部
+A6cdl,caudal dorsolateral area 6,6区尾侧背外侧部
+A6cvl,caudal ventrolateral area 6,6区尾侧腹外侧部
+A6dl,dorsolateral area 6,6区背外侧部
+A6m,medial area 6,6区内侧部
+A6vl,ventrolateral area 6,6区腹外侧部
+A7c,caudal area 7,7区尾侧部
+A7ip,intraparietal area 7(hIP3),7区顶内沟部
+A7m,medial area 7(PEp),7区内侧部
+A7pc,postcentral area 7,7区中央后部
+A7r,rostral area 7,7区嘴侧部
+A8dl,dorsolateral area 8,8区背外侧部
+A8m,medial area 8,8区内侧部
+A8vl,ventrolateral area 8,8区腹外侧部
+A9/46d,dorsal area 9/46,9/46区背侧部
+A9/46v,ventral area 9/46,9/46区腹侧部
+A9l,lateral area 9,9区外侧部
+A9m,medial area 9,9区内侧部
+G,hypergranular insula,高颗粒脑岛
+GP,globus pallidus,苍白球
+IFJ,inferior frontal junction,额下回交界区
+IFS,inferior frontal sulcus,额下沟
+NAC,nucleus accumbens,伏隔核
+OPC,occipital polar cortex,枕极皮层
+Otha,occipital thalamus,枕丘脑
+PPtha,posterior parietal thalamus,顶后丘脑
+Stha,sensory thalamus,感觉丘脑
+TE1.0/TE1.2,TE1.0 and TE1.2,TE1.0和TE1.2区
+TH,area TH (medial PPHC),TH区（内侧海马旁后部皮层）
+TI,area TI(temporal agranular insular cortex),TI区（颞叶无颗粒脑岛皮层）
+TL,"area TL (lateral PPHC, posterior parahippocampal gyrus)",TL区（外侧海马旁后部皮层）
+V5/MT+,area V5/MT+,V5/MT+区
+aSTS,anterior superior temporal sulcus,前部颞上沟
+cCunG,caudal cuneus gyrus,楔叶回尾侧部
+cHipp,caudal hippocampus,海马尾侧部
+cLinG,caudal lingual gyrus,舌回尾侧部
+cTtha,caudal temporal thalamus,尾侧颞丘脑
+cpSTS,caudoposterior superior temporal sulcus,后部颞上沟尾侧部
+dCa,dorsal caudate,背侧尾状核
+dIa,dorsal agranular insula,背侧无颗粒脑岛
+dId,dorsal dysgranular insula,背侧乏颗粒脑岛
+dIg,dorsal granular insula,背侧颗粒脑岛
+dlPu,dorsolateral putamen,背外侧壳核
+dmPOS,dorsomedial parietooccipital sulcus(PEr),顶枕沟背内侧部
+iOccG,inferior occipital gyrus,枕下回
+lAmyg,lateral amygdala,外侧杏仁核
+lPFtha,lateral pre-frontal thalamus,外侧前额叶丘脑
+lsOccG,lateral superior occipital gyrus,外侧枕上回
+mAmyg,medial amygdala,内侧杏仁核
+mOccG,middle occipital gyrus,枕中回
+mPFtha,medial pre-frontal thalamus,内侧前额叶丘脑
+mPMtha,pre-motor thalamus,运动前丘脑
+msOccG,medial superior occipital gyrus,内侧枕上回
+rCunG,rostral cuneus gyrus,楔叶回嘴侧部
+rHipp,rostral hippocampus,海马嘴侧部
+rLinG,rostral lingual gyrus,舌回嘴侧部
+rTtha,rostral temporal thalamus,嘴侧颞丘脑
+rpSTS,rostroposterior superior temporal sulcus,后部颞上沟嘴侧部
+vCa,ventral caudate,腹侧尾状核
+vIa,ventral agranular insula,腹侧无颗粒脑岛
+vId/vIg,ventral dysgranular and granular insula,腹侧乏颗粒及颗粒脑岛
+vmPOS,ventromedial parietooccipital sulcus,顶枕沟腹内侧部
+vmPu,ventromedial putamen,腹内侧壳核

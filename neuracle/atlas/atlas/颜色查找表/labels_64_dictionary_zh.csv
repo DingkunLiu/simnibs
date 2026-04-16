@@ -1,0 +1,65 @@
+index,label_en,label_zh,r,g,b,a
+1,Superior frontal sulcus,上额沟,242,92,92,255
+2,Fusiform gyrus,梭状回,242,106,92,255
+3,Calcarine cortex posterior,距状皮层后部,242,120,92,255
+4,Cingulate cortex posterior,后部扣带皮层,242,134,92,255
+5,Parieto-occipital sulcus superior,顶枕沟上部,242,148,92,255
+6,Insula antero-superior,脑岛前上部,242,162,92,255
+7,Superior temporal sulcus with angular gyrus,上颞沟与角回,242,176,92,255
+8,Planum temporale,颞平面,242,190,92,255
+9,Cerebellum Crus II,小脑Crus II,242,204,92,255
+10,Superior parts of Postcentral and Precentral gyri,中央后回和中央前回上部,242,218,92,255
+11,Transverse sinus,横窦,242,232,92,255
+12,Paracentral gyrus RH,旁中央回右侧,237,242,92,255
+13,Superior occipital gyrus,上枕回,223,242,92,255
+14,Cingulate gyrus mid-posterior,扣带回中后部,209,242,92,255
+15,ventricles,脑室,195,242,92,255
+16,Fusiform gyrus posterior,梭状回后部,181,242,92,255
+17,Superior frontal gyrus medial,上额回内侧,167,242,92,255
+18,Precuneus superior,楔前叶上部,153,242,92,255
+19,Planum polare,颞极平面,138,242,92,255
+20,Parieto-occipital sulcus middle,顶枕沟中部,124,242,92,255
+21,Cerebellum I-V,小脑I-V,110,242,92,255
+22,Superior fornix and isthmus,穹窿上部及峡部,96,242,92,255
+23,Anterior cingulate cortex,前扣带皮层,92,242,101,255
+24,Descending occipital gyrus,枕下回,92,242,115,255
+25,Putamen,壳核,92,242,129,255
+26,Cingulate gyrus mid-anterior,扣带回中前部,92,242,143,255
+27,Superior parietal lobule posterior,上顶叶后部,92,242,157,255
+28,Paracentral lobule,旁中央小叶,92,242,171,255
+29,Inferior occipital gyrus,枕下回,92,242,185,255
+30,Superior rostral gyrus,上喙回,92,242,200,255
+31,Calcarine sulcus anterior,距状沟前部,92,242,214,255
+32,Intraparietal sulcus,顶内沟,92,242,228,255
+33,Superior parietal lobule anterior,上顶叶前部,92,242,242,255
+34,Precentral gyrus medial,中央前回内侧,92,228,242,255
+35,Lingual gyrus anterior,舌回前部,92,214,242,255
+36,Angular gyrus superior,角回上部,92,200,242,255
+37,Supramarginal gyrus,缘上回,92,185,242,255
+38,Intraparietal sulcus LH,顶内沟左侧,92,171,242,255
+39,Dorsomedial prefrontal cortex antero-superior,内侧前额叶皮层前上部,92,157,242,255
+40,Precentral gyrus superior,中央前回上部,92,143,242,255
+41,Postcentral gyrus inferior,中央后回下部,92,129,242,255
+42,Lateral occipital cortex,枕外侧皮质,92,115,242,255
+43,Callosomarginal sulcus,胼胝体边缘沟,92,101,242,255
+44,Paracentral lobule superior,旁中央小叶上部,96,92,242,255
+45,Heschl's gyrus,颞横回,110,92,242,255
+46,Occipital pole,枕极,124,92,242,255
+47,Thalamus,丘脑,138,92,242,255
+48,Intraparietal sulcus RH,顶内沟右侧,153,92,242,255
+49,Inferior frontal sulcus,额下沟,167,92,242,255
+50,Postcentral gyrus LH,中央后回左侧,181,92,242,255
+51,Middle frontal gyrus,额中回,195,92,242,255
+52,Inferior frontal gyrus,额下回,209,92,242,255
+53,Parieto-occipital sulcus anterior,顶枕沟前部,223,92,242,255
+54,Precuneus anterior,楔前叶前部,237,92,242,255
+55,Lingual gyrus,舌回,242,92,232,255
+56,Superior occipital sulcus,上枕沟,242,92,218,255
+57,Superior parietal lobule,上顶叶,242,92,204,255
+58,Middle frontal gyrus anterior,额中回前部,242,92,190,255
+59,Angular gyrus inferior,角回下部,242,92,176,255
+60,Cuneus,楔叶,242,92,162,255
+61,Middle temporal gyrus,颞中回,242,92,148,255
+62,Superior frontal gyrus,上额回,242,92,134,255
+63,Central sulcus,中央沟,242,92,120,255
+64,Caudate,尾状核,242,92,106,255

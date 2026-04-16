@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>simnibs.utils.transformations.mni2subject_coilpos &#8212; SimNIBS 4.6.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/alabaster.css?v=27fed22d" />
+    <script src="../../../_static/documentation_options.js?v=cc8a4273"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="icon" href="../../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="simnibs.utils.transformations.atlas2subject" href="simnibs.utils.transformations.atlas2subject.html" />
+    <link rel="prev" title="simnibs.utils.transformations.mni2subject_coords" href="simnibs.utils.transformations.mni2subject_coords.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+              <div class="related top">
+                &nbsp;
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="simnibs.utils.transformations.mni2subject_coords.html" title="Previous document">simnibs.utils.transformations.mni2subject_coords</a>
+        </li>
+        <li>
+          <a href="simnibs.utils.transformations.atlas2subject.html" title="Next document">simnibs.utils.transformations.atlas2subject</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+              </div>
+          
+
+          <div class="body" role="main">
+            
+  <section id="simnibs-utils-transformations-mni2subject-coilpos">
+<h1>simnibs.utils.transformations.mni2subject_coilpos<a class="headerlink" href="#simnibs-utils-transformations-mni2subject-coilpos" title="Link to this heading">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="simnibs.utils.transformations.mni2subject_coilpos">
+<span class="sig-prename descclassname"><span class="pre">simnibs.utils.transformations.</span></span><span class="sig-name descname"><span class="pre">mni2subject_coilpos</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coilpos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m2m_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coil_skin_distance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transformation_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'nonl'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#simnibs.utils.transformations.mni2subject_coilpos" title="Link to this definition">¶</a></dt>
+<dd><p>Converts one or more coil positions to subject space.</p>
+<dl>
+<dt>NOTE: Coil centers are projected on the head surface as standard. Set</dt><dd><p>coil_skin_dist to ensure a specific distance of the coil center
+to the head surface.</p>
+<p>Coil centers away from the head are best defined by providing the
+closest positon on the surface of the MNI head and the desired
+coil-skin-distance.</p>
+<p>Non-linear transformations (used as default) are accurate for
+positions in the head and on its surface, but not outside the
+head. Thus, coil centers are automatically projected on the head
+surface during transformation.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>coilpos</strong> (<em>One</em><em> or </em><em>more coil positions</em><em>, </em><em>provided as:</em>) – <ul>
+<li><p>matsimnibs (4x4 numpy array or list of lists)</p></li>
+<li><p>list of several matsimnibs</p></li>
+<li><dl class="simple">
+<dt>tuple (center, ydir, zdir)</dt><dd><dl class="simple">
+<dt>center, ydir and zdir:</dt><dd><p>vectors (length 3) in case of a single postion, or
+arrays (N,3) for N positions</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</li>
+</ul>
+</p></li>
+<li><p><strong>m2m_dir</strong> (<em>str</em>) – Path to the m2m_{subject_id} folder, generated during the segmentation</p></li>
+<li><p><strong>coil_skin_distance</strong> (<em>float</em><em> or </em><em>list</em><em>, </em><em>optional</em>) – skin-coil distance in [mm]. In case of several coil positions, either
+a single value can be supplied that is used for all positions, or a
+list with one value per position can be supplied. The default is 0..</p></li>
+<li><p><strong>transformation_type</strong> (<em>{'nonl'</em><em>, </em><em>'6dof'</em><em>, </em><em>'12dof'}</em><em>, </em><em>optional</em>) – Type of tranformation: non-linear, 6 or 12 degrees of freedom. The default is ‘nonl’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>matsimnibs</strong> – TMS coil matrix (or list of matrices) in subject space.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy array (4x4) or list of numpy arrays</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+          </div>
+              <div class="related bottom">
+                &nbsp;
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="simnibs.utils.transformations.mni2subject_coords.html" title="Previous document">simnibs.utils.transformations.mni2subject_coords</a>
+        </li>
+        <li>
+          <a href="simnibs.utils.transformations.atlas2subject.html" title="Next document">simnibs.utils.transformations.atlas2subject</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+              </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../../../index.html">
+    <img class="logo" src="../../../_static/logo.png" alt="Logo" />
+    
+  </a>
+</p>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../installation/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../dataset.html">Datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial/tutorial.html">Tutorial</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../documentation.html">Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../gui.html">Graphical User Interface Documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command_line/command_line.html">Command Line Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sim_struct/sim_struct.html">Simulation Data Structures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../opt_struct/opt_struct.html">Optimization Data Structures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../neuronavigation/neuronavigation.html">Neuronavigation Data Import/Export</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../output_files.html">Output Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../file_formats.html">File Formats in SimNIBS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../coordinates.html">Coordinates in SimNIBS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../conductivity.html">Standard Conductivity Values</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../coils.html">Coil Models Included in SimNIBS</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../python_lib.html">Python Library Documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../gallery.html">Gallery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributors.html">Contributors and Funding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../publications.html">Publications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../external_packages.html">See also</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../documentation.html">Documentation</a><ul>
+  <li><a href="../python_lib.html">Python Library Documentation</a><ul>
+      <li>Previous: <a href="simnibs.utils.transformations.mni2subject_coords.html" title="previous chapter">simnibs.utils.transformations.mni2subject_coords</a></li>
+      <li>Next: <a href="simnibs.utils.transformations.atlas2subject.html" title="next chapter">simnibs.utils.transformations.atlas2subject</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2020, SimNIBS Developers.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../../../_sources/documentation/python_lib/auto/simnibs.utils.transformations.mni2subject_coilpos.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
