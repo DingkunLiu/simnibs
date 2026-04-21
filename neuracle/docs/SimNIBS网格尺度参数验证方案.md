@@ -396,13 +396,13 @@ inverse 原始输出行会包含：
 示例：
 
 ```powershell
-python neuracle/mesh_validation/run_mesh_validation.py `
+python -m neuracle.mesh_validation.run_mesh_validation `
   --manifest neuracle/mesh_validation/full_manifest_remote.json `
   --check-only
 ```
 
 ```powershell
-python neuracle/mesh_validation/run_mesh_validation.py `
+python -m neuracle.mesh_validation.run_mesh_validation `
   --manifest neuracle/mesh_validation/full_manifest_remote.json `
   --phases mesh report `
   --presets M0 M1 M2 `
@@ -410,14 +410,14 @@ python neuracle/mesh_validation/run_mesh_validation.py `
 ```
 
 ```powershell
-python neuracle/mesh_validation/run_mesh_validation.py `
+python -m neuracle.mesh_validation.run_mesh_validation `
   --manifest neuracle/mesh_validation/full_manifest_remote.json `
   --phases forward report `
   --presets M0 M1 M2 M3
 ```
 
 ```powershell
-python neuracle/mesh_validation/run_mesh_validation.py `
+python -m neuracle.mesh_validation.run_mesh_validation `
   --manifest neuracle/mesh_validation/full_manifest_remote.json `
   --phases inverse report `
   --presets M0 M1 M2 M3 M4

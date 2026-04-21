@@ -8,7 +8,6 @@ import argparse
 import configparser
 import json
 import logging
-import os
 import sys
 from pathlib import Path
 from typing import Any
@@ -16,7 +15,7 @@ from typing import Any
 
 def _bootstrap_imports() -> Path:
     """
-    清理 `sys.path`，优先导入 conda 环境中的 simnibs。
+    项目根目录导入path
 
     Returns
     -------
@@ -24,14 +23,6 @@ def _bootstrap_imports() -> Path:
         仓库根目录。
     """
     repo_root = Path(__file__).resolve().parents[2]
-    cleaned_sys_path: list[str] = []
-    for entry in sys.path:
-        candidate = Path(entry or os.getcwd()).resolve()
-        if candidate != repo_root:
-            cleaned_sys_path.append(entry)
-    sys.path[:] = cleaned_sys_path
-    import simnibs  # noqa: F401
-
     repo_root_str = str(repo_root)
     if repo_root_str not in sys.path:
         sys.path.insert(0, repo_root_str)
