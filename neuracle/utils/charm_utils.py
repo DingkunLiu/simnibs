@@ -73,16 +73,22 @@ def check_q_and_s_form(
     return scan
 
 
-def read_settings() -> dict:
+def read_settings(settings_path: str | None = None) -> dict:
     """
     读取 CHARM 设置文件。
+
+    Parameters
+    ----------
+    settings_path : str or None, optional
+        自定义 INI 文件路径。为 None 时使用 SimNIBS 默认 `charm.ini`
+        (default: None)
 
     Returns
     -------
     dict
         设置字典
     """
-    src_settings = os.path.join(SIMNIBSDIR, "charm.ini")
+    src_settings = settings_path or os.path.join(SIMNIBSDIR, "charm.ini")
     return settings_reader.read_ini(src_settings)
 
 

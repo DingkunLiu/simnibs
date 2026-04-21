@@ -34,3 +34,4 @@ conda activate simnibs_env
 * 函数内部变量名使用snake_case
 * 日志都使用中文
 * git message用中文，写详细
+* 远端配置在.vscode/sftp.json中，如果需要连接远端，从配置中获取信息

@@ -138,15 +138,19 @@ neuracle/charm/
 
 ### 步骤7: mesh.py
 
-- **函数**: `create_mesh_step(subject_dir: str, debug: bool = False) -> None`
+- **函数**: `create_mesh_step(subject_dir: str, debug: bool = False, settings_path: str | None = None, output_dir: str | None = None) -> None`
 - **输入**: tissue_labeling_upsampled.nii.gz
 - **输出**:
   - `m2m_{subid}/{subid}.msh` (四面体网格)
   - `m2m_{subid}/eeg_positions/*.csv`, `*.geo` (EEG 电极位置)
-  - `m2m_{subid}/mni_transf/final_labels.nii.gz`
-  - `m2m_{subid}/mni_transf/final_labels_MNI.nii.gz`
+  - `m2m_{subid}/final_tissues.nii.gz`
+  - `m2m_{subid}/final_tissues_LUT.txt`
+  - `m2m_{subid}/toMNI/final_tissues_MNI.nii.gz`
 - **功能**: 四面体网格生成 + EEG 电极位置变换到受试者空间
 - `relabel_internal_air()` - 重新标记内部空气边界
+- **扩展参数**:
+  - `settings_path`: 允许读取指定的 CHARM ini，用于对比不同 mesh 参数 preset
+  - `output_dir`: 允许将 mesh、`eeg_positions`、`final_tissues*` 写入独立目录，避免覆盖原始 `m2m` 数据
 
 ## 五、配置文件
 

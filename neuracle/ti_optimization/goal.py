@@ -78,7 +78,7 @@ def setup_goal(
     detailed_results : bool
         是否写入详细结果
     """
-    opt.goal = goal
+    opt.goal = [goal]
     opt.e_postproc = e_postproc
 
     if goal in ["focality", "focality_inv"]:

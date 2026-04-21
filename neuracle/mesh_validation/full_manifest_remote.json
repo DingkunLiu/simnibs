@@ -1,0 +1,56 @@
+{
+  "work_root": "/home/dell/simnibs/.worktrees/mesh-validation/neuracle/mesh_validation/work_remote_full",
+  "subjects": [
+    {
+      "id": "ernie",
+      "m2m_dir": "/home/dell/simnibs/data/m2m_ernie",
+      "reference_t1": "/home/dell/simnibs/data/m2m_ernie/T1.nii.gz"
+    }
+  ],
+  "forward_cases": [
+    {
+      "name": "ti_demo",
+      "eeg_cap": "EEG10-20_extended_SPM12",
+      "pair1": ["F5", "P5"],
+      "pair2": ["F6", "P6"],
+      "current1": [0.001, -0.001],
+      "current2": [0.001, -0.001],
+      "roi_specs": [
+        {
+          "name": "target_roi",
+          "type": "sphere",
+          "center": [-41.0, -13.0, 66.0],
+          "radius": 20.0
+        }
+      ],
+      "hotspot_roi": {
+        "name": "non_target_hotspot",
+        "type": "sphere",
+        "center": [-41.0, -13.0, 66.0],
+        "radius": 25.0
+      },
+      "n_workers": 16
+    }
+  ],
+  "inverse_cases": [
+    {
+      "name": "focality_inv_demo",
+      "goal": "focality_inv",
+      "net_electrode_file": "EEG10-20_extended_SPM12",
+      "roi": {
+        "type": "sphere",
+        "center": [-41.0, -13.0, 66.0],
+        "radius": 20.0
+      },
+      "non_roi": {
+        "type": "sphere",
+        "center": [-41.0, -13.0, 66.0],
+        "radius": 25.0
+      },
+      "threshold": [0.1, 0.2],
+      "optimizer": "differential_evolution",
+      "seeds": [7, 11, 19],
+      "n_workers": 16
+    }
+  ]
+}
