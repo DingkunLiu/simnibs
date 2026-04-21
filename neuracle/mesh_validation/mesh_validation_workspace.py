@@ -219,6 +219,57 @@ def preset_paths_for(work_root: Path, subject_id: str, preset: str) -> PresetPat
     )
 
 
+def build_workspace_result(paths: PresetPaths) -> WorkspaceBuildResult:
+    """
+    根据 preset 路径构造 workspace 结果对象。
+
+    Parameters
+    ----------
+    paths : PresetPaths
+        preset 路径集合。
+
+    Returns
+    -------
+    WorkspaceBuildResult
+        workspace 结果对象。
+    """
+    return WorkspaceBuildResult(
+        subject_id=paths.subject_id,
+        preset=paths.preset,
+        paths=paths,
+        workspace_dir=paths.workspace_dir,
+        mesh_file=paths.workspace_dir / f"{paths.subject_id}.msh",
+        eeg_positions_dir=paths.workspace_dir / "eeg_positions",
+        to_mni_dir=paths.workspace_dir / "toMNI",
+        final_tissues_path=paths.workspace_dir / "final_tissues.nii.gz",
+        final_tissues_lut_path=paths.workspace_dir / "final_tissues_LUT.txt",
+        final_tissues_mni_path=paths.workspace_dir / "toMNI" / "final_tissues_MNI.nii.gz",
+    )
+
+
+def load_existing_workspace(subject: SubjectConfig, preset: str, work_root: Path) -> WorkspaceBuildResult:
+    """
+    从现有产物加载 workspace 结果对象。
+
+    Parameters
+    ----------
+    subject : SubjectConfig
+        subject 配置。
+    preset : str
+        preset 名称。
+    work_root : Path
+        工作根目录。
+
+    Returns
+    -------
+    WorkspaceBuildResult
+        已存在的 workspace 结果对象。
+    """
+    workspace = build_workspace_result(preset_paths_for(work_root, subject.id, preset))
+    validate_workspace(workspace)
+    return workspace
+
+
 def resolve_workspace_eeg_cap(workspace: WorkspaceBuildResult, cap_name: str) -> str:
     """
     解析工作区内的 EEG cap 路径。
@@ -280,18 +331,7 @@ def prepare_workspace(
     except Exception as exc:  # noqa: BLE001
         raise MeshGenerationError(f"生成 mesh 失败: {exc}") from exc
     _materialize_to_mni_transforms(source_m2m_dir, paths.workspace_dir)
-    result = WorkspaceBuildResult(
-        subject_id=subject.id,
-        preset=preset,
-        paths=paths,
-        workspace_dir=paths.workspace_dir,
-        mesh_file=paths.workspace_dir / f"{subject.id}.msh",
-        eeg_positions_dir=paths.workspace_dir / "eeg_positions",
-        to_mni_dir=paths.workspace_dir / "toMNI",
-        final_tissues_path=paths.workspace_dir / "final_tissues.nii.gz",
-        final_tissues_lut_path=paths.workspace_dir / "final_tissues_LUT.txt",
-        final_tissues_mni_path=paths.workspace_dir / "toMNI" / "final_tissues_MNI.nii.gz",
-    )
+    result = build_workspace_result(paths)
     validate_workspace(result)
     return result
 

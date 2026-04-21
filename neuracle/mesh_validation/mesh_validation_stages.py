@@ -26,6 +26,7 @@ from neuracle.mesh_validation.mesh_validation_workspace import (
     SubjectConfig,
     WorkspaceBuildResult,
     WorkspacePreparationError,
+    load_existing_workspace,
     prepare_workspace,
     resolve_workspace_eeg_cap,
 )
@@ -1012,7 +1013,10 @@ def ensure_workspace(
     """
     key = (subject.id, preset)
     if key not in workspace_cache:
-        workspace_cache[key] = prepare_workspace(subject, preset, work_root, preset_ini_paths[preset], debug_mesh)
+        try:
+            workspace_cache[key] = load_existing_workspace(subject, preset, work_root)
+        except WorkspacePreparationError:
+            workspace_cache[key] = prepare_workspace(subject, preset, work_root, preset_ini_paths[preset], debug_mesh)
     return workspace_cache[key]
 
 

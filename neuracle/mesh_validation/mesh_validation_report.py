@@ -33,6 +33,35 @@ from simnibs.utils.mesh_element_properties import ElementTags
 LOGGER = logging.getLogger("mesh_validation")
 
 
+def has_replay_metrics(row: dict[str, Any]) -> bool:
+    """
+    判断结果行是否已经带有可复用的 replay 指标。
+
+    Parameters
+    ----------
+    row : dict[str, Any]
+        inverse 结果行。
+
+    Returns
+    -------
+    bool
+        是否可直接复用。
+    """
+    replay_path = row.get("replay_ti_volume_path")
+    if not replay_path:
+        return False
+    required_keys = (
+        "replay_goal",
+        "replay_roi_mean",
+        "replay_roi_p999",
+        "replay_non_roi_mean",
+        "replay_roc",
+    )
+    if any(row.get(key) is None for key in required_keys):
+        return False
+    return Path(str(replay_path)).exists()
+
+
 def write_rows_csv(path: Path, rows: list[dict[str, Any]]) -> None:
     """
     写出 CSV。
@@ -395,6 +424,8 @@ def _prepare_inverse_replay_metrics(
     mapping_cache: dict[str, list[dict[str, Any]]] = {}
     for row in inverse_rows:
         if row.get("status") != "ok":
+            continue
+        if has_replay_metrics(row):
             continue
         subject = subject_by_id.get(str(row["subject_id"]))
         case = case_by_name.get(str(row["case_name"]))
