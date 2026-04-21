@@ -153,6 +153,7 @@ miniconda3/
 *.tdo
 .claude/*
 data/*
+.worktrees/
 neuracle_backup/*
 *.env
 neuracle/atlas/manifests/*
