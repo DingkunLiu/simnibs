@@ -1,5 +1,5 @@
 """
-Mesh validation 工作区管理。
+Mesh validation workspace 管理。
 """
 
 from __future__ import annotations
@@ -11,6 +11,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from neuracle.charm.mesh import create_mesh_step
+from neuracle.mesh_validation.mesh_validation_schema import PresetPaths, preset_paths_for
 
 LOGGER = logging.getLogger(__name__)
 
@@ -106,7 +107,7 @@ TO_MNI_TRANSFORM_FILES = ("Conform2MNI_nonl.nii.gz", "MNI2Conform_nonl.nii.gz")
 
 class WorkspacePreparationError(RuntimeError):
     """
-    工作区准备失败。
+    workspace 准备失败。
     """
 
 
@@ -128,34 +129,9 @@ class SubjectConfig:
 
 
 @dataclass(frozen=True)
-class SubjectPaths:
-    """
-    Subject 路径集合。
-    """
-
-    subject_root: Path
-
-
-@dataclass(frozen=True)
-class PresetPaths:
-    """
-    preset 路径集合。
-    """
-
-    subject_id: str
-    preset: str
-    subject_root: Path
-    preset_root: Path
-    workspace_root: Path
-    workspace_dir: Path
-    forward_dir: Path
-    inverse_dir: Path
-
-
-@dataclass(frozen=True)
 class WorkspaceBuildResult:
     """
-    工作区构建结果。
+    workspace 构建结果。
     """
 
     subject_id: str
@@ -168,55 +144,6 @@ class WorkspaceBuildResult:
     final_tissues_path: Path
     final_tissues_lut_path: Path
     final_tissues_mni_path: Path
-
-
-def subject_paths_for(work_root: Path, subject_id: str) -> SubjectPaths:
-    """
-    返回 subject 路径。
-    Parameters
-    ----------
-    work_root : Path
-        工作根目录。
-    subject_id : str
-        subject 标识。
-    Returns
-    -------
-    SubjectPaths
-        subject 路径集合。
-    """
-    return SubjectPaths(subject_root=work_root / subject_id)
-
-
-def preset_paths_for(work_root: Path, subject_id: str, preset: str) -> PresetPaths:
-    """
-    返回 preset 路径。
-    Parameters
-    ----------
-    work_root : Path
-        工作根目录。
-    subject_id : str
-        subject 标识。
-    preset : str
-        preset 名称。
-    Returns
-    -------
-    PresetPaths
-        preset 路径集合。
-    """
-    subject_paths = subject_paths_for(work_root, subject_id)
-    preset_root = subject_paths.subject_root / preset
-    workspace_root = preset_root / "workspace"
-    workspace_dir = workspace_root / f"m2m_{subject_id}"
-    return PresetPaths(
-        subject_id=subject_id,
-        preset=preset,
-        subject_root=subject_paths.subject_root,
-        preset_root=preset_root,
-        workspace_root=workspace_root,
-        workspace_dir=workspace_dir,
-        forward_dir=preset_root / "forward",
-        inverse_dir=preset_root / "inverse",
-    )
 
 
 def build_workspace_result(paths: PresetPaths) -> WorkspaceBuildResult:
@@ -249,7 +176,7 @@ def build_workspace_result(paths: PresetPaths) -> WorkspaceBuildResult:
 
 def load_existing_workspace(subject: SubjectConfig, preset: str, work_root: Path) -> WorkspaceBuildResult:
     """
-    从现有产物加载 workspace 结果对象。
+    从现有产物加载 workspace。
 
     Parameters
     ----------
@@ -272,13 +199,15 @@ def load_existing_workspace(subject: SubjectConfig, preset: str, work_root: Path
 
 def resolve_workspace_eeg_cap(workspace: WorkspaceBuildResult, cap_name: str) -> str:
     """
-    解析工作区内的 EEG cap 路径。
+    解析 workspace 内的 EEG cap 路径。
+
     Parameters
     ----------
     workspace : WorkspaceBuildResult
-        工作区结果。
+        workspace 结果。
     cap_name : str
         cap 文件名或绝对路径。
+
     Returns
     -------
     str
@@ -298,7 +227,8 @@ def prepare_workspace(
     debug_mesh: bool,
 ) -> WorkspaceBuildResult:
     """
-    构建单一可运行工作区。
+    构建单个可运行 workspace。
+
     Parameters
     ----------
     subject : SubjectConfig
@@ -311,10 +241,11 @@ def prepare_workspace(
         preset ini 路径。
     debug_mesh : bool
         是否保留 mesh 调试输出。
+
     Returns
     -------
     WorkspaceBuildResult
-        工作区结果。
+        workspace 构建结果。
     """
     paths = preset_paths_for(work_root, subject.id, preset)
     _reset_directory(paths.workspace_root)
@@ -338,11 +269,13 @@ def prepare_workspace(
 
 def validate_workspace(workspace: WorkspaceBuildResult) -> None:
     """
-    校验工作区产物完整性。
+    校验 workspace 产物完整性。
+
     Parameters
     ----------
     workspace : WorkspaceBuildResult
-        工作区结果。
+        workspace 结果。
+
     Returns
     -------
     None
@@ -359,7 +292,7 @@ def validate_workspace(workspace: WorkspaceBuildResult) -> None:
     )
     for path in required_paths:
         if not path.exists() and not path.is_symlink():
-            raise WorkspacePreparationError(f"工作区缺少必需产物: {path}")
+            raise WorkspacePreparationError(f"workspace 缺少必需产物: {path}")
     if workspace.to_mni_dir.is_symlink():
         raise WorkspacePreparationError(f"toMNI 目录不允许为符号链接: {workspace.to_mni_dir}")
     for item in workspace.to_mni_dir.iterdir():
@@ -367,14 +300,15 @@ def validate_workspace(workspace: WorkspaceBuildResult) -> None:
             try:
                 resolved = item.resolve(strict=False)
             except (OSError, RuntimeError) as exc:
-                raise WorkspacePreparationError(f"检测到自引用链接: {item}") from exc
+                raise WorkspacePreparationError(f"检测到异常符号链接: {item}") from exc
             if resolved == item:
-                raise WorkspacePreparationError(f"检测到自引用链接: {item}")
+                raise WorkspacePreparationError(f"检测到自引用符号链接: {item}")
 
 
 def _materialize_source_assets(source_m2m_dir: Path, workspace_dir: Path, subject_id: str) -> None:
     """
     物化只读输入资产。
+
     Parameters
     ----------
     source_m2m_dir : Path
@@ -383,6 +317,7 @@ def _materialize_source_assets(source_m2m_dir: Path, workspace_dir: Path, subjec
         工作区目录。
     subject_id : str
         subject 标识。
+
     Returns
     -------
     None
@@ -403,12 +338,14 @@ def _materialize_source_assets(source_m2m_dir: Path, workspace_dir: Path, subjec
 def _materialize_to_mni_transforms(source_m2m_dir: Path, workspace_dir: Path) -> None:
     """
     物化 toMNI 形变场。
+
     Parameters
     ----------
     source_m2m_dir : Path
         原始 m2m 目录。
     workspace_dir : Path
         工作区目录。
+
     Returns
     -------
     None
@@ -426,12 +363,14 @@ def _materialize_to_mni_transforms(source_m2m_dir: Path, workspace_dir: Path) ->
 def _materialize_path(source: Path, target: Path) -> None:
     """
     以链接优先、复制兜底的方式物化路径。
+
     Parameters
     ----------
     source : Path
         源路径。
     target : Path
         目标路径。
+
     Returns
     -------
     None
@@ -439,7 +378,7 @@ def _materialize_path(source: Path, target: Path) -> None:
     source_resolved = source.resolve(strict=False)
     target_resolved = target.resolve(strict=False)
     if source_resolved == target_resolved:
-        raise WorkspacePreparationError(f"禁止把路径物化到自身: {source} -> {target}")
+        return
     if target.exists() or target.is_symlink():
         _remove_path(target)
     try:
@@ -454,10 +393,12 @@ def _materialize_path(source: Path, target: Path) -> None:
 def _reset_directory(path: Path) -> None:
     """
     重建目录。
+
     Parameters
     ----------
     path : Path
         目标目录。
+
     Returns
     -------
     None
@@ -470,10 +411,12 @@ def _reset_directory(path: Path) -> None:
 def _remove_path(path: Path) -> None:
     """
     删除路径。
+
     Parameters
     ----------
     path : Path
         目标路径。
+
     Returns
     -------
     None

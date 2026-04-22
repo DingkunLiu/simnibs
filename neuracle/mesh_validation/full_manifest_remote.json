@@ -1,5 +1,6 @@
 {
-  "work_root": "/home/dell/simnibs/neuracle/mesh_validation/work_remote_full",
+  "schema_version": 2,
+  "work_root": "/data/liudingkun/simnibs/work_remote_full_v2",
   "subjects": [
     {
       "id": "ernie",
