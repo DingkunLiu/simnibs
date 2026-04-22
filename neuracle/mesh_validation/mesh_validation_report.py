@@ -1,5 +1,5 @@
 """
-Mesh validation 报告聚合逻辑。
+Mesh validation V2 报告聚合逻辑。
 """
 
 from __future__ import annotations
@@ -14,52 +14,18 @@ from typing import Any
 import nibabel as nib
 import numpy as np
 
+from neuracle.mesh_validation.mesh_validation_schema import load_stage_results, write_json
 from neuracle.mesh_validation.mesh_validation_stages import (
     FORWARD_THRESHOLDS,
-    INVERSE_THRESHOLDS,
     bidirectional_surface_distance,
-    compute_goal_from_volume,
-    compute_mapping_drift,
-    ensure_workspace,
-    load_mapping,
     load_volume_data,
     relative_error,
-    run_replay_on_m0,
     scalp_surface_points,
 )
-from neuracle.mesh_validation.mesh_validation_workspace import PRESET_ORDER, SubjectConfig, WorkspaceBuildResult
+from neuracle.mesh_validation.mesh_validation_workspace import PRESET_ORDER
 from simnibs.utils.mesh_element_properties import ElementTags
 
 LOGGER = logging.getLogger("mesh_validation")
-
-
-def has_replay_metrics(row: dict[str, Any]) -> bool:
-    """
-    判断结果行是否已经带有可复用的 replay 指标。
-
-    Parameters
-    ----------
-    row : dict[str, Any]
-        inverse 结果行。
-
-    Returns
-    -------
-    bool
-        是否可直接复用。
-    """
-    replay_path = row.get("replay_ti_volume_path")
-    if not replay_path:
-        return False
-    required_keys = (
-        "replay_goal",
-        "replay_roi_mean",
-        "replay_roi_p999",
-        "replay_non_roi_mean",
-        "replay_roc",
-    )
-    if any(row.get(key) is None for key in required_keys):
-        return False
-    return Path(str(replay_path)).exists()
 
 
 def write_rows_csv(path: Path, rows: list[dict[str, Any]]) -> None:
@@ -88,48 +54,6 @@ def write_rows_csv(path: Path, rows: list[dict[str, Any]]) -> None:
         writer.writerows(rows)
 
 
-def write_json(path: Path, payload: Any) -> None:
-    """
-    写出 JSON。
-
-    Parameters
-    ----------
-    path : Path
-        输出路径。
-    payload : Any
-        输出内容。
-
-    Returns
-    -------
-    None
-    """
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("w", encoding="utf-8") as handle:
-        json.dump(payload, handle, indent=2, ensure_ascii=False)
-
-
-def load_json(path: Path, default: Any) -> Any:
-    """
-    读取 JSON，不存在时返回默认值。
-
-    Parameters
-    ----------
-    path : Path
-        JSON 路径。
-    default : Any
-        默认值。
-
-    Returns
-    -------
-    Any
-        JSON 内容或默认值。
-    """
-    if not path.exists():
-        return default
-    with path.open("r", encoding="utf-8") as handle:
-        return json.load(handle)
-
-
 def sort_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     """
     对结果行做稳定排序。
@@ -142,7 +66,7 @@ def sort_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     Returns
     -------
     list[dict[str, Any]]
-        排序后的结果行列表。
+        排序后的结果行。
     """
     return sorted(
         rows,
@@ -157,9 +81,47 @@ def sort_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     )
 
 
+def flatten_forward_results(forward_results: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """
+    将 case 级 forward 结果展开为 ROI 行。
+
+    Parameters
+    ----------
+    forward_results : list[dict[str, Any]]
+        case 级结果。
+
+    Returns
+    -------
+    list[dict[str, Any]]
+        ROI 级结果行。
+    """
+    rows: list[dict[str, Any]] = []
+    for result in forward_results:
+        base = {
+            "subject_id": result.get("subject_id"),
+            "case_name": result.get("case_name"),
+            "preset": result.get("preset"),
+            "status": result.get("status"),
+            "elapsed_seconds": result.get("elapsed_seconds"),
+            "ti_mesh_path": result.get("ti_mesh_path"),
+            "ti_volume_path": result.get("ti_volume_path"),
+            "final_labels_path": result.get("final_labels_path"),
+            "failure_stage": result.get("failure_stage"),
+            "error": result.get("error"),
+            "traceback": result.get("traceback"),
+            "hotspot_value": result.get("hotspot_value"),
+        }
+        if result.get("status") != "ok":
+            rows.append(base)
+            continue
+        for roi in result.get("roi_metrics", []):
+            rows.append({**base, **roi})
+    return sort_rows(rows)
+
+
 def annotate_mesh_rows(mesh_rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     """
-    为 mesh 结果补充与 M0 的表面距离比较。
+    为 mesh 结果补充 M0 的头皮表面对比指标。
 
     Parameters
     ----------
@@ -175,7 +137,7 @@ def annotate_mesh_rows(mesh_rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     for row in mesh_rows:
         if row.get("status") != "ok" or row.get("preset") != "M0":
             continue
-        baseline_points_by_subject[str(row["subject_id"])] = scalp_surface_points(Path(row["mesh_file"]))
+        baseline_points_by_subject[str(row["subject_id"])] = scalp_surface_points(Path(str(row["mesh_file"])))
     for row in mesh_rows:
         if row.get("status") != "ok":
             continue
@@ -184,14 +146,14 @@ def annotate_mesh_rows(mesh_rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
             row["scalp_mean_distance_mm"] = None
             row["scalp_hausdorff95_mm"] = None
             continue
-        current_points = scalp_surface_points(Path(row["mesh_file"]))
+        current_points = scalp_surface_points(Path(str(row["mesh_file"])))
         row.update(bidirectional_surface_distance(baseline_points, current_points))
     return sort_rows(mesh_rows)
 
 
 def mark_forward_baseline_unavailable(row: dict[str, Any]) -> None:
     """
-    标记正向 comparison 不可用。
+    标记 forward comparison 不可用。
 
     Parameters
     ----------
@@ -222,7 +184,7 @@ def mark_forward_baseline_unavailable(row: dict[str, Any]) -> None:
 
 def evaluate_forward_pass(row: dict[str, Any], preset: str) -> bool | None:
     """
-    评估正向是否通过。
+    评估 forward 是否通过。
 
     Parameters
     ----------
@@ -256,17 +218,17 @@ def evaluate_forward_pass(row: dict[str, Any], preset: str) -> bool | None:
 
 def annotate_forward_rows(forward_rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     """
-    为 forward 结果补充与 M0 的 comparison。
+    为 forward 结果补充 M0 comparison。
 
     Parameters
     ----------
     forward_rows : list[dict[str, Any]]
-        forward 结果行。
+        ROI 级 forward 结果。
 
     Returns
     -------
     list[dict[str, Any]]
-        补充后的 forward 结果行。
+        补充后的结果行。
     """
     baseline_by_key = {
         (str(row["subject_id"]), str(row["case_name"]), str(row["roi_name"])): row
@@ -297,11 +259,11 @@ def annotate_forward_rows(forward_rows: list[dict[str, Any]]) -> list[dict[str, 
             continue
         gm_key = (str(baseline["ti_volume_path"]), str(row["ti_volume_path"]))
         if gm_key not in gm_cache:
-            reference_img = nib.load(str(Path(row["ti_volume_path"])))
-            current_ti = load_volume_data(Path(row["ti_volume_path"]), reference_img)
-            baseline_ti = load_volume_data(Path(baseline["ti_volume_path"]), reference_img)
-            current_labels = load_volume_data(Path(row["final_labels_path"]), reference_img)
-            baseline_labels = load_volume_data(Path(baseline["final_labels_path"]), reference_img)
+            reference_img = nib.load(str(Path(str(row["ti_volume_path"]))))
+            current_ti = load_volume_data(Path(str(row["ti_volume_path"])), reference_img)
+            baseline_ti = load_volume_data(Path(str(baseline["ti_volume_path"])), reference_img)
+            current_labels = load_volume_data(Path(str(row["final_labels_path"])), reference_img)
+            baseline_labels = load_volume_data(Path(str(baseline["final_labels_path"])), reference_img)
             gm_mask = (current_labels == ElementTags.GM) & (baseline_labels == ElementTags.GM)
             gm_cache[gm_key] = (current_ti[gm_mask], baseline_ti[gm_mask])
         current_gm, baseline_gm = gm_cache[gm_key]
@@ -320,291 +282,82 @@ def annotate_forward_rows(forward_rows: list[dict[str, Any]]) -> list[dict[str, 
                 "gm_pearson_r": pearson_r,
                 "gm_nrmse": nrmse,
                 "baseline_hotspot_value": baseline["hotspot_value"],
-                "roi_mean_rel_error": relative_error(row["roi_mean"], baseline["roi_mean"]),
-                "roi_median_rel_error": relative_error(row["roi_median"], baseline["roi_median"]),
-                "roi_p95_rel_error": relative_error(row["roi_p95"], baseline["roi_p95"]),
-                "roi_p99_rel_error": relative_error(row["roi_p99"], baseline["roi_p99"]),
-                "roi_max_rel_error": relative_error(row["roi_max"], baseline["roi_max"]),
-                "hotspot_rel_error": relative_error(row["hotspot_value"], baseline["hotspot_value"]),
+                "roi_mean_rel_error": relative_error(float(row["roi_mean"]), float(baseline["roi_mean"])),
+                "roi_median_rel_error": relative_error(float(row["roi_median"]), float(baseline["roi_median"])),
+                "roi_p95_rel_error": relative_error(float(row["roi_p95"]), float(baseline["roi_p95"])),
+                "roi_p99_rel_error": relative_error(float(row["roi_p99"]), float(baseline["roi_p99"])),
+                "roi_max_rel_error": relative_error(float(row["roi_max"]), float(baseline["roi_max"])),
+                "hotspot_rel_error": relative_error(float(row["hotspot_value"]), float(baseline["hotspot_value"])),
             }
         )
         row["forward_pass"] = evaluate_forward_pass(row, str(row["preset"]))
     return sort_rows(forward_rows)
 
 
-def mark_inverse_baseline_unavailable(row: dict[str, Any], reason: str = "M0 baseline is unavailable for this subject/case/seed") -> None:
+def _report_presets(selected_presets: list[str]) -> list[str]:
     """
-    标记 inverse comparison 不可用。
+    生成报告加载所需的 preset 列表。
 
     Parameters
     ----------
-    row : dict[str, Any]
-        结果行。
-    reason : str
-        原因说明。
+    selected_presets : list[str]
+        用户请求的 preset 列表。
 
     Returns
     -------
-    None
+    list[str]
+        加载所需的 preset 列表。
     """
-    row.update(
-        {
-            "comparison_status": "baseline_unavailable",
-            "comparison_reason": reason,
-            "replay_ti_volume_path": None,
-            "replay_roi_mean": None,
-            "replay_roi_p999": None,
-            "replay_non_roi_mean": None,
-            "replay_roc": None,
-            "replay_goal": None,
-            "goal_gap_on_m0": None,
-            "label_consistent": None,
-            "optimized_center_drift_mean_mm": None,
-            "optimized_center_drift_max_mm": None,
-            "mapped_center_drift_mean_mm": None,
-            "mapped_center_drift_max_mm": None,
-            "inverse_pass": None,
-        }
-    )
+    ordered = ["M0", *selected_presets]
+    return list(dict.fromkeys(ordered))
 
 
-def mark_inverse_comparison_failed(row: dict[str, Any], reason: str) -> None:
+def _filter_requested_presets(rows: list[dict[str, Any]], selected_presets: list[str]) -> list[dict[str, Any]]:
     """
-    标记 inverse comparison 计算失败。
+    过滤出用户请求的 preset。
 
     Parameters
     ----------
-    row : dict[str, Any]
-        结果行。
-    reason : str
-        失败原因。
-
-    Returns
-    -------
-    None
-    """
-    mark_inverse_baseline_unavailable(row, reason)
-    row["comparison_status"] = "comparison_failed"
-
-
-def _prepare_inverse_replay_metrics(
-    inverse_rows: list[dict[str, Any]],
-    work_root: Path,
-    subjects: list[SubjectConfig],
-    inverse_cases: list[dict[str, Any]],
-    preset_ini_paths: dict[str, Path],
-    debug_mesh: bool,
-) -> dict[str, list[dict[str, Any]]]:
-    """
-    在 report 阶段串行执行 inverse replay。
-
-    Parameters
-    ----------
-    inverse_rows : list[dict[str, Any]]
-        inverse 结果行。
-    work_root : Path
-        工作根目录。
-    subjects : list[SubjectConfig]
-        subject 配置列表。
-    inverse_cases : list[dict[str, Any]]
-        inverse case 配置列表。
-    preset_ini_paths : dict[str, Path]
-        preset ini 路径映射。
-    debug_mesh : bool
-        是否保留 mesh 调试输出。
-
-    Returns
-    -------
-    dict[str, list[dict[str, Any]]]
-        electrode mapping 缓存。
-    """
-    subject_by_id = {subject.id: subject for subject in subjects}
-    case_by_name = {case["name"]: case for case in inverse_cases}
-    workspace_cache: dict[tuple[str, str], WorkspaceBuildResult] = {}
-    mapping_cache: dict[str, list[dict[str, Any]]] = {}
-    for row in inverse_rows:
-        if row.get("status") != "ok":
-            continue
-        if has_replay_metrics(row):
-            continue
-        subject = subject_by_id.get(str(row["subject_id"]))
-        case = case_by_name.get(str(row["case_name"]))
-        if subject is None or case is None:
-            mark_inverse_comparison_failed(row, "missing subject or inverse case definition for report replay")
-            continue
-        mapping_path = str(row["electrode_mapping_path"])
-        try:
-            if mapping_path not in mapping_cache:
-                mapping_cache[mapping_path] = load_mapping(Path(mapping_path))
-            mapped_entries = mapping_cache[mapping_path]
-            replay_ti_volume = run_replay_on_m0(
-                subject=subject,
-                preset=str(row["preset"]),
-                case=case,
-                seed=int(row["seed"]),
-                mapped_entries=mapped_entries,
-                work_root=work_root,
-                preset_ini_paths=preset_ini_paths,
-                debug_mesh=debug_mesh,
-                workspace_cache=workspace_cache,
-            )
-            reference_img = nib.load(subject.reference_t1)
-            baseline_workspace = ensure_workspace(
-                workspace_cache=workspace_cache,
-                subject=subject,
-                preset="M0",
-                work_root=work_root,
-                preset_ini_paths=preset_ini_paths,
-                debug_mesh=debug_mesh,
-            )
-            replay_metrics = compute_goal_from_volume(
-                load_volume_data(replay_ti_volume, reference_img),
-                reference_img,
-                str(baseline_workspace.workspace_dir),
-                case,
-                Path(replay_ti_volume).parent / "_mask_cache",
-            )
-        except Exception as exc:  # noqa: BLE001
-            LOGGER.exception("inverse replay failed: %s", row)
-            mark_inverse_comparison_failed(row, f"report replay failed: {exc}")
-            continue
-        row.update({"replay_ti_volume_path": str(replay_ti_volume), **replay_metrics})
-    return mapping_cache
-
-
-def annotate_inverse_rows(
-    inverse_rows: list[dict[str, Any]],
-    work_root: Path,
-    subjects: list[SubjectConfig],
-    inverse_cases: list[dict[str, Any]],
-    preset_ini_paths: dict[str, Path],
-    debug_mesh: bool,
-) -> list[dict[str, Any]]:
-    """
-    为 inverse 结果补充 replay 和与 M0 的 comparison。
-
-    Parameters
-    ----------
-    inverse_rows : list[dict[str, Any]]
-        inverse 结果行。
-    work_root : Path
-        工作根目录。
-    subjects : list[SubjectConfig]
-        subject 配置列表。
-    inverse_cases : list[dict[str, Any]]
-        inverse case 配置列表。
-    preset_ini_paths : dict[str, Path]
-        preset ini 路径映射。
-    debug_mesh : bool
-        是否保留 mesh 调试输出。
+    rows : list[dict[str, Any]]
+        结果行列表。
+    selected_presets : list[str]
+        用户请求的 preset。
 
     Returns
     -------
     list[dict[str, Any]]
-        补充后的 inverse 结果行。
+        过滤后的结果行。
     """
-    mapping_cache = _prepare_inverse_replay_metrics(inverse_rows, work_root, subjects, inverse_cases, preset_ini_paths, debug_mesh)
-    baseline_by_key = {
-        (str(row["subject_id"]), str(row["case_name"]), int(row["seed"])): row
-        for row in inverse_rows
-        if row.get("status") == "ok" and row.get("preset") == "M0"
-    }
-    for row in inverse_rows:
-        if row.get("status") != "ok":
-            continue
-        if row.get("comparison_status") == "comparison_failed":
-            continue
-        if row.get("preset") == "M0":
-            row["comparison_status"] = "baseline_reference"
-            row["comparison_reason"] = None
-            row["goal_gap_on_m0"] = 0.0
-            row["label_consistent"] = True
-            row["optimized_center_drift_mean_mm"] = 0.0
-            row["optimized_center_drift_max_mm"] = 0.0
-            row["mapped_center_drift_mean_mm"] = 0.0
-            row["mapped_center_drift_max_mm"] = 0.0
-            row["inverse_pass"] = True
-            continue
-        key = (str(row["subject_id"]), str(row["case_name"]), int(row["seed"]))
-        baseline = baseline_by_key.get(key)
-        if baseline is None or baseline.get("comparison_status") == "comparison_failed" or baseline.get("replay_goal") is None:
-            mark_inverse_baseline_unavailable(row)
-            continue
-        baseline_mapping_path = str(baseline["electrode_mapping_path"])
-        current_mapping_path = str(row["electrode_mapping_path"])
-        if baseline_mapping_path not in mapping_cache:
-            mapping_cache[baseline_mapping_path] = load_mapping(Path(baseline_mapping_path))
-        if current_mapping_path not in mapping_cache:
-            mapping_cache[current_mapping_path] = load_mapping(Path(current_mapping_path))
-        row["comparison_status"] = "ok"
-        row["comparison_reason"] = None
-        row["goal_gap_on_m0"] = relative_error(row["replay_goal"], baseline["replay_goal"])
-        row.update(compute_mapping_drift(mapping_cache[baseline_mapping_path], mapping_cache[current_mapping_path]))
-        preset = str(row["preset"])
-        if preset in INVERSE_THRESHOLDS:
-            row["inverse_pass"] = row["goal_gap_on_m0"] <= INVERSE_THRESHOLDS[preset]
-        else:
-            row["inverse_pass"] = None
-    return sort_rows(inverse_rows)
+    allowed = set(selected_presets)
+    return [row for row in rows if str(row.get("preset")) in allowed]
 
 
-def aggregate_report(
+def _build_summary(
     mesh_rows: list[dict[str, Any]],
     forward_rows: list[dict[str, Any]],
     inverse_rows: list[dict[str, Any]],
-    work_root: Path,
-    executed_phases: list[str],
-    subjects: list[SubjectConfig],
-    inverse_cases: list[dict[str, Any]],
-    preset_ini_paths: dict[str, Path],
-    debug_mesh: bool,
+    replay_rows: list[dict[str, Any]],
 ) -> dict[str, Any]:
     """
-    聚合并落盘所有报告。
+    构建 summary.json。
 
     Parameters
     ----------
     mesh_rows : list[dict[str, Any]]
-        mesh 结果行。
+        mesh 报告行。
     forward_rows : list[dict[str, Any]]
-        forward 结果行。
+        forward 报告行。
     inverse_rows : list[dict[str, Any]]
-        inverse 结果行。
-    work_root : Path
-        工作根目录。
-    executed_phases : list[str]
-        本次执行的阶段列表。
-    subjects : list[SubjectConfig]
-        subject 配置列表。
-    inverse_cases : list[dict[str, Any]]
-        inverse case 配置列表。
-    preset_ini_paths : dict[str, Path]
-        preset ini 路径映射。
-    debug_mesh : bool
-        是否保留 mesh 调试输出。
+        inverse 正式结果。
+    replay_rows : list[dict[str, Any]]
+        replay 正式结果。
 
     Returns
     -------
     dict[str, Any]
-        汇总结果。
+        summary 结果。
     """
-    reports_dir = work_root / "reports"
-    phase_to_rows = {"mesh": mesh_rows, "forward": forward_rows, "inverse": inverse_rows}
-    phase_to_json = {
-        "mesh": reports_dir / "mesh_stats.json",
-        "forward": reports_dir / "forward_metrics.json",
-        "inverse": reports_dir / "inverse_metrics.json",
-    }
-    merged_rows: dict[str, list[dict[str, Any]]] = {}
-    for phase_name, current_rows in phase_to_rows.items():
-        if phase_name in executed_phases:
-            merged_rows[phase_name] = current_rows
-        else:
-            merged_rows[phase_name] = load_json(phase_to_json[phase_name], [])
-    mesh_rows = annotate_mesh_rows(merged_rows["mesh"])
-    forward_rows = annotate_forward_rows(merged_rows["forward"])
-    inverse_rows = annotate_inverse_rows(merged_rows["inverse"], work_root, subjects, inverse_cases, preset_ini_paths, debug_mesh)
-    summary: dict[str, Any] = {"mesh": {}, "forward": {}, "inverse": {}}
+    summary: dict[str, Any] = {"mesh": {}, "forward": {}, "inverse": {}, "replay": {}}
     for preset in PRESET_ORDER:
         preset_mesh = [row for row in mesh_rows if row.get("preset") == preset]
         if preset_mesh:
@@ -624,19 +377,59 @@ def aggregate_report(
         preset_inverse = [row for row in inverse_rows if row.get("preset") == preset]
         if preset_inverse:
             ok_rows = [row for row in preset_inverse if row.get("status") == "ok"]
+            summary["inverse"][preset] = {"total": len(preset_inverse), "ok": len(ok_rows)}
+        preset_replay = [row for row in replay_rows if row.get("preset") == preset]
+        if preset_replay:
+            ok_rows = [row for row in preset_replay if row.get("status") == "ok"]
             passed_rows = [row for row in ok_rows if row.get("inverse_pass") is True]
             comparable_rows = [row for row in ok_rows if row.get("inverse_pass") is not None]
-            summary["inverse"][preset] = {
-                "total": len(preset_inverse),
+            summary["replay"][preset] = {
+                "total": len(preset_replay),
                 "ok": len(ok_rows),
                 "comparable": len(comparable_rows),
                 "pass_rate": len(passed_rows) / len(comparable_rows) if comparable_rows else math.nan,
             }
-    write_rows_csv(reports_dir / "mesh_stats.csv", mesh_rows)
-    write_rows_csv(reports_dir / "forward_metrics.csv", forward_rows)
-    write_rows_csv(reports_dir / "inverse_metrics.csv", inverse_rows)
-    write_json(reports_dir / "mesh_stats.json", mesh_rows)
-    write_json(reports_dir / "forward_metrics.json", forward_rows)
-    write_json(reports_dir / "inverse_metrics.json", inverse_rows)
+    return summary
+
+
+def aggregate_report(work_root: Path, selected_presets: list[str]) -> dict[str, Any]:
+    """
+    聚合 V2 正式结果并写出报告。
+
+    Parameters
+    ----------
+    work_root : Path
+        工作根目录。
+    selected_presets : list[str]
+        用户请求输出的 preset 列表。
+
+    Returns
+    -------
+    dict[str, Any]
+        summary 结果。
+    """
+    reports_dir = work_root / "reports"
+    presets_for_loading = _report_presets(selected_presets)
+    mesh_results = load_stage_results(work_root, "mesh", presets_for_loading)
+    forward_results = load_stage_results(work_root, "forward", presets_for_loading)
+    inverse_results = load_stage_results(work_root, "inverse", presets_for_loading)
+    replay_results = load_stage_results(work_root, "replay", presets_for_loading)
+    mesh_report_rows = annotate_mesh_rows(mesh_results)
+    forward_report_rows = annotate_forward_rows(flatten_forward_results(forward_results))
+    inverse_report_rows = sort_rows(inverse_results)
+    replay_report_rows = sort_rows(replay_results)
+    output_mesh_rows = _filter_requested_presets(mesh_report_rows, selected_presets)
+    output_forward_rows = _filter_requested_presets(forward_report_rows, selected_presets)
+    output_inverse_rows = _filter_requested_presets(inverse_report_rows, selected_presets)
+    output_replay_rows = _filter_requested_presets(replay_report_rows, selected_presets)
+    summary = _build_summary(output_mesh_rows, output_forward_rows, output_inverse_rows, output_replay_rows)
+    write_rows_csv(reports_dir / "mesh_report.csv", output_mesh_rows)
+    write_rows_csv(reports_dir / "forward_report.csv", output_forward_rows)
+    write_rows_csv(reports_dir / "inverse_report.csv", output_inverse_rows)
+    write_rows_csv(reports_dir / "replay_report.csv", output_replay_rows)
+    write_json(reports_dir / "mesh_report.json", output_mesh_rows)
+    write_json(reports_dir / "forward_report.json", output_forward_rows)
+    write_json(reports_dir / "inverse_report.json", output_inverse_rows)
+    write_json(reports_dir / "replay_report.json", output_replay_rows)
     write_json(reports_dir / "summary.json", summary)
     return summary

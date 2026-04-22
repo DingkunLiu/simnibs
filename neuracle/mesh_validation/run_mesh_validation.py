@@ -1,5 +1,5 @@
 """
-SimNIBS mesh validation 入口脚本。
+SimNIBS mesh validation V2 入口脚本。
 """
 
 from __future__ import annotations
@@ -8,34 +8,24 @@ import argparse
 import configparser
 import json
 import logging
+import subprocess
 import sys
 from pathlib import Path
 from typing import Any
 
-
-def _bootstrap_imports() -> Path:
-    """
-    项目根目录导入path
-
-    Returns
-    -------
-    Path
-        仓库根目录。
-    """
-    repo_root = Path(__file__).resolve().parents[2]
-    repo_root_str = str(repo_root)
-    if repo_root_str not in sys.path:
-        sys.path.insert(0, repo_root_str)
-    return repo_root
-
-
-REPO_ROOT = _bootstrap_imports()
-
 from neuracle.mesh_validation.mesh_validation_report import aggregate_report
+from neuracle.mesh_validation.mesh_validation_schema import (
+    SCHEMA_VERSION,
+    ensure_v2_schema,
+    initialize_work_root,
+    read_json,
+    write_json,
+)
 from neuracle.mesh_validation.mesh_validation_stages import (
     build_mesh_variants,
     run_forward_validation,
     run_inverse_validation,
+    run_replay_validation,
 )
 from neuracle.mesh_validation.mesh_validation_workspace import (
     PRESET_CONFIGS,
@@ -46,6 +36,7 @@ from neuracle.mesh_validation.mesh_validation_workspace import (
 from simnibs import SIMNIBSDIR
 
 LOGGER = logging.getLogger("mesh_validation")
+REPO_ROOT = Path(__file__).resolve().parents[2]
 
 
 def configure_logging(work_root: Path) -> None:
@@ -84,14 +75,14 @@ def parse_args() -> argparse.Namespace:
     argparse.Namespace
         命令行参数。
     """
-    parser = argparse.ArgumentParser(description="SimNIBS mesh validation pipeline")
+    parser = argparse.ArgumentParser(description="SimNIBS mesh validation pipeline V2")
     parser.add_argument("--manifest", required=True, help="manifest JSON 路径")
     parser.add_argument("--work-root", help="覆盖 manifest 中的 work_root")
     parser.add_argument(
         "--phases",
         nargs="+",
-        default=["mesh", "forward", "inverse", "report"],
-        choices=["mesh", "forward", "inverse", "report"],
+        default=["mesh", "forward", "inverse", "replay", "report"],
+        choices=["mesh", "forward", "inverse", "replay", "report"],
         help="执行阶段列表",
     )
     parser.add_argument(
@@ -106,7 +97,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--inverse-cases", nargs="*", help="筛选 inverse case")
     parser.add_argument("--preset-workers", type=int, default=1, help="preset 并行进程数上限")
     parser.add_argument("--debug-mesh", action="store_true", help="保留 mesh 调试输出")
-    parser.add_argument("--check-only", action="store_true", help="仅检查并生成 preset ini，不执行后续阶段")
+    parser.add_argument("--check-only", action="store_true", help="仅检查并生成 V2 元数据与 preset ini，不执行后续阶段")
     return parser.parse_args()
 
 
@@ -260,6 +251,74 @@ def ensure_manifest_paths(subjects: list[SubjectConfig], work_root: Path) -> Non
             raise FileNotFoundError(f"reference_t1 不存在: {subject.reference_t1}")
 
 
+def build_manifest_snapshot(manifest: dict[str, Any], work_root: Path) -> dict[str, Any]:
+    """
+    构造 V2 manifest 快照。
+
+    Parameters
+    ----------
+    manifest : dict[str, Any]
+        原始 manifest。
+    work_root : Path
+        工作根目录。
+
+    Returns
+    -------
+    dict[str, Any]
+        manifest 快照。
+    """
+    snapshot = json.loads(json.dumps(manifest))
+    snapshot["work_root"] = str(work_root)
+    snapshot["schema_version"] = SCHEMA_VERSION
+    return snapshot
+
+
+def ensure_work_root_initialized(work_root: Path, manifest_snapshot: dict[str, Any]) -> None:
+    """
+    初始化或校验 V2 work_root。
+
+    Parameters
+    ----------
+    work_root : Path
+        工作根目录。
+    manifest_snapshot : dict[str, Any]
+        manifest 快照。
+
+    Returns
+    -------
+    None
+    """
+    schema_path = work_root / "schema.json"
+    if not work_root.exists():
+        initialize_work_root(work_root, manifest_snapshot)
+        return
+    if schema_path.exists():
+        ensure_v2_schema(work_root)
+        write_json(work_root / "manifest.snapshot.json", manifest_snapshot)
+        return
+    existing_items = list(work_root.iterdir())
+    if existing_items:
+        raise RuntimeError(f"work_root 不是 V2 schema，请先迁移旧结果: {work_root}")
+    initialize_work_root(work_root, manifest_snapshot)
+
+
+def build_command_string(argv: list[str]) -> str:
+    """
+    生成命令行字符串。
+
+    Parameters
+    ----------
+    argv : list[str]
+        argv 列表。
+
+    Returns
+    -------
+    str
+        命令行字符串。
+    """
+    return subprocess.list2cmdline(argv)
+
+
 def main() -> None:
     """
     程序入口。
@@ -269,10 +328,14 @@ def main() -> None:
     None
     """
     args = parse_args()
+    command = build_command_string(sys.argv)
     manifest_path = Path(args.manifest).resolve()
     manifest = load_manifest(manifest_path)
     work_root = Path(args.work_root or manifest.get("work_root") or (manifest_path.parent / "work")).resolve()
+    manifest_snapshot = build_manifest_snapshot(manifest, work_root)
+    ensure_work_root_initialized(work_root, manifest_snapshot)
     configure_logging(work_root)
+    LOGGER.info("使用 V2 schema_version=%s", SCHEMA_VERSION)
     preset_workers = validate_parallelism(args.preset_workers)
     subjects = select_subjects(manifest, args.subject_ids)
     forward_cases = select_cases(manifest["forward_cases"], args.forward_cases)
@@ -283,21 +346,16 @@ def main() -> None:
         LOGGER.info("check-only 模式结束，不执行后续阶段")
         return
     ensure_manifest_paths(subjects, work_root)
-    mesh_rows = build_mesh_variants(subjects, args.presets, preset_ini_paths, work_root, args.debug_mesh, preset_workers) if "mesh" in args.phases else []
-    forward_rows = run_forward_validation(subjects, args.presets, forward_cases, work_root, preset_ini_paths, args.debug_mesh, preset_workers) if "forward" in args.phases else []
-    inverse_rows = run_inverse_validation(subjects, args.presets, inverse_cases, work_root, preset_ini_paths, args.debug_mesh, preset_workers) if "inverse" in args.phases else []
+    if "mesh" in args.phases:
+        build_mesh_variants(subjects, args.presets, preset_ini_paths, work_root, args.debug_mesh, preset_workers, command)
+    if "forward" in args.phases:
+        run_forward_validation(subjects, args.presets, forward_cases, work_root, preset_ini_paths, args.debug_mesh, preset_workers, command)
+    if "inverse" in args.phases:
+        run_inverse_validation(subjects, args.presets, inverse_cases, work_root, preset_ini_paths, args.debug_mesh, preset_workers, command)
+    if "replay" in args.phases:
+        run_replay_validation(subjects, args.presets, inverse_cases, work_root, preset_ini_paths, args.debug_mesh, preset_workers, command)
     if "report" in args.phases:
-        summary = aggregate_report(
-            mesh_rows=mesh_rows,
-            forward_rows=forward_rows,
-            inverse_rows=inverse_rows,
-            work_root=work_root,
-            executed_phases=args.phases,
-            subjects=subjects,
-            inverse_cases=inverse_cases,
-            preset_ini_paths=preset_ini_paths,
-            debug_mesh=args.debug_mesh,
-        )
+        summary = aggregate_report(work_root=work_root, selected_presets=args.presets)
         LOGGER.info("结果汇总: %s", json.dumps(summary, ensure_ascii=False))
 
 

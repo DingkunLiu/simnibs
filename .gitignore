@@ -159,3 +159,5 @@ neuracle_backup/*
 neuracle/atlas/manifests/*
 neuracle/atlas/standardized/*
 neuracle/atlas/validation/*
+neuracle/mesh_validation/_docx_node/*
+neuracle/mesh_validation/_remote_report_data/*

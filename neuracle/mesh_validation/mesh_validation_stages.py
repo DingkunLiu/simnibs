@@ -21,6 +21,24 @@ import numpy as np
 from nibabel.processing import resample_from_to
 from scipy.spatial import cKDTree
 
+from neuracle.mesh_validation.mesh_validation_schema import (
+    RUN_STATE_COMPLETED,
+    RUN_STATE_FAILED,
+    RUN_STATE_RUNNING,
+    RunStateTracker,
+    forward_result_path,
+    forward_run_path,
+    inverse_result_path,
+    inverse_run_path,
+    mesh_result_path,
+    mesh_run_path,
+    preset_paths_for,
+    read_json,
+    replay_result_path,
+    replay_run_path,
+    wait_for_run_completion,
+    write_json,
+)
 from neuracle.mesh_validation.mesh_validation_workspace import (
     MeshGenerationError,
     SubjectConfig,
@@ -82,47 +100,82 @@ def sort_result_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     )
 
 
-def run_with_failure_capture(default_failure_stage: str, payload: dict[str, Any], fn: Any) -> list[dict[str, Any]]:
+def _resolve_failure_stage(default_failure_stage: str, exc: Exception) -> str:
     """
-    执行任务并将异常转换为失败结果行。
+    解析失败阶段名称。
 
     Parameters
     ----------
     default_failure_stage : str
         默认失败阶段名称。
-    payload : dict[str, Any]
-        失败行需要保留的基础字段。
-    fn : Any
-        执行函数。
+    exc : Exception
+        捕获到的异常。
 
     Returns
     -------
-    list[dict[str, Any]]
-        执行结果行列表。
+    str
+        failure_stage。
     """
+    if isinstance(exc, MeshGenerationError):
+        return "mesh_generation_failed"
+    if isinstance(exc, WorkspacePreparationError):
+        return "workspace_prepare_failed"
+    return default_failure_stage
+
+
+def _execute_stage_task(
+    stage: str,
+    result_path: Path,
+    run_path: Path,
+    command: str,
+    payload: dict[str, Any],
+    default_failure_stage: str,
+    runner: Any,
+) -> dict[str, Any]:
+    """
+    执行单个阶段任务并维护 result/run 文件。
+
+    Parameters
+    ----------
+    stage : str
+        阶段名称。
+    result_path : Path
+        result.json 路径。
+    run_path : Path
+        run.json 路径。
+    command : str
+        当前命令行。
+    payload : dict[str, Any]
+        结果基础字段。
+    default_failure_stage : str
+        默认失败阶段名称。
+    runner : Any
+        真正执行逻辑的回调。
+
+    Returns
+    -------
+    dict[str, Any]
+        result.json 对象。
+    """
+    tracker = RunStateTracker(run_path=run_path, stage=stage, command=command, metadata=payload)
+    tracker.start()
     try:
-        result = fn()
+        result = runner()
     except Exception as exc:  # noqa: BLE001
-        failure_stage = default_failure_stage
-        if isinstance(exc, MeshGenerationError):
-            failure_stage = "mesh_generation_failed"
-        elif isinstance(exc, WorkspacePreparationError):
-            failure_stage = "workspace_prepare_failed"
-        LOGGER.exception("%s 执行失败: %s", failure_stage, payload)
-        return [
-            {
-                **payload,
-                "status": "failed",
-                "failure_stage": failure_stage,
-                "error": str(exc),
-                "traceback": traceback.format_exc(limit=5),
-            }
-        ]
-    if result is None:
-        return []
-    if isinstance(result, list):
-        return result
-    return [result]
+        failure = {
+            **payload,
+            "status": "failed",
+            "failure_stage": _resolve_failure_stage(default_failure_stage, exc),
+            "error": str(exc),
+            "traceback": traceback.format_exc(limit=5),
+        }
+        write_json(result_path, failure)
+        tracker.finish(RUN_STATE_FAILED, error=str(exc))
+        LOGGER.exception("%s 执行失败: %s", stage, payload)
+        return failure
+    write_json(result_path, result)
+    tracker.finish(RUN_STATE_COMPLETED)
+    return result
 
 
 def collect_parallel_rows(task_args: list[tuple[Any, ...]], worker_fn: Any, max_workers: int) -> list[dict[str, Any]]:
@@ -159,12 +212,202 @@ def collect_parallel_rows(task_args: list[tuple[Any, ...]], worker_fn: Any, max_
     return sort_result_rows(rows)
 
 
+def _prepare_stage_artifacts_dir(stage_dir: Path) -> Path:
+    """
+    重建阶段工件目录。
+
+    Parameters
+    ----------
+    stage_dir : Path
+        阶段目录。
+
+    Returns
+    -------
+    Path
+        工件目录。
+    """
+    stage_dir.mkdir(parents=True, exist_ok=True)
+    artifacts_dir = stage_dir / "artifacts"
+    if artifacts_dir.exists():
+        shutil.rmtree(artifacts_dir)
+    artifacts_dir.mkdir(parents=True, exist_ok=True)
+    return artifacts_dir
+
+
+def _load_completed_stage_result(
+    run_path: Path,
+    result_path: Path,
+    description: str,
+    wait_on_running: bool,
+) -> dict[str, Any]:
+    """
+    读取已完成的阶段结果。
+
+    Parameters
+    ----------
+    run_path : Path
+        run.json 路径。
+    result_path : Path
+        result.json 路径。
+    description : str
+        描述字符串。
+    wait_on_running : bool
+        遇到 running 是否等待。
+
+    Returns
+    -------
+    dict[str, Any]
+        result.json 内容。
+    """
+    run_payload = read_json(run_path)
+    if run_payload is None:
+        raise FileNotFoundError(f"缺少运行状态: {description} -> {run_path}")
+    state = str(run_payload.get("state"))
+    if state == RUN_STATE_RUNNING:
+        if not wait_on_running:
+            raise RuntimeError(f"前序任务仍在运行: {description}")
+        run_payload = wait_for_run_completion(run_path, description)
+        state = str(run_payload.get("state"))
+    if state != RUN_STATE_COMPLETED:
+        raise RuntimeError(f"前序任务未完成: {description} -> {state}")
+    result_payload = read_json(result_path)
+    if result_payload is None:
+        raise FileNotFoundError(f"缺少结果文件: {description} -> {result_path}")
+    return result_payload
+
+
+def _ensure_m0_workspace_ready(
+    subject: SubjectConfig,
+    work_root: Path,
+    preset_ini_paths: dict[str, Path],
+    debug_mesh: bool,
+    workspace_cache: dict[tuple[str, str], WorkspaceBuildResult],
+) -> WorkspaceBuildResult:
+    """
+    确保 M0 workspace 已完成且可用。
+
+    Parameters
+    ----------
+    subject : SubjectConfig
+        subject 配置。
+    work_root : Path
+        工作根目录。
+    preset_ini_paths : dict[str, Path]
+        preset ini 路径映射。
+    debug_mesh : bool
+        是否保留 mesh 调试输出。
+    workspace_cache : dict[tuple[str, str], WorkspaceBuildResult]
+        workspace 缓存。
+
+    Returns
+    -------
+    WorkspaceBuildResult
+        M0 workspace。
+    """
+    paths = preset_paths_for(work_root, subject.id, "M0")
+    _load_completed_stage_result(
+        run_path=mesh_run_path(paths),
+        result_path=mesh_result_path(paths),
+        description=f"M0 mesh {subject.id}",
+        wait_on_running=True,
+    )
+    return ensure_workspace(
+        workspace_cache=workspace_cache,
+        subject=subject,
+        preset="M0",
+        work_root=work_root,
+        preset_ini_paths=preset_ini_paths,
+        debug_mesh=debug_mesh,
+    )
+
+
+def _load_inverse_result(
+    subject: SubjectConfig,
+    preset: str,
+    case_name: str,
+    seed: int,
+    work_root: Path,
+    wait_on_running: bool,
+) -> dict[str, Any]:
+    """
+    加载 inverse 正式结果。
+
+    Parameters
+    ----------
+    subject : SubjectConfig
+        subject 配置。
+    preset : str
+        preset 名称。
+    case_name : str
+        case 名称。
+    seed : int
+        随机种子。
+    work_root : Path
+        工作根目录。
+    wait_on_running : bool
+        遇到 running 是否等待。
+
+    Returns
+    -------
+    dict[str, Any]
+        inverse 结果。
+    """
+    paths = preset_paths_for(work_root, subject.id, preset)
+    return _load_completed_stage_result(
+        run_path=inverse_run_path(paths, case_name, seed),
+        result_path=inverse_result_path(paths, case_name, seed),
+        description=f"{preset} inverse {subject.id}/{case_name}/{seed}",
+        wait_on_running=wait_on_running,
+    )
+
+
+def _load_replay_result(
+    subject: SubjectConfig,
+    preset: str,
+    case_name: str,
+    seed: int,
+    work_root: Path,
+    wait_on_running: bool,
+) -> dict[str, Any]:
+    """
+    加载 replay 正式结果。
+
+    Parameters
+    ----------
+    subject : SubjectConfig
+        subject 配置。
+    preset : str
+        preset 名称。
+    case_name : str
+        case 名称。
+    seed : int
+        随机种子。
+    work_root : Path
+        工作根目录。
+    wait_on_running : bool
+        遇到 running 是否等待。
+
+    Returns
+    -------
+    dict[str, Any]
+        replay 结果。
+    """
+    paths = preset_paths_for(work_root, subject.id, preset)
+    return _load_completed_stage_result(
+        run_path=replay_run_path(paths, case_name, seed),
+        result_path=replay_result_path(paths, case_name, seed),
+        description=f"{preset} replay {subject.id}/{case_name}/{seed}",
+        wait_on_running=wait_on_running,
+    )
+
+
 def _run_mesh_preset_worker(
     subject: SubjectConfig,
     preset: str,
     preset_ini_paths: dict[str, Path],
     work_root: Path,
     debug_mesh: bool,
+    command: str,
 ) -> list[dict[str, Any]]:
     """
     执行单个 `(subject, preset)` 的 mesh 阶段。
@@ -181,6 +424,8 @@ def _run_mesh_preset_worker(
         工作根目录。
     debug_mesh : bool
         是否保留 mesh 调试输出。
+    command : str
+        当前命令行。
 
     Returns
     -------
@@ -188,6 +433,7 @@ def _run_mesh_preset_worker(
         mesh 结果行。
     """
     payload = {"subject_id": subject.id, "preset": preset}
+    paths = preset_paths_for(work_root, subject.id, preset)
     workspace_cache: dict[tuple[str, str], WorkspaceBuildResult] = {}
 
     def runner() -> dict[str, Any]:
@@ -212,7 +458,16 @@ def _run_mesh_preset_worker(
             **stats,
         }
 
-    return run_with_failure_capture("mesh_generation_failed", payload, runner)
+    result = _execute_stage_task(
+        stage="mesh",
+        result_path=mesh_result_path(paths),
+        run_path=mesh_run_path(paths),
+        command=command,
+        payload=payload,
+        default_failure_stage="mesh_generation_failed",
+        runner=runner,
+    )
+    return [result]
 
 
 def build_mesh_variants(
@@ -222,6 +477,7 @@ def build_mesh_variants(
     work_root: Path,
     debug_mesh: bool,
     preset_workers: int,
+    command: str,
 ) -> list[dict[str, Any]]:
     """
     构建 workspace 并统计 mesh 指标。
@@ -240,13 +496,15 @@ def build_mesh_variants(
         是否保留 mesh 调试输出。
     preset_workers : int
         preset 并行进程数。
+    command : str
+        当前命令行。
 
     Returns
     -------
     list[dict[str, Any]]
         mesh 结果行。
     """
-    task_args = [(subject, preset, preset_ini_paths, work_root, debug_mesh) for subject in subjects for preset in presets]
+    task_args = [(subject, preset, preset_ini_paths, work_root, debug_mesh, command) for subject in subjects for preset in presets]
     return collect_parallel_rows(task_args, _run_mesh_preset_worker, preset_workers)
 
 
@@ -356,9 +614,9 @@ def compute_forward_case_metrics(
     subject_dir: str,
     case: dict[str, Any],
     cache_dir: Path,
-) -> list[dict[str, Any]]:
+) -> dict[str, Any]:
     """
-    计算正向 case 的 ROI 指标。
+    计算 forward case 的 ROI 指标。
 
     Parameters
     ----------
@@ -375,20 +633,19 @@ def compute_forward_case_metrics(
 
     Returns
     -------
-    list[dict[str, Any]]
-        指标结果行。
+    dict[str, Any]
+        case 级指标结果。
     """
     reference_img = nib.load(subject.reference_t1)
     ti_data = load_volume_data(ti_volume_path, reference_img)
     hotspot_mask = build_spec_mask(case["hotspot_roi"], reference_img, subject_dir, cache_dir, f"{subject.id}_{case['name']}_hotspot")
     hotspot_value = float(np.max(ti_data[hotspot_mask])) if np.any(hotspot_mask) else math.nan
-    rows: list[dict[str, Any]] = []
+    roi_metrics = []
     for roi_index, roi_spec in enumerate(case["roi_specs"]):
         roi_name = roi_spec.get("name", f"roi_{roi_index}")
         roi_mask = build_spec_mask(roi_spec, reference_img, subject_dir, cache_dir, f"{subject.id}_{case['name']}_{roi_name}")
-        stats = roi_statistics(ti_data[roi_mask])
-        rows.append({"subject_id": subject.id, "case_name": case["name"], "roi_name": roi_name, "hotspot_value": hotspot_value, **stats})
-    return rows
+        roi_metrics.append({"roi_name": roi_name, **roi_statistics(ti_data[roi_mask])})
+    return {"hotspot_value": hotspot_value, "roi_metrics": roi_metrics}
 
 
 def _run_forward_preset_worker(
@@ -398,6 +655,7 @@ def _run_forward_preset_worker(
     work_root: Path,
     preset_ini_paths: dict[str, Path],
     debug_mesh: bool,
+    command: str,
 ) -> list[dict[str, Any]]:
     """
     执行单个 `(subject, preset)` 的 forward 阶段。
@@ -416,6 +674,8 @@ def _run_forward_preset_worker(
         preset ini 路径映射。
     debug_mesh : bool
         是否保留 mesh 调试输出。
+    command : str
+        当前命令行。
 
     Returns
     -------
@@ -424,10 +684,12 @@ def _run_forward_preset_worker(
     """
     rows: list[dict[str, Any]] = []
     workspace_cache: dict[tuple[str, str], WorkspaceBuildResult] = {}
+    paths = preset_paths_for(work_root, subject.id, preset)
     for case in forward_cases:
         payload = {"subject_id": subject.id, "case_name": case["name"], "preset": preset}
+        stage_dir = paths.forward_root / case["name"]
 
-        def runner() -> list[dict[str, Any]]:
+        def runner() -> dict[str, Any]:
             start = time.perf_counter()
             workspace = ensure_workspace(
                 workspace_cache=workspace_cache,
@@ -437,8 +699,7 @@ def _run_forward_preset_worker(
                 preset_ini_paths=preset_ini_paths,
                 debug_mesh=debug_mesh,
             )
-            output_dir = workspace.paths.forward_dir / case["name"]
-            reset_output_dir(output_dir)
+            output_dir = _prepare_stage_artifacts_dir(stage_dir)
             session = setup_session(
                 subject_dir=str(workspace.workspace_dir),
                 output_dir=str(output_dir),
@@ -464,7 +725,7 @@ def _run_forward_preset_worker(
             mesh1_path, mesh2_path = run_tdcs_simulation(session, str(workspace.workspace_dir), str(output_dir), int(case.get("n_workers", 1)))
             ti_mesh_path = Path(calculate_ti(mesh1_path, mesh2_path, str(output_dir)))
             ti_nifti_path = Path(export_ti_to_nifti(str(ti_mesh_path), str(output_dir), subject.reference_t1, "max_TI", f"{subject.id}_{case['name']}"))
-            metric_rows = compute_forward_case_metrics(
+            metrics = compute_forward_case_metrics(
                 ti_volume_path=ti_nifti_path,
                 subject=subject,
                 subject_dir=str(workspace.workspace_dir),
@@ -472,20 +733,27 @@ def _run_forward_preset_worker(
                 cache_dir=output_dir / "_mask_cache",
             )
             elapsed = time.perf_counter() - start
-            for row in metric_rows:
-                row.update(
-                    {
-                        **payload,
-                        "status": "ok",
-                        "elapsed_seconds": elapsed,
-                        "ti_mesh_path": str(ti_mesh_path),
-                        "ti_volume_path": str(ti_nifti_path),
-                        "final_labels_path": str(workspace.final_tissues_path),
-                    }
-                )
-            return metric_rows
+            return {
+                **payload,
+                "status": "ok",
+                "elapsed_seconds": elapsed,
+                "ti_mesh_path": str(ti_mesh_path),
+                "ti_volume_path": str(ti_nifti_path),
+                "final_labels_path": str(workspace.final_tissues_path),
+                **metrics,
+            }
 
-        rows.extend(run_with_failure_capture("forward_execution_failed", payload, runner))
+        rows.append(
+            _execute_stage_task(
+                stage="forward",
+                result_path=forward_result_path(paths, case["name"]),
+                run_path=forward_run_path(paths, case["name"]),
+                command=command,
+                payload=payload,
+                default_failure_stage="forward_execution_failed",
+                runner=runner,
+            )
+        )
     return rows
 
 
@@ -497,9 +765,10 @@ def run_forward_validation(
     preset_ini_paths: dict[str, Path],
     debug_mesh: bool,
     preset_workers: int,
+    command: str,
 ) -> list[dict[str, Any]]:
     """
-    运行正向 TI 验证。
+    运行 forward TI 验证。
 
     Parameters
     ----------
@@ -517,13 +786,15 @@ def run_forward_validation(
         是否保留 mesh 调试输出。
     preset_workers : int
         preset 并行进程数。
+    command : str
+        当前命令行。
 
     Returns
     -------
     list[dict[str, Any]]
         forward 结果行。
     """
-    task_args = [(subject, preset, forward_cases, work_root, preset_ini_paths, debug_mesh) for subject in subjects for preset in presets]
+    task_args = [(subject, preset, forward_cases, work_root, preset_ini_paths, debug_mesh, command) for subject in subjects for preset in presets]
     return collect_parallel_rows(task_args, _run_forward_preset_worker, preset_workers)
 
 
@@ -834,8 +1105,8 @@ def run_replay_on_m0(
     Path
         replay TI NIfTI 路径。
     """
-    replay_dir = work_root / subject.id / preset / "inverse" / case["name"] / f"seed_{seed}" / "replay_on_m0"
-    reset_output_dir(replay_dir)
+    candidate_paths = preset_paths_for(work_root, subject.id, preset)
+    replay_dir = _prepare_stage_artifacts_dir(candidate_paths.replay_root / case["name"] / "seeds" / str(seed))
     pair1, pair2 = group_labels_by_channel(mapped_entries)
     baseline_workspace = ensure_workspace(
         workspace_cache=workspace_cache,
@@ -865,6 +1136,7 @@ def _run_inverse_preset_worker(
     work_root: Path,
     preset_ini_paths: dict[str, Path],
     debug_mesh: bool,
+    command: str,
 ) -> list[dict[str, Any]]:
     """
     执行单个 `(subject, preset)` 的 inverse 阶段。
@@ -883,6 +1155,8 @@ def _run_inverse_preset_worker(
         preset ini 路径映射。
     debug_mesh : bool
         是否保留 mesh 调试输出。
+    command : str
+        当前命令行。
 
     Returns
     -------
@@ -891,9 +1165,11 @@ def _run_inverse_preset_worker(
     """
     rows: list[dict[str, Any]] = []
     workspace_cache: dict[tuple[str, str], WorkspaceBuildResult] = {}
+    paths = preset_paths_for(work_root, subject.id, preset)
     for case in inverse_cases:
         for seed in case.get("seeds", []):
             payload = {"subject_id": subject.id, "case_name": case["name"], "preset": preset, "seed": seed}
+            stage_dir = paths.inverse_root / case["name"] / "seeds" / str(seed)
 
             def runner() -> dict[str, Any]:
                 start = time.perf_counter()
@@ -905,8 +1181,7 @@ def _run_inverse_preset_worker(
                     preset_ini_paths=preset_ini_paths,
                     debug_mesh=debug_mesh,
                 )
-                output_dir = workspace.paths.inverse_dir / case["name"] / f"seed_{seed}"
-                reset_output_dir(output_dir)
+                output_dir = _prepare_stage_artifacts_dir(stage_dir)
                 mesh_file = str(workspace.mesh_file)
                 opt = init_optimization(str(workspace.workspace_dir), str(output_dir), mesh_file)
                 opt.seed = int(seed)
@@ -937,7 +1212,17 @@ def _run_inverse_preset_worker(
                     "mapping_distance_mean_mm": float(np.mean([entry["mapping_distance_mm"] for entry in mapping_entries])),
                 }
 
-            rows.extend(run_with_failure_capture("inverse_execution_failed", payload, runner))
+            rows.append(
+                _execute_stage_task(
+                    stage="inverse",
+                    result_path=inverse_result_path(paths, case["name"], int(seed)),
+                    run_path=inverse_run_path(paths, case["name"], int(seed)),
+                    command=command,
+                    payload=payload,
+                    default_failure_stage="inverse_execution_failed",
+                    runner=runner,
+                )
+            )
     return rows
 
 
@@ -949,6 +1234,7 @@ def run_inverse_validation(
     preset_ini_paths: dict[str, Path],
     debug_mesh: bool,
     preset_workers: int,
+    command: str,
 ) -> list[dict[str, Any]]:
     """
     运行 inverse 验证。
@@ -969,6 +1255,8 @@ def run_inverse_validation(
         是否保留 mesh 调试输出。
     preset_workers : int
         preset 并行进程数。
+    command : str
+        当前命令行。
 
     Returns
     -------
@@ -976,8 +1264,437 @@ def run_inverse_validation(
         inverse 结果行。
     """
     active_presets = [preset for preset in presets if preset in INVERSE_PRESET_ORDER]
-    task_args = [(subject, preset, inverse_cases, work_root, preset_ini_paths, debug_mesh) for subject in subjects for preset in active_presets]
+    task_args = [(subject, preset, inverse_cases, work_root, preset_ini_paths, debug_mesh, command) for subject in subjects for preset in active_presets]
     return collect_parallel_rows(task_args, _run_inverse_preset_worker, preset_workers)
+
+
+def _build_replay_success_result(
+    subject: SubjectConfig,
+    preset: str,
+    case: dict[str, Any],
+    seed: int,
+    elapsed_seconds: float,
+    replay_ti_volume: Path,
+    replay_metrics: dict[str, float],
+    inverse_result: dict[str, Any],
+    baseline_replay: dict[str, Any] | None,
+    baseline_inverse: dict[str, Any] | None,
+) -> dict[str, Any]:
+    """
+    构造 replay 成功结果。
+
+    Parameters
+    ----------
+    subject : SubjectConfig
+        subject 配置。
+    preset : str
+        preset 名称。
+    case : dict[str, Any]
+        inverse case 配置。
+    seed : int
+        随机种子。
+    elapsed_seconds : float
+        执行耗时。
+    replay_ti_volume : Path
+        replay TI 路径。
+    replay_metrics : dict[str, float]
+        replay 指标。
+    inverse_result : dict[str, Any]
+        当前 preset inverse 结果。
+    baseline_replay : dict[str, Any] or None
+        M0 replay 基线结果。
+    baseline_inverse : dict[str, Any] or None
+        M0 inverse 基线结果。
+
+    Returns
+    -------
+    dict[str, Any]
+        replay 结果。
+    """
+    payload = {
+        "subject_id": subject.id,
+        "case_name": case["name"],
+        "preset": preset,
+        "seed": seed,
+        "status": "ok",
+        "elapsed_seconds": elapsed_seconds,
+        "replay_ti_volume_path": str(replay_ti_volume),
+    }
+    payload["source_inverse_result_path"] = str(inverse_result.get("result_path", ""))
+    payload.update(replay_metrics)
+    if preset == "M0":
+        payload.update(
+            {
+                "comparison_status": "baseline_reference",
+                "comparison_reason": None,
+                "goal_gap_on_m0": 0.0,
+                "label_consistent": True,
+                "optimized_center_drift_mean_mm": 0.0,
+                "optimized_center_drift_max_mm": 0.0,
+                "mapped_center_drift_mean_mm": 0.0,
+                "mapped_center_drift_max_mm": 0.0,
+                "inverse_pass": True,
+            }
+        )
+        return payload
+    if baseline_replay is None or baseline_inverse is None:
+        payload.update(
+            {
+                "comparison_status": "baseline_unavailable",
+                "comparison_reason": "M0 replay baseline is unavailable",
+                "goal_gap_on_m0": None,
+                "label_consistent": None,
+                "optimized_center_drift_mean_mm": None,
+                "optimized_center_drift_max_mm": None,
+                "mapped_center_drift_mean_mm": None,
+                "mapped_center_drift_max_mm": None,
+                "inverse_pass": None,
+            }
+        )
+        return payload
+    baseline_mapping = load_mapping(Path(str(baseline_inverse["electrode_mapping_path"])))
+    current_mapping = load_mapping(Path(str(inverse_result["electrode_mapping_path"])))
+    payload.update(
+        {
+            "comparison_status": "ok",
+            "comparison_reason": None,
+            "goal_gap_on_m0": relative_error(float(replay_metrics["replay_goal"]), float(baseline_replay["replay_goal"])),
+            **compute_mapping_drift(baseline_mapping, current_mapping),
+        }
+    )
+    if preset in INVERSE_THRESHOLDS and payload["goal_gap_on_m0"] is not None:
+        payload["inverse_pass"] = bool(payload["goal_gap_on_m0"] <= INVERSE_THRESHOLDS[preset])
+    else:
+        payload["inverse_pass"] = None
+    return payload
+
+
+def _run_single_replay_result(
+    subject: SubjectConfig,
+    preset: str,
+    case: dict[str, Any],
+    seed: int,
+    work_root: Path,
+    preset_ini_paths: dict[str, Path],
+    debug_mesh: bool,
+    command: str,
+    workspace_cache: dict[tuple[str, str], WorkspaceBuildResult],
+    wait_on_inverse: bool,
+) -> dict[str, Any]:
+    """
+    执行单个 replay 结果生成。
+
+    Parameters
+    ----------
+    subject : SubjectConfig
+        subject 配置。
+    preset : str
+        preset 名称。
+    case : dict[str, Any]
+        inverse case 配置。
+    seed : int
+        随机种子。
+    work_root : Path
+        工作根目录。
+    preset_ini_paths : dict[str, Path]
+        preset ini 路径映射。
+    debug_mesh : bool
+        是否保留 mesh 调试输出。
+    command : str
+        当前命令行。
+    workspace_cache : dict[tuple[str, str], WorkspaceBuildResult]
+        workspace 缓存。
+    wait_on_inverse : bool
+        当前 preset inverse 是否允许等待。
+
+    Returns
+    -------
+    dict[str, Any]
+        replay 结果。
+    """
+    paths = preset_paths_for(work_root, subject.id, preset)
+    payload = {"subject_id": subject.id, "case_name": case["name"], "preset": preset, "seed": seed}
+
+    def runner() -> dict[str, Any]:
+        start = time.perf_counter()
+        baseline_workspace = _ensure_m0_workspace_ready(
+            subject=subject,
+            work_root=work_root,
+            preset_ini_paths=preset_ini_paths,
+            debug_mesh=debug_mesh,
+            workspace_cache=workspace_cache,
+        )
+        inverse_result = _load_inverse_result(
+            subject=subject,
+            preset=preset,
+            case_name=case["name"],
+            seed=seed,
+            work_root=work_root,
+            wait_on_running=wait_on_inverse,
+        )
+        inverse_result["result_path"] = str(inverse_result_path(paths, case["name"], seed))
+        mapped_entries = load_mapping(Path(str(inverse_result["electrode_mapping_path"])))
+        replay_ti_volume = run_replay_on_m0(
+            subject=subject,
+            preset=preset,
+            case=case,
+            seed=seed,
+            mapped_entries=mapped_entries,
+            work_root=work_root,
+            preset_ini_paths=preset_ini_paths,
+            debug_mesh=debug_mesh,
+            workspace_cache=workspace_cache,
+        )
+        reference_img = nib.load(subject.reference_t1)
+        replay_metrics = compute_goal_from_volume(
+            load_volume_data(replay_ti_volume, reference_img),
+            reference_img,
+            str(baseline_workspace.workspace_dir),
+            case,
+            replay_ti_volume.parent / "_mask_cache",
+        )
+        baseline_replay: dict[str, Any] | None = None
+        baseline_inverse: dict[str, Any] | None = None
+        if preset != "M0":
+            baseline_replay = _load_replay_result(
+                subject=subject,
+                preset="M0",
+                case_name=case["name"],
+                seed=seed,
+                work_root=work_root,
+                wait_on_running=True,
+            )
+            baseline_inverse = _load_inverse_result(
+                subject=subject,
+                preset="M0",
+                case_name=case["name"],
+                seed=seed,
+                work_root=work_root,
+                wait_on_running=True,
+            )
+        elapsed = time.perf_counter() - start
+        return _build_replay_success_result(
+            subject=subject,
+            preset=preset,
+            case=case,
+            seed=seed,
+            elapsed_seconds=elapsed,
+            replay_ti_volume=replay_ti_volume,
+            replay_metrics=replay_metrics,
+            inverse_result=inverse_result,
+            baseline_replay=baseline_replay,
+            baseline_inverse=baseline_inverse,
+        )
+
+    return _execute_stage_task(
+        stage="replay",
+        result_path=replay_result_path(paths, case["name"], seed),
+        run_path=replay_run_path(paths, case["name"], seed),
+        command=command,
+        payload=payload,
+        default_failure_stage="replay_execution_failed",
+        runner=runner,
+    )
+
+
+def _ensure_m0_replay_baseline(
+    subject: SubjectConfig,
+    case: dict[str, Any],
+    seed: int,
+    work_root: Path,
+    preset_ini_paths: dict[str, Path],
+    debug_mesh: bool,
+    command: str,
+    workspace_cache: dict[tuple[str, str], WorkspaceBuildResult],
+) -> dict[str, Any]:
+    """
+    确保 M0 replay 基线存在。
+
+    Parameters
+    ----------
+    subject : SubjectConfig
+        subject 配置。
+    case : dict[str, Any]
+        inverse case 配置。
+    seed : int
+        随机种子。
+    work_root : Path
+        工作根目录。
+    preset_ini_paths : dict[str, Path]
+        preset ini 路径映射。
+    debug_mesh : bool
+        是否保留 mesh 调试输出。
+    command : str
+        当前命令行。
+    workspace_cache : dict[tuple[str, str], WorkspaceBuildResult]
+        workspace 缓存。
+
+    Returns
+    -------
+    dict[str, Any]
+        M0 replay 结果。
+    """
+    _ensure_m0_workspace_ready(
+        subject=subject,
+        work_root=work_root,
+        preset_ini_paths=preset_ini_paths,
+        debug_mesh=debug_mesh,
+        workspace_cache=workspace_cache,
+    )
+    _load_inverse_result(
+        subject=subject,
+        preset="M0",
+        case_name=case["name"],
+        seed=seed,
+        work_root=work_root,
+        wait_on_running=True,
+    )
+    paths = preset_paths_for(work_root, subject.id, "M0")
+    run_path = replay_run_path(paths, case["name"], seed)
+    result_path = replay_result_path(paths, case["name"], seed)
+    run_payload = read_json(run_path)
+    if run_payload is not None:
+        state = str(run_payload.get("state"))
+        if state == RUN_STATE_RUNNING:
+            return _load_replay_result(subject, "M0", case["name"], seed, work_root, wait_on_running=True)
+        if state == RUN_STATE_COMPLETED:
+            return _load_replay_result(subject, "M0", case["name"], seed, work_root, wait_on_running=False)
+    if result_path.exists() and run_payload is None:
+        raise RuntimeError(f"检测到无状态 replay 结果，拒绝继续: {result_path}")
+    return _run_single_replay_result(
+        subject=subject,
+        preset="M0",
+        case=case,
+        seed=seed,
+        work_root=work_root,
+        preset_ini_paths=preset_ini_paths,
+        debug_mesh=debug_mesh,
+        command=command,
+        workspace_cache=workspace_cache,
+        wait_on_inverse=True,
+    )
+
+
+def _run_replay_preset_worker(
+    subject: SubjectConfig,
+    preset: str,
+    inverse_cases: list[dict[str, Any]],
+    work_root: Path,
+    preset_ini_paths: dict[str, Path],
+    debug_mesh: bool,
+    command: str,
+) -> list[dict[str, Any]]:
+    """
+    执行单个 `(subject, preset)` 的 replay 阶段。
+
+    Parameters
+    ----------
+    subject : SubjectConfig
+        subject 配置。
+    preset : str
+        preset 名称。
+    inverse_cases : list[dict[str, Any]]
+        inverse case 列表。
+    work_root : Path
+        工作根目录。
+    preset_ini_paths : dict[str, Path]
+        preset ini 路径映射。
+    debug_mesh : bool
+        是否保留 mesh 调试输出。
+    command : str
+        当前命令行。
+
+    Returns
+    -------
+    list[dict[str, Any]]
+        replay 结果行。
+    """
+    rows: list[dict[str, Any]] = []
+    workspace_cache: dict[tuple[str, str], WorkspaceBuildResult] = {}
+    for case in inverse_cases:
+        for seed in case.get("seeds", []):
+            rows.append(
+                _run_single_replay_result(
+                    subject=subject,
+                    preset=preset,
+                    case=case,
+                    seed=int(seed),
+                    work_root=work_root,
+                    preset_ini_paths=preset_ini_paths,
+                    debug_mesh=debug_mesh,
+                    command=command,
+                    workspace_cache=workspace_cache,
+                    wait_on_inverse=False,
+                )
+            )
+    return rows
+
+
+def run_replay_validation(
+    subjects: list[SubjectConfig],
+    presets: list[str],
+    inverse_cases: list[dict[str, Any]],
+    work_root: Path,
+    preset_ini_paths: dict[str, Path],
+    debug_mesh: bool,
+    preset_workers: int,
+    command: str,
+) -> list[dict[str, Any]]:
+    """
+    运行 replay 验证。
+
+    Parameters
+    ----------
+    subjects : list[SubjectConfig]
+        subject 列表。
+    presets : list[str]
+        preset 列表。
+    inverse_cases : list[dict[str, Any]]
+        inverse case 列表。
+    work_root : Path
+        工作根目录。
+    preset_ini_paths : dict[str, Path]
+        preset ini 路径映射。
+    debug_mesh : bool
+        是否保留 mesh 调试输出。
+    preset_workers : int
+        preset 并行进程数。
+    command : str
+        当前命令行。
+
+    Returns
+    -------
+    list[dict[str, Any]]
+        replay 结果行。
+    """
+    baseline_rows: list[dict[str, Any]] = []
+    workspace_cache: dict[tuple[str, str], WorkspaceBuildResult] = {}
+    for subject in subjects:
+        _ensure_m0_workspace_ready(
+            subject=subject,
+            work_root=work_root,
+            preset_ini_paths=preset_ini_paths,
+            debug_mesh=debug_mesh,
+            workspace_cache=workspace_cache,
+        )
+        for case in inverse_cases:
+            for seed in case.get("seeds", []):
+                baseline_result = _ensure_m0_replay_baseline(
+                    subject=subject,
+                    case=case,
+                    seed=int(seed),
+                    work_root=work_root,
+                    preset_ini_paths=preset_ini_paths,
+                    debug_mesh=debug_mesh,
+                    command=command,
+                    workspace_cache=workspace_cache,
+                )
+                if "M0" in presets:
+                    baseline_rows.append(baseline_result)
+    candidate_presets = [preset for preset in presets if preset != "M0"]
+    task_args = [(subject, preset, inverse_cases, work_root, preset_ini_paths, debug_mesh, command) for subject in subjects for preset in candidate_presets]
+    parallel_rows = collect_parallel_rows(task_args, _run_replay_preset_worker, preset_workers)
+    return sort_result_rows(baseline_rows + parallel_rows)
 
 
 def ensure_workspace(
@@ -1113,21 +1830,3 @@ def bidirectional_surface_distance(reference_points: np.ndarray, candidate_point
         "scalp_mean_distance_mm": float(np.mean(merged)),
         "scalp_hausdorff95_mm": float(np.percentile(merged, 95)),
     }
-
-
-def reset_output_dir(path: Path) -> None:
-    """
-    重建阶段输出目录。
-
-    Parameters
-    ----------
-    path : Path
-        输出目录。
-
-    Returns
-    -------
-    None
-    """
-    if path.exists():
-        shutil.rmtree(path)
-    path.mkdir(parents=True, exist_ok=True)
