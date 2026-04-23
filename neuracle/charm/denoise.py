@@ -76,7 +76,7 @@ def _denoise_if_needed(
     name: str,
 ) -> None:
     """
-    如果输入文件存在且降噪输出不存在，则执行降噪
+    如果输入文件存在且降噪输出缺失或过期，则执行降噪
 
     Parameters
     ----------
@@ -89,8 +89,32 @@ def _denoise_if_needed(
     """
     if not os.path.exists(input_path):
         return
-    if os.path.exists(output_path):
+    if not _should_regenerate_denoised(input_path, output_path):
         logger.info("%s 降噪文件已存在: %s", name, output_path)
     else:
         logger.info("正在对 %s 进行降噪并保存。", name)
         charm_utils._denoise_input_and_save(input_path, output_path)
+
+
+def _should_regenerate_denoised(
+    input_path: str,
+    output_path: str,
+) -> bool:
+    """
+    判断是否需要重建降噪输出。
+
+    Parameters
+    ----------
+    input_path : str
+        输入文件路径
+    output_path : str
+        输出文件路径
+
+    Returns
+    -------
+    bool
+        当输出缺失或早于输入时返回 True
+    """
+    if not os.path.exists(output_path):
+        return True
+    return os.path.getmtime(output_path) < os.path.getmtime(input_path)

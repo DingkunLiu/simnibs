@@ -89,3 +89,24 @@ def prepare_t2(
         t2_tmp.set_data_dtype(np.float32)
         nib.save(t2_tmp, sub_files.T2_reg)
         logger.info("T2 图像已保存至: %s", sub_files.T2_reg)
+    _invalidate_t2_derivatives(sub_files)
+
+
+def _invalidate_t2_derivatives(sub_files: file_finder.SubjectFiles) -> None:
+    """
+    删除依赖 T2_reg 的陈旧派生文件。
+
+    Parameters
+    ----------
+    sub_files : SubjectFiles
+        Subject files 对象
+    """
+    stale_outputs = [
+        sub_files.T2_reg_denoised,
+        sub_files.T2_bias_corrected,
+        sub_files.T2_upsampled,
+    ]
+    for output_path in stale_outputs:
+        if os.path.exists(output_path):
+            os.remove(output_path)
+            logger.info("已删除需要重建的 T2 派生文件: %s", output_path)

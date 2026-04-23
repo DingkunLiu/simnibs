@@ -26,6 +26,7 @@ import os
 import shutil
 
 import nibabel as nib
+from samseg import gems
 
 from neuracle.utils.charm_utils import read_settings, setup_atlas
 from neuracle.utils.constants import N_WORKERS
@@ -103,6 +104,7 @@ def run_segmentation(
         else:
             input_images.append(sub_files.T2_reg)
             logger.info("使用原始 T2 图像: %s", sub_files.T2_reg)
+    _validate_input_image_shapes(input_images, sub_files.template_coregistered)
     logger.info("正在估计参数。")
     segment_parameters_and_inputs = charm_utils._estimate_parameters(
         sub_files.segmentation_folder,
@@ -180,3 +182,35 @@ def run_segmentation(
     fn_lut = sub_files.tissue_labeling_upsampled.rsplit(".", 2)[0] + "_LUT.txt"
     shutil.copyfile(file_finder.templates.final_tissues_LUT, fn_lut)
     logger.info("分割完成")
+
+
+def _validate_input_image_shapes(
+    input_images: list[str],
+    template_coregistered: str,
+) -> None:
+    """
+    检查 samseg 输入在 KVL 裁剪后的形状是否一致。
+
+    Parameters
+    ----------
+    input_images : list[str]
+        用于分割的输入图像路径列表
+    template_coregistered : str
+        配准到 T1 空间的 atlas 模板路径
+    """
+    if len(input_images) < 2:
+        return
+    crop_shapes = {}
+    for image_path in input_images:
+        crop_shapes[image_path] = tuple(
+            int(x)
+            for x in gems.KvlImage(
+                image_path, template_coregistered
+            ).getImageBuffer().shape
+        )
+    if len(set(crop_shapes.values())) == 1:
+        return
+    detail = ", ".join(
+        f"{image_path}: {shape}" for image_path, shape in crop_shapes.items()
+    )
+    raise ValueError(f"KVL 裁剪后输入图像形状不一致: {detail}")

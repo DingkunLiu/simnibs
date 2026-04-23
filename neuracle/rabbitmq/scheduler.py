@@ -277,15 +277,25 @@ def handle_model_task(
     if current_progress < ModelProgress.PREPARE_T2_DONE:
         if t2_local_path and t2_local_path.exists():
             try:
-                # T2 图像格式转换（默认方式）
-                prepare_t2(str(subject_dir), str(t2_local_path))
+                # T2 图像格式转换并配准到 T1
+                prepare_t2(str(subject_dir), str(t2_local_path), register_t2=True)
             except Exception:
                 try:
                     # 失败时尝试强制使用 qform
-                    prepare_t2(str(subject_dir), str(t2_local_path), force_qform=True)
+                    prepare_t2(
+                        str(subject_dir),
+                        str(t2_local_path),
+                        register_t2=True,
+                        force_qform=True,
+                    )
                 except Exception:
                     # 再尝试强制使用 sform
-                    prepare_t2(str(subject_dir), str(t2_local_path), force_sform=True)
+                    prepare_t2(
+                        str(subject_dir),
+                        str(t2_local_path),
+                        register_t2=True,
+                        force_sform=True,
+                    )
         save_progress(progress_file, ModelProgress.PREPARE_T2_DONE)
         send_progress(message_queue, task_id, "model", ModelProgress.PREPARE_T2_DONE)
 
