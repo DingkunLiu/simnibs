@@ -103,6 +103,12 @@ PRESET_CONFIGS = {
 }
 SIMNIBS_TISSUE_NAME_TO_TAG = {"WM": "1", "GM": "2", "Scalp": "5"}
 TO_MNI_TRANSFORM_FILES = ("Conform2MNI_nonl.nii.gz", "MNI2Conform_nonl.nii.gz")
+MESH_SOURCE_REQUIRED_PATHS = (
+    Path("segmentation") / "tissue_labeling_upsampled.nii.gz",
+    Path("segmentation") / "norm_image.nii.gz",
+    Path("toMNI") / "Conform2MNI_nonl.nii.gz",
+    Path("toMNI") / "MNI2Conform_nonl.nii.gz",
+)
 
 
 class WorkspacePreparationError(RuntimeError):
@@ -251,6 +257,7 @@ def prepare_workspace(
     _reset_directory(paths.workspace_root)
     paths.workspace_dir.mkdir(parents=True, exist_ok=True)
     source_m2m_dir = Path(subject.m2m_dir)
+    _ensure_mesh_source_ready(source_m2m_dir)
     _materialize_source_assets(source_m2m_dir, paths.workspace_dir, subject.id)
     try:
         create_mesh_step(
@@ -265,6 +272,30 @@ def prepare_workspace(
     result = build_workspace_result(paths)
     validate_workspace(result)
     return result
+
+
+def _ensure_mesh_source_ready(source_m2m_dir: Path) -> None:
+    """
+    校验 mesh baseline 输入目录是否已经具备 CHARM 产物。
+
+    Parameters
+    ----------
+    source_m2m_dir : Path
+        manifest 中配置的 subject 目录。
+
+    Returns
+    -------
+    None
+    """
+    missing_paths = [source_m2m_dir / relpath for relpath in MESH_SOURCE_REQUIRED_PATHS if not (source_m2m_dir / relpath).exists()]
+    if not missing_paths:
+        return
+    hint = source_m2m_dir / "T1.nii.gz"
+    raise WorkspacePreparationError(
+        "mesh baseline 输入目录不完整，当前目录更像是 input-only MRI 目录，缺少 CHARM 必需产物: "
+        f"{', '.join(str(path) for path in missing_paths)}。"
+        f" 请先基于 {hint} 和同目录下的 T2/T2_reg 生成完整 m2m baseline，再执行 mesh validation。"
+    )
 
 
 def validate_workspace(workspace: WorkspaceBuildResult) -> None:
