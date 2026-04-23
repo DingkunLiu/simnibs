@@ -4,8 +4,33 @@
   "subjects": [
     {
       "id": "ernie",
-      "m2m_dir": "/home/dell/simnibs/data/m2m_ernie",
-      "reference_t1": "/home/dell/simnibs/data/m2m_ernie/T1.nii.gz"
+      "m2m_dir": "/data/liudingkun/simnibs/data/m2m_ernie",
+      "reference_t1": "/data/liudingkun/simnibs/data/m2m_ernie/T1.nii.gz"
+    },
+    {
+      "id": "sub-MSC01",
+      "m2m_dir": "/data/liudingkun/simnibs/data/openneuro/m2m_sub-MSC01",
+      "reference_t1": "/data/liudingkun/simnibs/data/openneuro/m2m_sub-MSC01/T1.nii.gz"
+    },
+    {
+      "id": "sub-MSC02",
+      "m2m_dir": "/data/liudingkun/simnibs/data/openneuro/m2m_sub-MSC02",
+      "reference_t1": "/data/liudingkun/simnibs/data/openneuro/m2m_sub-MSC02/T1.nii.gz"
+    },
+    {
+      "id": "sub-MSC03",
+      "m2m_dir": "/data/liudingkun/simnibs/data/openneuro/m2m_sub-MSC03",
+      "reference_t1": "/data/liudingkun/simnibs/data/openneuro/m2m_sub-MSC03/T1.nii.gz"
+    },
+    {
+      "id": "sub-MSC04",
+      "m2m_dir": "/data/liudingkun/simnibs/data/openneuro/m2m_sub-MSC04",
+      "reference_t1": "/data/liudingkun/simnibs/data/openneuro/m2m_sub-MSC04/T1.nii.gz"
+    },
+    {
+      "id": "sub-MSC05",
+      "m2m_dir": "/data/liudingkun/simnibs/data/openneuro/m2m_sub-MSC05",
+      "reference_t1": "/data/liudingkun/simnibs/data/openneuro/m2m_sub-MSC05/T1.nii.gz"
     }
   ],
   "forward_cases": [
@@ -16,27 +41,40 @@
       "pair2": ["F6", "P6"],
       "current1": [0.001, -0.001],
       "current2": [0.001, -0.001],
-      "roi_specs": [
-        {
-          "name": "target_roi",
-          "type": "sphere",
-          "center": [-41.0, -13.0, 66.0],
-          "radius": 20.0
-        }
-      ],
-      "hotspot_roi": {
-        "name": "non_target_hotspot",
-        "type": "sphere",
-        "center": [-41.0, -13.0, 66.0],
-        "radius": 25.0
-      },
+      "n_workers": 16
+    },
+    {
+      "name": "motor_rampersad2019",
+      "eeg_cap": "EEG10-20_extended_SPM12",
+      "pair1": ["F1", "CP1"],
+      "pair2": ["FC1", "CP3"],
+      "current1": [0.001, -0.001],
+      "current2": [0.001, -0.001],
+      "n_workers": 16
+    },
+    {
+      "name": "hippocampus_rampersad2019",
+      "eeg_cap": "EEG10-20_extended_SPM12",
+      "pair1": ["AFz", "P7"],
+      "pair2": ["AF4", "P9"],
+      "current1": [0.001, -0.001],
+      "current2": [0.001, -0.001],
+      "n_workers": 16
+    },
+    {
+      "name": "thalamus_lee2021",
+      "eeg_cap": "EEG10-20_extended_SPM12",
+      "pair1": ["F7", "PO7"],
+      "pair2": ["F8", "PO8"],
+      "current1": [0.001, -0.001],
+      "current2": [0.001, -0.001],
       "n_workers": 16
     }
   ],
   "inverse_cases": [
     {
-      "name": "focality_inv_demo",
-      "goal": "focality_inv",
+      "name": "m1_focality_lh",
+      "goal": "focality",
       "net_electrode_file": "EEG10-20_extended_SPM12",
       "roi": {
         "type": "sphere",
@@ -47,6 +85,48 @@
         "type": "sphere",
         "center": [-41.0, -13.0, 66.0],
         "radius": 25.0
+      },
+      "threshold": [0.1, 0.2],
+      "optimizer": "differential_evolution",
+      "seeds": [7, 11, 19],
+      "n_workers": 16
+    },
+    {
+      "name": "hippocampus_focality_lh",
+      "goal": "focality",
+      "net_electrode_file": "EEG10-20_extended_SPM12",
+      "roi": {
+        "type": "atlas",
+        "atlas_name": "BN_Atlas_246_1mm",
+        "areas": ["rHipp_L", "cHipp_L"],
+        "space": "mni"
+      },
+      "non_roi": {
+        "type": "sphere",
+        "center": [-30.0, -20.0, -18.0],
+        "radius": 25.0,
+        "space": "mni"
+      },
+      "threshold": [0.1, 0.2],
+      "optimizer": "differential_evolution",
+      "seeds": [7, 11, 19],
+      "n_workers": 16
+    },
+    {
+      "name": "thalamus_focality_lh",
+      "goal": "focality",
+      "net_electrode_file": "EEG10-20_extended_SPM12",
+      "roi": {
+        "type": "atlas",
+        "atlas_name": "BN_Atlas_246_1mm",
+        "areas": ["mPFtha_L", "mPMtha_L", "Stha_L", "rTtha_L", "PPtha_L", "Otha_L", "cTtha_L", "lPFtha_L"],
+        "space": "mni"
+      },
+      "non_roi": {
+        "type": "sphere",
+        "center": [-14.0, -18.0, 8.0],
+        "radius": 28.0,
+        "space": "mni"
       },
       "threshold": [0.1, 0.2],
       "optimizer": "differential_evolution",

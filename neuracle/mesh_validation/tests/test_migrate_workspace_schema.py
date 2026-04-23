@@ -16,8 +16,8 @@ from neuracle.mesh_validation.migrate_workspace_schema import (
 def test_relocate_replay_dirs_moves_artifacts_to_preset_replay_dir(tmp_path: Path) -> None:
     old_root = tmp_path / "work_v1"
     new_root = tmp_path / "work_v2"
-    replay_a = old_root / "ernie" / "M1" / "inverse" / "focality_inv_demo" / "seed_7" / "replay_on_m0"
-    replay_b = old_root / "ernie" / "M2" / "inverse" / "focality_inv_demo" / "seed_7" / "replay_on_m0"
+    replay_a = old_root / "ernie" / "M1" / "inverse" / "m1_focality_lh" / "seed_7" / "replay_on_m0"
+    replay_b = old_root / "ernie" / "M2" / "inverse" / "m1_focality_lh" / "seed_7" / "replay_on_m0"
     replay_a.mkdir(parents=True)
     replay_b.mkdir(parents=True)
     (replay_a / "a.txt").write_text("m1", encoding="utf-8")
@@ -25,8 +25,8 @@ def test_relocate_replay_dirs_moves_artifacts_to_preset_replay_dir(tmp_path: Pat
 
     relocate_replay_dirs(old_root, new_root)
 
-    m1_target = replay_result_path(preset_paths_for(new_root, "ernie", "M1"), "focality_inv_demo", 7).parent / "artifacts"
-    m2_target = replay_result_path(preset_paths_for(new_root, "ernie", "M2"), "focality_inv_demo", 7).parent / "artifacts"
+    m1_target = replay_result_path(preset_paths_for(new_root, "ernie", "M1"), "m1_focality_lh", 7).parent / "artifacts"
+    m2_target = replay_result_path(preset_paths_for(new_root, "ernie", "M2"), "m1_focality_lh", 7).parent / "artifacts"
     assert (m1_target / "a.txt").read_text(encoding="utf-8") == "m1"
     assert (m2_target / "b.txt").read_text(encoding="utf-8") == "m2"
     assert replay_a.exists()
@@ -36,8 +36,8 @@ def test_relocate_replay_dirs_moves_artifacts_to_preset_replay_dir(tmp_path: Pat
 def test_rewrite_migrated_path_value_rewrites_replay_paths_to_v2_replay_dir(tmp_path: Path) -> None:
     old_root = tmp_path / "work_v1"
     new_root = tmp_path / "work_v2"
-    old_path = old_root / "ernie" / "M1" / "inverse" / "focality_inv_demo" / "seed_7" / "replay_on_m0" / "artifact.nii.gz"
-    expected = replay_result_path(preset_paths_for(new_root, "ernie", "M1"), "focality_inv_demo", 7).parent / "artifacts" / "artifact.nii.gz"
+    old_path = old_root / "ernie" / "M1" / "inverse" / "m1_focality_lh" / "seed_7" / "replay_on_m0" / "artifact.nii.gz"
+    expected = replay_result_path(preset_paths_for(new_root, "ernie", "M1"), "m1_focality_lh", 7).parent / "artifacts" / "artifact.nii.gz"
     expected.parent.mkdir(parents=True, exist_ok=True)
     expected.write_text("ok", encoding="utf-8")
 
@@ -51,9 +51,9 @@ def test_rewrite_migrated_path_value_accepts_legacy_absolute_prefix(tmp_path: Pa
     old_root = tmp_path / "work_v1"
     new_root = tmp_path / "work_v2"
     legacy_path = Path(
-        "/home/dell/simnibs/neuracle/mesh_validation/work_remote_full/ernie/M1/inverse/focality_inv_demo/seed_7/replay_on_m0/artifact.nii.gz"
+        "/home/dell/simnibs/neuracle/mesh_validation/work_remote_full/ernie/M1/inverse/m1_focality_lh/seed_7/replay_on_m0/artifact.nii.gz"
     )
-    expected = replay_result_path(preset_paths_for(new_root, "ernie", "M1"), "focality_inv_demo", 7).parent / "artifacts" / "artifact.nii.gz"
+    expected = replay_result_path(preset_paths_for(new_root, "ernie", "M1"), "m1_focality_lh", 7).parent / "artifacts" / "artifact.nii.gz"
     expected.parent.mkdir(parents=True, exist_ok=True)
     expected.write_text("ok", encoding="utf-8")
 
@@ -65,7 +65,7 @@ def test_rewrite_migrated_path_value_accepts_legacy_absolute_prefix(tmp_path: Pa
 def test_rewrite_migrated_path_value_fails_when_replay_artifact_is_missing(tmp_path: Path) -> None:
     old_root = tmp_path / "work_v1"
     new_root = tmp_path / "work_v2"
-    old_path = old_root / "ernie" / "M1" / "inverse" / "focality_inv_demo" / "seed_7" / "replay_on_m0" / "artifact.nii.gz"
+    old_path = old_root / "ernie" / "M1" / "inverse" / "m1_focality_lh" / "seed_7" / "replay_on_m0" / "artifact.nii.gz"
 
     with pytest.raises(FileNotFoundError, match="artifact.nii.gz"):
         rewrite_migrated_path_value(old_root, new_root, str(old_path))

@@ -1,5 +1,5 @@
 """
-Mesh validation 阶段执行逻辑。
+Mesh validation 闃舵鎵ц閫昏緫銆?
 """
 
 from __future__ import annotations
@@ -21,6 +21,7 @@ import numpy as np
 from nibabel.processing import resample_from_to
 from scipy.spatial import cKDTree
 
+from neuracle.atlas import get_standardized_roi_path
 from neuracle.mesh_validation.mesh_validation_schema import (
     RUN_STATE_COMPLETED,
     RUN_STATE_FAILED,
@@ -71,21 +72,22 @@ FORWARD_THRESHOLDS = {
     "M3": {"mean_median": 0.12, "tail": 0.15, "hotspot": 0.20, "nrmse": 0.12},
 }
 INVERSE_THRESHOLDS = {"M1": 0.05, "M2": 0.08, "M3": 0.12, "M4": 0.12}
+FORWARD_HOTSPOT_THRESHOLDS_ABS = [0.10, 0.15, 0.20, 0.25, 0.30]
 
 
 def sort_result_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     """
-    对结果行做稳定排序。
+    瀵圭粨鏋滆鍋氱ǔ瀹氭帓搴忋€?
 
     Parameters
     ----------
     rows : list[dict[str, Any]]
-        结果行列表。
+        缁撴灉琛屽垪琛ㄣ€?
 
     Returns
     -------
     list[dict[str, Any]]
-        排序后的结果行列表。
+        鎺掑簭鍚庣殑缁撴灉琛屽垪琛ㄣ€?
     """
     return sorted(
         rows,
@@ -94,7 +96,6 @@ def sort_result_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
             str(row.get("case_name", "")),
             int(row.get("seed", -1)) if row.get("seed") is not None else -1,
             str(row.get("preset", "")),
-            str(row.get("roi_name", "")),
             str(row.get("status", "")),
         ),
     )
@@ -102,19 +103,19 @@ def sort_result_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
 
 def _resolve_failure_stage(default_failure_stage: str, exc: Exception) -> str:
     """
-    解析失败阶段名称。
+    瑙ｆ瀽澶辫触闃舵鍚嶇О銆?
 
     Parameters
     ----------
     default_failure_stage : str
-        默认失败阶段名称。
+        榛樿澶辫触闃舵鍚嶇О銆?
     exc : Exception
-        捕获到的异常。
+        鎹曡幏鍒扮殑寮傚父銆?
 
     Returns
     -------
     str
-        failure_stage。
+        failure_stage銆?
     """
     if isinstance(exc, MeshGenerationError):
         return "mesh_generation_failed"
@@ -133,29 +134,29 @@ def _execute_stage_task(
     runner: Any,
 ) -> dict[str, Any]:
     """
-    执行单个阶段任务并维护 result/run 文件。
+    鎵ц鍗曚釜闃舵浠诲姟骞剁淮鎶?result/run 鏂囦欢銆?
 
     Parameters
     ----------
     stage : str
-        阶段名称。
+        闃舵鍚嶇О銆?
     result_path : Path
-        result.json 路径。
+        result.json 璺緞銆?
     run_path : Path
-        run.json 路径。
+        run.json 璺緞銆?
     command : str
-        当前命令行。
+        褰撳墠鍛戒护琛屻€?
     payload : dict[str, Any]
-        结果基础字段。
+        缁撴灉鍩虹瀛楁銆?
     default_failure_stage : str
-        默认失败阶段名称。
+        榛樿澶辫触闃舵鍚嶇О銆?
     runner : Any
-        真正执行逻辑的回调。
+        鐪熸鎵ц閫昏緫鐨勫洖璋冦€?
 
     Returns
     -------
     dict[str, Any]
-        result.json 对象。
+        result.json 瀵硅薄銆?
     """
     tracker = RunStateTracker(run_path=run_path, stage=stage, command=command, metadata=payload)
     tracker.start()
@@ -171,7 +172,7 @@ def _execute_stage_task(
         }
         write_json(result_path, failure)
         tracker.finish(RUN_STATE_FAILED, error=str(exc))
-        LOGGER.exception("%s 执行失败: %s", stage, payload)
+        LOGGER.exception("%s 鎵ц澶辫触: %s", stage, payload)
         return failure
     write_json(result_path, result)
     tracker.finish(RUN_STATE_COMPLETED)
@@ -180,21 +181,21 @@ def _execute_stage_task(
 
 def collect_parallel_rows(task_args: list[tuple[Any, ...]], worker_fn: Any, max_workers: int) -> list[dict[str, Any]]:
     """
-    使用 spawn 进程池执行 worker。
+    浣跨敤 spawn 杩涚▼姹犳墽琛?worker銆?
 
     Parameters
     ----------
     task_args : list[tuple[Any, ...]]
-        每个 worker 的参数元组。
+        姣忎釜 worker 鐨勫弬鏁板厓缁勩€?
     worker_fn : Any
-        模块级 worker 入口。
+        妯″潡绾?worker 鍏ュ彛銆?
     max_workers : int
-        最大并行进程数。
+        鏈€澶у苟琛岃繘绋嬫暟銆?
 
     Returns
     -------
     list[dict[str, Any]]
-        聚合后的结果行。
+        鑱氬悎鍚庣殑缁撴灉琛屻€?
     """
     if not task_args:
         return []
@@ -214,17 +215,17 @@ def collect_parallel_rows(task_args: list[tuple[Any, ...]], worker_fn: Any, max_
 
 def _prepare_stage_artifacts_dir(stage_dir: Path) -> Path:
     """
-    重建阶段工件目录。
+    閲嶅缓闃舵宸ヤ欢鐩綍銆?
 
     Parameters
     ----------
     stage_dir : Path
-        阶段目录。
+        闃舵鐩綍銆?
 
     Returns
     -------
     Path
-        工件目录。
+        宸ヤ欢鐩綍銆?
     """
     stage_dir.mkdir(parents=True, exist_ok=True)
     artifacts_dir = stage_dir / "artifacts"
@@ -241,35 +242,35 @@ def _load_completed_stage_result(
     wait_on_running: bool,
 ) -> dict[str, Any]:
     """
-    读取已完成的阶段结果。
+    璇诲彇宸插畬鎴愮殑闃舵缁撴灉銆?
 
     Parameters
     ----------
     run_path : Path
-        run.json 路径。
+        run.json 璺緞銆?
     result_path : Path
-        result.json 路径。
+        result.json 璺緞銆?
     description : str
-        描述字符串。
+        鎻忚堪瀛楃涓层€?
     wait_on_running : bool
-        遇到 running 是否等待。
+        閬囧埌 running 鏄惁绛夊緟銆?
 
     Returns
     -------
     dict[str, Any]
-        result.json 内容。
+        result.json 鍐呭銆?
     """
     run_payload = read_json(run_path)
     if run_payload is None:
-        raise FileNotFoundError(f"缺少运行状态: {description} -> {run_path}")
+        raise FileNotFoundError(f"缂哄皯杩愯鐘舵€? {description} -> {run_path}")
     state = str(run_payload.get("state"))
     if state == RUN_STATE_RUNNING:
         if not wait_on_running:
-            raise RuntimeError(f"前序任务仍在运行: {description}")
+            raise RuntimeError(f"鍓嶅簭浠诲姟浠嶅湪杩愯: {description}")
         run_payload = wait_for_run_completion(run_path, description)
         state = str(run_payload.get("state"))
     if state != RUN_STATE_COMPLETED:
-        raise RuntimeError(f"前序任务未完成: {description} -> {state}")
+        raise RuntimeError(f"鍓嶅簭浠诲姟鏈畬鎴? {description} -> {state}")
     result_payload = read_json(result_path)
     if result_payload is None:
         raise FileNotFoundError(f"缺少结果文件: {description} -> {result_path}")
@@ -284,25 +285,25 @@ def _ensure_m0_workspace_ready(
     workspace_cache: dict[tuple[str, str], WorkspaceBuildResult],
 ) -> WorkspaceBuildResult:
     """
-    确保 M0 workspace 已完成且可用。
+    纭繚 M0 workspace 宸插畬鎴愪笖鍙敤銆?
 
     Parameters
     ----------
     subject : SubjectConfig
-        subject 配置。
+        subject 閰嶇疆銆?
     work_root : Path
-        工作根目录。
+        宸ヤ綔鏍圭洰褰曘€?
     preset_ini_paths : dict[str, Path]
-        preset ini 路径映射。
+        preset ini 璺緞鏄犲皠銆?
     debug_mesh : bool
-        是否保留 mesh 调试输出。
+        鏄惁淇濈暀 mesh 璋冭瘯杈撳嚭銆?
     workspace_cache : dict[tuple[str, str], WorkspaceBuildResult]
-        workspace 缓存。
+        workspace 缂撳瓨銆?
 
     Returns
     -------
     WorkspaceBuildResult
-        M0 workspace。
+        M0 workspace銆?
     """
     paths = preset_paths_for(work_root, subject.id, "M0")
     _load_completed_stage_result(
@@ -330,27 +331,27 @@ def _load_inverse_result(
     wait_on_running: bool,
 ) -> dict[str, Any]:
     """
-    加载 inverse 正式结果。
+    鍔犺浇 inverse 姝ｅ紡缁撴灉銆?
 
     Parameters
     ----------
     subject : SubjectConfig
-        subject 配置。
+        subject 閰嶇疆銆?
     preset : str
-        preset 名称。
+        preset 鍚嶇О銆?
     case_name : str
-        case 名称。
+        case 鍚嶇О銆?
     seed : int
-        随机种子。
+        闅忔満绉嶅瓙銆?
     work_root : Path
-        工作根目录。
+        宸ヤ綔鏍圭洰褰曘€?
     wait_on_running : bool
-        遇到 running 是否等待。
+        閬囧埌 running 鏄惁绛夊緟銆?
 
     Returns
     -------
     dict[str, Any]
-        inverse 结果。
+        inverse 缁撴灉銆?
     """
     paths = preset_paths_for(work_root, subject.id, preset)
     return _load_completed_stage_result(
@@ -370,27 +371,27 @@ def _load_replay_result(
     wait_on_running: bool,
 ) -> dict[str, Any]:
     """
-    加载 replay 正式结果。
+    鍔犺浇 replay 姝ｅ紡缁撴灉銆?
 
     Parameters
     ----------
     subject : SubjectConfig
-        subject 配置。
+        subject 閰嶇疆銆?
     preset : str
-        preset 名称。
+        preset 鍚嶇О銆?
     case_name : str
-        case 名称。
+        case 鍚嶇О銆?
     seed : int
-        随机种子。
+        闅忔満绉嶅瓙銆?
     work_root : Path
-        工作根目录。
+        宸ヤ綔鏍圭洰褰曘€?
     wait_on_running : bool
-        遇到 running 是否等待。
+        閬囧埌 running 鏄惁绛夊緟銆?
 
     Returns
     -------
     dict[str, Any]
-        replay 结果。
+        replay 缁撴灉銆?
     """
     paths = preset_paths_for(work_root, subject.id, preset)
     return _load_completed_stage_result(
@@ -410,27 +411,27 @@ def _run_mesh_preset_worker(
     command: str,
 ) -> list[dict[str, Any]]:
     """
-    执行单个 `(subject, preset)` 的 mesh 阶段。
+    鎵ц鍗曚釜 `(subject, preset)` 鐨?mesh 闃舵銆?
 
     Parameters
     ----------
     subject : SubjectConfig
-        subject 配置。
+        subject 閰嶇疆銆?
     preset : str
-        preset 名称。
+        preset 鍚嶇О銆?
     preset_ini_paths : dict[str, Path]
-        preset ini 路径映射。
+        preset ini 璺緞鏄犲皠銆?
     work_root : Path
-        工作根目录。
+        宸ヤ綔鏍圭洰褰曘€?
     debug_mesh : bool
-        是否保留 mesh 调试输出。
+        鏄惁淇濈暀 mesh 璋冭瘯杈撳嚭銆?
     command : str
-        当前命令行。
+        褰撳墠鍛戒护琛屻€?
 
     Returns
     -------
     list[dict[str, Any]]
-        mesh 结果行。
+        mesh 缁撴灉琛屻€?
     """
     payload = {"subject_id": subject.id, "preset": preset}
     paths = preset_paths_for(work_root, subject.id, preset)
@@ -480,29 +481,29 @@ def build_mesh_variants(
     command: str,
 ) -> list[dict[str, Any]]:
     """
-    构建 workspace 并统计 mesh 指标。
+    鏋勫缓 workspace 骞剁粺璁?mesh 鎸囨爣銆?
 
     Parameters
     ----------
     subjects : list[SubjectConfig]
-        subject 列表。
+        subject 鍒楄〃銆?
     presets : list[str]
-        preset 列表。
+        preset 鍒楄〃銆?
     preset_ini_paths : dict[str, Path]
-        preset ini 路径映射。
+        preset ini 璺緞鏄犲皠銆?
     work_root : Path
-        工作根目录。
+        宸ヤ綔鏍圭洰褰曘€?
     debug_mesh : bool
-        是否保留 mesh 调试输出。
+        鏄惁淇濈暀 mesh 璋冭瘯杈撳嚭銆?
     preset_workers : int
-        preset 并行进程数。
+        preset 骞惰杩涚▼鏁般€?
     command : str
-        当前命令行。
+        褰撳墠鍛戒护琛屻€?
 
     Returns
     -------
     list[dict[str, Any]]
-        mesh 结果行。
+        mesh 缁撴灉琛屻€?
     """
     task_args = [(subject, preset, preset_ini_paths, work_root, debug_mesh, command) for subject in subjects for preset in presets]
     return collect_parallel_rows(task_args, _run_mesh_preset_worker, preset_workers)
@@ -510,26 +511,27 @@ def build_mesh_variants(
 
 def build_spec_mask(spec: dict[str, Any], reference_img: nib.Nifti1Image, subject_dir: str, cache_dir: Path, cache_key: str) -> np.ndarray:
     """
-    构建 ROI 掩码。
+    鏋勫缓 ROI 鎺╃爜銆?
 
     Parameters
     ----------
     spec : dict[str, Any]
-        ROI 配置。
+        ROI 閰嶇疆銆?
     reference_img : nib.Nifti1Image
-        参考图像。
+        鍙傝€冨浘鍍忋€?
     subject_dir : str
-        subject 目录。
+        subject 鐩綍銆?
     cache_dir : Path
-        缓存目录。
+        缂撳瓨鐩綍銆?
     cache_key : str
-        缓存键。
+        缂撳瓨閿€?
 
     Returns
     -------
     np.ndarray
-        布尔掩码。
+        甯冨皵鎺╃爜銆?
     """
+    spec = materialize_roi_spec(spec)
     spec_type = spec.get("type", "sphere")
     if spec_type == "sphere":
         ijk = np.indices(reference_img.shape, dtype=float).reshape(3, -1).T
@@ -538,7 +540,7 @@ def build_spec_mask(spec: dict[str, Any], reference_img: nib.Nifti1Image, subjec
         radius = float(spec["radius"])
         return (np.linalg.norm(xyz - center, axis=1) <= radius).reshape(reference_img.shape)
     if spec_type != "mask":
-        raise ValueError(f"不支持的 ROI 类型: {spec_type}")
+        raise ValueError(f"涓嶆敮鎸佺殑 ROI 绫诲瀷: {spec_type}")
     mask_img = nib.load(spec["path"])
     if spec.get("space", "subject") == "mni":
         cache_dir.mkdir(parents=True, exist_ok=True)
@@ -560,21 +562,58 @@ def build_spec_mask(spec: dict[str, Any], reference_img: nib.Nifti1Image, subjec
     return np.asarray(mask_img.get_fdata()) == spec.get("value", 1)
 
 
+def materialize_roi_spec(spec: dict[str, Any]) -> dict[str, Any]:
+    """
+    Materialize atlas ROI specs into mask ROI specs.
+    """
+    if spec.get("type", "sphere") != "atlas":
+        return spec
+    return {
+        "type": "mask",
+        "path": str(get_standardized_roi_path(spec["atlas_name"], spec["areas"])),
+        "space": spec.get("space", "mni"),
+        "value": spec.get("value", 1),
+    }
+
+
+def compute_gm_threshold_metrics(
+    ti_data: np.ndarray,
+    gm_mask: np.ndarray,
+    thresholds_abs: list[float],
+) -> list[dict[str, float]]:
+    """
+    Compute current-case GM threshold counts for each absolute threshold.
+    """
+    gm_voxels = int(np.count_nonzero(gm_mask))
+    metrics: list[dict[str, float]] = []
+    for threshold in thresholds_abs:
+        active_voxels = int(np.count_nonzero(gm_mask & (ti_data >= float(threshold))))
+        metrics.append(
+            {
+                "threshold_abs": float(threshold),
+                "gm_voxels": gm_voxels,
+                "current_gm_threshold_voxels": active_voxels,
+                "current_gm_threshold_fraction": float(active_voxels / gm_voxels) if gm_voxels else math.nan,
+            }
+        )
+    return metrics
+
+
 def load_volume_data(volume_path: Path, reference_img: nib.Nifti1Image) -> np.ndarray:
     """
-    读取并对齐体积数据。
+    璇诲彇骞跺榻愪綋绉暟鎹€?
 
     Parameters
     ----------
     volume_path : Path
-        体积路径。
+        浣撶Н璺緞銆?
     reference_img : nib.Nifti1Image
-        参考图像。
+        鍙傝€冨浘鍍忋€?
 
     Returns
     -------
     np.ndarray
-        对齐后的体积数据。
+        瀵归綈鍚庣殑浣撶Н鏁版嵁銆?
     """
     image = nib.squeeze_image(nib.load(str(volume_path)))
     reference_img = nib.squeeze_image(reference_img)
@@ -583,69 +622,41 @@ def load_volume_data(volume_path: Path, reference_img: nib.Nifti1Image) -> np.nd
     return np.asarray(image.get_fdata())
 
 
-def roi_statistics(values: np.ndarray) -> dict[str, float]:
-    """
-    计算 ROI 统计量。
-
-    Parameters
-    ----------
-    values : np.ndarray
-        ROI 内体素值。
-
-    Returns
-    -------
-    dict[str, float]
-        ROI 统计结果。
-    """
-    if values.size == 0:
-        return {"roi_mean": math.nan, "roi_median": math.nan, "roi_p95": math.nan, "roi_p99": math.nan, "roi_max": math.nan}
-    return {
-        "roi_mean": float(np.mean(values)),
-        "roi_median": float(np.median(values)),
-        "roi_p95": float(np.percentile(values, 95)),
-        "roi_p99": float(np.percentile(values, 99)),
-        "roi_max": float(np.max(values)),
-    }
-
 
 def compute_forward_case_metrics(
     ti_volume_path: Path,
-    subject: SubjectConfig,
-    subject_dir: str,
+    final_labels_path: Path,
     case: dict[str, Any],
-    cache_dir: Path,
 ) -> dict[str, Any]:
     """
-    计算 forward case 的 ROI 指标。
+    计算 forward case 的 GM 指标。
 
     Parameters
     ----------
     ti_volume_path : Path
         TI 体积路径。
-    subject : SubjectConfig
-        subject 配置。
-    subject_dir : str
-        当前 workspace 目录。
+    final_labels_path : Path
+        最终组织标签路径。
     case : dict[str, Any]
         forward case 配置。
-    cache_dir : Path
-        掩码缓存目录。
 
     Returns
     -------
     dict[str, Any]
         case 级指标结果。
     """
-    reference_img = nib.load(subject.reference_t1)
+    reference_img = nib.squeeze_image(nib.load(str(ti_volume_path)))
     ti_data = load_volume_data(ti_volume_path, reference_img)
-    hotspot_mask = build_spec_mask(case["hotspot_roi"], reference_img, subject_dir, cache_dir, f"{subject.id}_{case['name']}_hotspot")
-    hotspot_value = float(np.max(ti_data[hotspot_mask])) if np.any(hotspot_mask) else math.nan
-    roi_metrics = []
-    for roi_index, roi_spec in enumerate(case["roi_specs"]):
-        roi_name = roi_spec.get("name", f"roi_{roi_index}")
-        roi_mask = build_spec_mask(roi_spec, reference_img, subject_dir, cache_dir, f"{subject.id}_{case['name']}_{roi_name}")
-        roi_metrics.append({"roi_name": roi_name, **roi_statistics(ti_data[roi_mask])})
-    return {"hotspot_value": hotspot_value, "roi_metrics": roi_metrics}
+    current_labels = load_volume_data(final_labels_path, reference_img)
+    gm_mask = current_labels == ElementTags.GM
+    return {
+        "gm_peak_value": float(np.max(ti_data[gm_mask])) if np.any(gm_mask) else math.nan,
+        "gm_threshold_metrics": compute_gm_threshold_metrics(
+            ti_data=ti_data,
+            gm_mask=gm_mask,
+            thresholds_abs=[float(value) for value in case.get("gm_thresholds_abs", FORWARD_HOTSPOT_THRESHOLDS_ABS)],
+        ),
+    }
 
 
 def _run_forward_preset_worker(
@@ -658,29 +669,29 @@ def _run_forward_preset_worker(
     command: str,
 ) -> list[dict[str, Any]]:
     """
-    执行单个 `(subject, preset)` 的 forward 阶段。
+    鎵ц鍗曚釜 `(subject, preset)` 鐨?forward 闃舵銆?
 
     Parameters
     ----------
     subject : SubjectConfig
-        subject 配置。
+        subject 閰嶇疆銆?
     preset : str
-        preset 名称。
+        preset 鍚嶇О銆?
     forward_cases : list[dict[str, Any]]
-        forward case 列表。
+        forward case 鍒楄〃銆?
     work_root : Path
-        工作根目录。
+        宸ヤ綔鏍圭洰褰曘€?
     preset_ini_paths : dict[str, Path]
-        preset ini 路径映射。
+        preset ini 璺緞鏄犲皠銆?
     debug_mesh : bool
-        是否保留 mesh 调试输出。
+        鏄惁淇濈暀 mesh 璋冭瘯杈撳嚭銆?
     command : str
-        当前命令行。
+        褰撳墠鍛戒护琛屻€?
 
     Returns
     -------
     list[dict[str, Any]]
-        forward 结果行。
+        forward 缁撴灉琛屻€?
     """
     rows: list[dict[str, Any]] = []
     workspace_cache: dict[tuple[str, str], WorkspaceBuildResult] = {}
@@ -727,10 +738,8 @@ def _run_forward_preset_worker(
             ti_nifti_path = Path(export_ti_to_nifti(str(ti_mesh_path), str(output_dir), subject.reference_t1, "max_TI", f"{subject.id}_{case['name']}"))
             metrics = compute_forward_case_metrics(
                 ti_volume_path=ti_nifti_path,
-                subject=subject,
-                subject_dir=str(workspace.workspace_dir),
+                final_labels_path=workspace.final_tissues_path,
                 case=case,
-                cache_dir=output_dir / "_mask_cache",
             )
             elapsed = time.perf_counter() - start
             return {
@@ -768,31 +777,31 @@ def run_forward_validation(
     command: str,
 ) -> list[dict[str, Any]]:
     """
-    运行 forward TI 验证。
+    杩愯 forward TI 楠岃瘉銆?
 
     Parameters
     ----------
     subjects : list[SubjectConfig]
-        subject 列表。
+        subject 鍒楄〃銆?
     presets : list[str]
-        preset 列表。
+        preset 鍒楄〃銆?
     forward_cases : list[dict[str, Any]]
-        forward case 列表。
+        forward case 鍒楄〃銆?
     work_root : Path
-        工作根目录。
+        宸ヤ綔鏍圭洰褰曘€?
     preset_ini_paths : dict[str, Path]
-        preset ini 路径映射。
+        preset ini 璺緞鏄犲皠銆?
     debug_mesh : bool
-        是否保留 mesh 调试输出。
+        鏄惁淇濈暀 mesh 璋冭瘯杈撳嚭銆?
     preset_workers : int
-        preset 并行进程数。
+        preset 骞惰杩涚▼鏁般€?
     command : str
-        当前命令行。
+        褰撳墠鍛戒护琛屻€?
 
     Returns
     -------
     list[dict[str, Any]]
-        forward 结果行。
+        forward 缁撴灉琛屻€?
     """
     task_args = [(subject, preset, forward_cases, work_root, preset_ini_paths, debug_mesh, command) for subject in subjects for preset in presets]
     return collect_parallel_rows(task_args, _run_forward_preset_worker, preset_workers)
@@ -800,17 +809,17 @@ def run_forward_validation(
 
 def read_hdf5_scalar(dataset: Any) -> Any:
     """
-    读取 HDF5 标量。
+    璇诲彇 HDF5 鏍囬噺銆?
 
     Parameters
     ----------
     dataset : Any
-        HDF5 数据集。
+        HDF5 鏁版嵁闆嗐€?
 
     Returns
     -------
     Any
-        标量值。
+        鏍囬噺鍊笺€?
     """
     value = dataset[()]
     if isinstance(value, bytes):
@@ -822,17 +831,17 @@ def read_hdf5_scalar(dataset: Any) -> Any:
 
 def parse_inverse_summary(summary_path: Path) -> dict[str, Any]:
     """
-    解析优化 summary.hdf5。
+    瑙ｆ瀽浼樺寲 summary.hdf5銆?
 
     Parameters
     ----------
     summary_path : Path
-        summary 路径。
+        summary 璺緞銆?
 
     Returns
     -------
     dict[str, Any]
-        摘要结果。
+        鎽樿缁撴灉銆?
     """
     result: dict[str, Any] = {}
     with h5py.File(summary_path, "r") as handle:
@@ -845,17 +854,17 @@ def parse_inverse_summary(summary_path: Path) -> dict[str, Any]:
 
 def load_mapping(mapping_path: Path) -> list[dict[str, Any]]:
     """
-    读取 electrode mapping。
+    璇诲彇 electrode mapping銆?
 
     Parameters
     ----------
     mapping_path : Path
-        mapping 路径。
+        mapping 璺緞銆?
 
     Returns
     -------
     list[dict[str, Any]]
-        规范化后的 mapping 条目。
+        瑙勮寖鍖栧悗鐨?mapping 鏉＄洰銆?
     """
     with mapping_path.open("r", encoding="utf-8") as handle:
         raw = json.load(handle)
@@ -884,23 +893,24 @@ def load_mapping(mapping_path: Path) -> list[dict[str, Any]]:
 
 def add_inverse_roi(opt: Any, spec: dict[str, Any], mesh_file: str, default_difference: bool = False) -> None:
     """
-    向优化对象添加 ROI。
+    鍚戜紭鍖栧璞℃坊鍔?ROI銆?
 
     Parameters
     ----------
     opt : Any
-        优化对象。
+        浼樺寲瀵硅薄銆?
     spec : dict[str, Any]
-        ROI 配置。
+        ROI 閰嶇疆銆?
     mesh_file : str
-        mesh 路径。
+        mesh 璺緞銆?
     default_difference : bool, optional
-        是否默认作为 difference ROI。
+        鏄惁榛樿浣滀负 difference ROI銆?
 
     Returns
     -------
     None
     """
+    spec = materialize_roi_spec(spec)
     roi = opt.add_roi()
     roi.method = "volume"
     roi.mesh = mesh_file
@@ -922,18 +932,18 @@ def add_inverse_roi(opt: Any, spec: dict[str, Any], mesh_file: str, default_diff
 
 def configure_inverse_case(opt: Any, case: dict[str, Any], mesh_file: str, net_file: str) -> None:
     """
-    配置 inverse case。
+    閰嶇疆 inverse case銆?
 
     Parameters
     ----------
     opt : Any
-        优化对象。
+        浼樺寲瀵硅薄銆?
     case : dict[str, Any]
-        inverse case 配置。
+        inverse case 閰嶇疆銆?
     mesh_file : str
-        mesh 路径。
+        mesh 璺緞銆?
     net_file : str
-        电极网文件路径。
+        鐢垫瀬缃戞枃浠惰矾寰勩€?
 
     Returns
     -------
@@ -957,7 +967,7 @@ def configure_inverse_case(opt: Any, case: dict[str, Any], mesh_file: str, net_f
     pair2.radius = case.get("electrode_radius", [10])
     pair2.current = case.get("electrode_current2", [0.002, -0.002])
     add_inverse_roi(opt, case["roi"], mesh_file=mesh_file, default_difference=False)
-    if case["goal"] in {"focality", "focality_inv"}:
+    if case["goal"] == "focality":
         add_inverse_roi(opt, case.get("non_roi", case["roi"]), mesh_file=mesh_file, default_difference=True)
 
 
@@ -969,25 +979,25 @@ def compute_goal_from_volume(
     cache_dir: Path,
 ) -> dict[str, float]:
     """
-    根据 TI 体积重算目标值。
+    鏍规嵁 TI 浣撶Н閲嶇畻鐩爣鍊笺€?
 
     Parameters
     ----------
     ti_data : np.ndarray
-        TI 数据。
+        TI 鏁版嵁銆?
     reference_img : nib.Nifti1Image
-        参考图像。
+        鍙傝€冨浘鍍忋€?
     subject_dir : str
-        subject 目录。
+        subject 鐩綍銆?
     case : dict[str, Any]
-        inverse case 配置。
+        inverse case 閰嶇疆銆?
     cache_dir : Path
-        缓存目录。
+        缂撳瓨鐩綍銆?
 
     Returns
     -------
     dict[str, float]
-        replay 指标结果。
+        replay 鎸囨爣缁撴灉銆?
     """
     roi_mask = build_spec_mask(case["roi"], reference_img, subject_dir, cache_dir, f"{case['name']}_inverse_roi")
     roi_values = ti_data[roi_mask]
@@ -999,29 +1009,28 @@ def compute_goal_from_volume(
         result["replay_goal"] = float(-np.percentile(roi_values, 99.9))
         return result
     non_roi_mask = build_spec_mask(case.get("non_roi", case["roi"]), reference_img, subject_dir, cache_dir, f"{case['name']}_inverse_non_roi")
-    if case["goal"] in {"focality", "focality_inv"}:
-        non_roi_mask = np.logical_and(non_roi_mask, np.logical_not(roi_mask))
+    non_roi_mask = np.logical_and(non_roi_mask, np.logical_not(roi_mask))
     non_roi_values = ti_data[non_roi_mask]
-    roc_value = float(ROC(roi_values, non_roi_values, case.get("threshold", [0.1, 0.2]), focal=case["goal"] == "focality"))
+    roc_value = float(ROC(roi_values, non_roi_values, case.get("threshold", [0.1, 0.2]), focal=True))
     result["replay_non_roi_mean"] = float(np.mean(non_roi_values))
     result["replay_roc"] = roc_value
-    result["replay_goal"] = float(-100 * (math.sqrt(2) - roc_value)) if case["goal"] == "focality" else float(-100 * roc_value)
+    result["replay_goal"] = float(-100 * (math.sqrt(2) - roc_value))
     return result
 
 
 def group_labels_by_channel(entries: list[dict[str, Any]]) -> tuple[list[str], list[str]]:
     """
-    从映射结果恢复两对电极标签。
+    浠庢槧灏勭粨鏋滄仮澶嶄袱瀵圭數鏋佹爣绛俱€?
 
     Parameters
     ----------
     entries : list[dict[str, Any]]
-        映射条目。
+        鏄犲皠鏉＄洰銆?
 
     Returns
     -------
     tuple[list[str], list[str]]
-        两对电极标签。
+        涓ゅ鐢垫瀬鏍囩銆?
     """
     grouped: dict[int, list[dict[str, Any]]] = {}
     for entry in entries:
@@ -1033,19 +1042,19 @@ def group_labels_by_channel(entries: list[dict[str, Any]]) -> tuple[list[str], l
 
 def compute_mapping_drift(baseline_entries: list[dict[str, Any]], candidate_entries: list[dict[str, Any]]) -> dict[str, float | bool]:
     """
-    计算映射漂移指标。
+    璁＄畻鏄犲皠婕傜Щ鎸囨爣銆?
 
     Parameters
     ----------
     baseline_entries : list[dict[str, Any]]
-        M0 基线映射。
+        M0 鍩虹嚎鏄犲皠銆?
     candidate_entries : list[dict[str, Any]]
-        当前映射。
+        褰撳墠鏄犲皠銆?
 
     Returns
     -------
     dict[str, float | bool]
-        漂移指标。
+        婕傜Щ鎸囨爣銆?
     """
     if len(baseline_entries) != len(candidate_entries):
         return {"label_consistent": False}
@@ -1077,33 +1086,33 @@ def run_replay_on_m0(
     workspace_cache: dict[tuple[str, str], WorkspaceBuildResult],
 ) -> Path:
     """
-    在 M0 workspace 上回放映射后的电极。
+    鍦?M0 workspace 涓婂洖鏀炬槧灏勫悗鐨勭數鏋併€?
 
     Parameters
     ----------
     subject : SubjectConfig
-        subject 配置。
+        subject 閰嶇疆銆?
     preset : str
-        来源 preset。
+        鏉ユ簮 preset銆?
     case : dict[str, Any]
-        inverse case 配置。
+        inverse case 閰嶇疆銆?
     seed : int
-        随机种子。
+        闅忔満绉嶅瓙銆?
     mapped_entries : list[dict[str, Any]]
-        映射结果。
+        鏄犲皠缁撴灉銆?
     work_root : Path
-        工作根目录。
+        宸ヤ綔鏍圭洰褰曘€?
     preset_ini_paths : dict[str, Path]
-        preset ini 路径映射。
+        preset ini 璺緞鏄犲皠銆?
     debug_mesh : bool
-        是否保留 mesh 调试输出。
+        鏄惁淇濈暀 mesh 璋冭瘯杈撳嚭銆?
     workspace_cache : dict[tuple[str, str], WorkspaceBuildResult]
-        workspace 缓存。
+        workspace 缂撳瓨銆?
 
     Returns
     -------
     Path
-        replay TI NIfTI 路径。
+        replay TI NIfTI 璺緞銆?
     """
     candidate_paths = preset_paths_for(work_root, subject.id, preset)
     replay_dir = _prepare_stage_artifacts_dir(candidate_paths.replay_root / case["name"] / "seeds" / str(seed))
@@ -1139,29 +1148,29 @@ def _run_inverse_preset_worker(
     command: str,
 ) -> list[dict[str, Any]]:
     """
-    执行单个 `(subject, preset)` 的 inverse 阶段。
+    鎵ц鍗曚釜 `(subject, preset)` 鐨?inverse 闃舵銆?
 
     Parameters
     ----------
     subject : SubjectConfig
-        subject 配置。
+        subject 閰嶇疆銆?
     preset : str
-        preset 名称。
+        preset 鍚嶇О銆?
     inverse_cases : list[dict[str, Any]]
-        inverse case 列表。
+        inverse case 鍒楄〃銆?
     work_root : Path
-        工作根目录。
+        宸ヤ綔鏍圭洰褰曘€?
     preset_ini_paths : dict[str, Path]
-        preset ini 路径映射。
+        preset ini 璺緞鏄犲皠銆?
     debug_mesh : bool
-        是否保留 mesh 调试输出。
+        鏄惁淇濈暀 mesh 璋冭瘯杈撳嚭銆?
     command : str
-        当前命令行。
+        褰撳墠鍛戒护琛屻€?
 
     Returns
     -------
     list[dict[str, Any]]
-        inverse 结果行。
+        inverse 缁撴灉琛屻€?
     """
     rows: list[dict[str, Any]] = []
     workspace_cache: dict[tuple[str, str], WorkspaceBuildResult] = {}
@@ -1237,31 +1246,31 @@ def run_inverse_validation(
     command: str,
 ) -> list[dict[str, Any]]:
     """
-    运行 inverse 验证。
+    杩愯 inverse 楠岃瘉銆?
 
     Parameters
     ----------
     subjects : list[SubjectConfig]
-        subject 列表。
+        subject 鍒楄〃銆?
     presets : list[str]
-        preset 列表。
+        preset 鍒楄〃銆?
     inverse_cases : list[dict[str, Any]]
-        inverse case 列表。
+        inverse case 鍒楄〃銆?
     work_root : Path
-        工作根目录。
+        宸ヤ綔鏍圭洰褰曘€?
     preset_ini_paths : dict[str, Path]
-        preset ini 路径映射。
+        preset ini 璺緞鏄犲皠銆?
     debug_mesh : bool
-        是否保留 mesh 调试输出。
+        鏄惁淇濈暀 mesh 璋冭瘯杈撳嚭銆?
     preset_workers : int
-        preset 并行进程数。
+        preset 骞惰杩涚▼鏁般€?
     command : str
-        当前命令行。
+        褰撳墠鍛戒护琛屻€?
 
     Returns
     -------
     list[dict[str, Any]]
-        inverse 结果行。
+        inverse 缁撴灉琛屻€?
     """
     active_presets = [preset for preset in presets if preset in INVERSE_PRESET_ORDER]
     task_args = [(subject, preset, inverse_cases, work_root, preset_ini_paths, debug_mesh, command) for subject in subjects for preset in active_presets]
@@ -1281,35 +1290,35 @@ def _build_replay_success_result(
     baseline_inverse: dict[str, Any] | None,
 ) -> dict[str, Any]:
     """
-    构造 replay 成功结果。
+    鏋勯€?replay 鎴愬姛缁撴灉銆?
 
     Parameters
     ----------
     subject : SubjectConfig
-        subject 配置。
+        subject 閰嶇疆銆?
     preset : str
-        preset 名称。
+        preset 鍚嶇О銆?
     case : dict[str, Any]
-        inverse case 配置。
+        inverse case 閰嶇疆銆?
     seed : int
-        随机种子。
+        闅忔満绉嶅瓙銆?
     elapsed_seconds : float
-        执行耗时。
+        鎵ц鑰楁椂銆?
     replay_ti_volume : Path
-        replay TI 路径。
+        replay TI 璺緞銆?
     replay_metrics : dict[str, float]
-        replay 指标。
+        replay 鎸囨爣銆?
     inverse_result : dict[str, Any]
-        当前 preset inverse 结果。
+        褰撳墠 preset inverse 缁撴灉銆?
     baseline_replay : dict[str, Any] or None
-        M0 replay 基线结果。
+        M0 replay 鍩虹嚎缁撴灉銆?
     baseline_inverse : dict[str, Any] or None
-        M0 inverse 基线结果。
+        M0 inverse 鍩虹嚎缁撴灉銆?
 
     Returns
     -------
     dict[str, Any]
-        replay 结果。
+        replay 缁撴灉銆?
     """
     payload = {
         "subject_id": subject.id,
@@ -1382,35 +1391,35 @@ def _run_single_replay_result(
     wait_on_inverse: bool,
 ) -> dict[str, Any]:
     """
-    执行单个 replay 结果生成。
+    鎵ц鍗曚釜 replay 缁撴灉鐢熸垚銆?
 
     Parameters
     ----------
     subject : SubjectConfig
-        subject 配置。
+        subject 閰嶇疆銆?
     preset : str
-        preset 名称。
+        preset 鍚嶇О銆?
     case : dict[str, Any]
-        inverse case 配置。
+        inverse case 閰嶇疆銆?
     seed : int
-        随机种子。
+        闅忔満绉嶅瓙銆?
     work_root : Path
-        工作根目录。
+        宸ヤ綔鏍圭洰褰曘€?
     preset_ini_paths : dict[str, Path]
-        preset ini 路径映射。
+        preset ini 璺緞鏄犲皠銆?
     debug_mesh : bool
-        是否保留 mesh 调试输出。
+        鏄惁淇濈暀 mesh 璋冭瘯杈撳嚭銆?
     command : str
-        当前命令行。
+        褰撳墠鍛戒护琛屻€?
     workspace_cache : dict[tuple[str, str], WorkspaceBuildResult]
-        workspace 缓存。
+        workspace 缂撳瓨銆?
     wait_on_inverse : bool
-        当前 preset inverse 是否允许等待。
+        褰撳墠 preset inverse 鏄惁鍏佽绛夊緟銆?
 
     Returns
     -------
     dict[str, Any]
-        replay 结果。
+        replay 缁撴灉銆?
     """
     paths = preset_paths_for(work_root, subject.id, preset)
     payload = {"subject_id": subject.id, "case_name": case["name"], "preset": preset, "seed": seed}
@@ -1508,31 +1517,31 @@ def _ensure_m0_replay_baseline(
     workspace_cache: dict[tuple[str, str], WorkspaceBuildResult],
 ) -> dict[str, Any]:
     """
-    确保 M0 replay 基线存在。
+    纭繚 M0 replay 鍩虹嚎瀛樺湪銆?
 
     Parameters
     ----------
     subject : SubjectConfig
-        subject 配置。
+        subject 閰嶇疆銆?
     case : dict[str, Any]
-        inverse case 配置。
+        inverse case 閰嶇疆銆?
     seed : int
-        随机种子。
+        闅忔満绉嶅瓙銆?
     work_root : Path
-        工作根目录。
+        宸ヤ綔鏍圭洰褰曘€?
     preset_ini_paths : dict[str, Path]
-        preset ini 路径映射。
+        preset ini 璺緞鏄犲皠銆?
     debug_mesh : bool
-        是否保留 mesh 调试输出。
+        鏄惁淇濈暀 mesh 璋冭瘯杈撳嚭銆?
     command : str
-        当前命令行。
+        褰撳墠鍛戒护琛屻€?
     workspace_cache : dict[tuple[str, str], WorkspaceBuildResult]
-        workspace 缓存。
+        workspace 缂撳瓨銆?
 
     Returns
     -------
     dict[str, Any]
-        M0 replay 结果。
+        M0 replay 缁撴灉銆?
     """
     _ensure_m0_workspace_ready(
         subject=subject,
@@ -1560,7 +1569,7 @@ def _ensure_m0_replay_baseline(
         if state == RUN_STATE_COMPLETED:
             return _load_replay_result(subject, "M0", case["name"], seed, work_root, wait_on_running=False)
     if result_path.exists() and run_payload is None:
-        raise RuntimeError(f"检测到无状态 replay 结果，拒绝继续: {result_path}")
+        raise RuntimeError(f"妫€娴嬪埌鏃犵姸鎬?replay 缁撴灉锛屾嫆缁濈户缁? {result_path}")
     return _run_single_replay_result(
         subject=subject,
         preset="M0",
@@ -1585,29 +1594,29 @@ def _run_replay_preset_worker(
     command: str,
 ) -> list[dict[str, Any]]:
     """
-    执行单个 `(subject, preset)` 的 replay 阶段。
+    鎵ц鍗曚釜 `(subject, preset)` 鐨?replay 闃舵銆?
 
     Parameters
     ----------
     subject : SubjectConfig
-        subject 配置。
+        subject 閰嶇疆銆?
     preset : str
-        preset 名称。
+        preset 鍚嶇О銆?
     inverse_cases : list[dict[str, Any]]
-        inverse case 列表。
+        inverse case 鍒楄〃銆?
     work_root : Path
-        工作根目录。
+        宸ヤ綔鏍圭洰褰曘€?
     preset_ini_paths : dict[str, Path]
-        preset ini 路径映射。
+        preset ini 璺緞鏄犲皠銆?
     debug_mesh : bool
-        是否保留 mesh 调试输出。
+        鏄惁淇濈暀 mesh 璋冭瘯杈撳嚭銆?
     command : str
-        当前命令行。
+        褰撳墠鍛戒护琛屻€?
 
     Returns
     -------
     list[dict[str, Any]]
-        replay 结果行。
+        replay 缁撴灉琛屻€?
     """
     rows: list[dict[str, Any]] = []
     workspace_cache: dict[tuple[str, str], WorkspaceBuildResult] = {}
@@ -1641,31 +1650,31 @@ def run_replay_validation(
     command: str,
 ) -> list[dict[str, Any]]:
     """
-    运行 replay 验证。
+    杩愯 replay 楠岃瘉銆?
 
     Parameters
     ----------
     subjects : list[SubjectConfig]
-        subject 列表。
+        subject 鍒楄〃銆?
     presets : list[str]
-        preset 列表。
+        preset 鍒楄〃銆?
     inverse_cases : list[dict[str, Any]]
-        inverse case 列表。
+        inverse case 鍒楄〃銆?
     work_root : Path
-        工作根目录。
+        宸ヤ綔鏍圭洰褰曘€?
     preset_ini_paths : dict[str, Path]
-        preset ini 路径映射。
+        preset ini 璺緞鏄犲皠銆?
     debug_mesh : bool
-        是否保留 mesh 调试输出。
+        鏄惁淇濈暀 mesh 璋冭瘯杈撳嚭銆?
     preset_workers : int
-        preset 并行进程数。
+        preset 骞惰杩涚▼鏁般€?
     command : str
-        当前命令行。
+        褰撳墠鍛戒护琛屻€?
 
     Returns
     -------
     list[dict[str, Any]]
-        replay 结果行。
+        replay 缁撴灉琛屻€?
     """
     baseline_rows: list[dict[str, Any]] = []
     workspace_cache: dict[tuple[str, str], WorkspaceBuildResult] = {}
@@ -1706,27 +1715,27 @@ def ensure_workspace(
     debug_mesh: bool,
 ) -> WorkspaceBuildResult:
     """
-    获取或准备 workspace。
+    鑾峰彇鎴栧噯澶?workspace銆?
 
     Parameters
     ----------
     workspace_cache : dict[tuple[str, str], WorkspaceBuildResult]
-        workspace 缓存。
+        workspace 缂撳瓨銆?
     subject : SubjectConfig
-        subject 配置。
+        subject 閰嶇疆銆?
     preset : str
-        preset 名称。
+        preset 鍚嶇О銆?
     work_root : Path
-        工作根目录。
+        宸ヤ綔鏍圭洰褰曘€?
     preset_ini_paths : dict[str, Path]
-        preset ini 路径映射。
+        preset ini 璺緞鏄犲皠銆?
     debug_mesh : bool
-        是否保留 mesh 调试输出。
+        鏄惁淇濈暀 mesh 璋冭瘯杈撳嚭銆?
 
     Returns
     -------
     WorkspaceBuildResult
-        workspace 结果。
+        workspace 缁撴灉銆?
     """
     key = (subject.id, preset)
     if key not in workspace_cache:
@@ -1739,19 +1748,19 @@ def ensure_workspace(
 
 def relative_error(value: float, baseline: float) -> float:
     """
-    计算相对误差。
+    璁＄畻鐩稿璇樊銆?
 
     Parameters
     ----------
     value : float
-        当前值。
+        褰撳墠鍊笺€?
     baseline : float
-        基线值。
+        鍩虹嚎鍊笺€?
 
     Returns
     -------
     float
-        相对误差。
+        鐩稿璇樊銆?
     """
     if baseline in (0, 0.0) or math.isnan(baseline):
         return math.nan
@@ -1760,17 +1769,17 @@ def relative_error(value: float, baseline: float) -> float:
 
 def summarize_mesh(mesh_file: Path) -> dict[str, float]:
     """
-    统计 mesh 规模。
+    缁熻 mesh 瑙勬ā銆?
 
     Parameters
     ----------
     mesh_file : Path
-        mesh 路径。
+        mesh 璺緞銆?
 
     Returns
     -------
     dict[str, float]
-        mesh 统计结果。
+        mesh 缁熻缁撴灉銆?
     """
     mesh = mesh_io.read_msh(str(mesh_file))
     tetra_mask = mesh.elm.get_tetrahedra()
@@ -1788,17 +1797,17 @@ def summarize_mesh(mesh_file: Path) -> dict[str, float]:
 
 def scalp_surface_points(mesh_file: Path) -> np.ndarray:
     """
-    提取头皮外表面点集。
+    鎻愬彇澶寸毊澶栬〃闈㈢偣闆嗐€?
 
     Parameters
     ----------
     mesh_file : Path
-        mesh 路径。
+        mesh 璺緞銆?
 
     Returns
     -------
     np.ndarray
-        表面点坐标。
+        琛ㄩ潰鐐瑰潗鏍囥€?
     """
     mesh = mesh_io.read_msh(str(mesh_file))
     _, vertices_out, _, _ = mesh.partition_skin_surface(label_skin=ElementTags.SCALP_TH_SURFACE)
@@ -1807,19 +1816,19 @@ def scalp_surface_points(mesh_file: Path) -> np.ndarray:
 
 def bidirectional_surface_distance(reference_points: np.ndarray, candidate_points: np.ndarray) -> dict[str, float]:
     """
-    计算双向表面距离。
+    璁＄畻鍙屽悜琛ㄩ潰璺濈銆?
 
     Parameters
     ----------
     reference_points : np.ndarray
-        参考点集。
+        鍙傝€冪偣闆嗐€?
     candidate_points : np.ndarray
-        候选点集。
+        鍊欓€夌偣闆嗐€?
 
     Returns
     -------
     dict[str, float]
-        mean distance 和 95% Hausdorff。
+        mean distance 鍜?95% Hausdorff銆?
     """
     ref_tree = cKDTree(reference_points)
     cand_tree = cKDTree(candidate_points)

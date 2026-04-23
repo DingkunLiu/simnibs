@@ -564,18 +564,6 @@ def write_forward_results(old_root: Path, new_root: Path, forward_rows: list[dic
                 "traceback": first.get("traceback"),
             }
         else:
-            roi_metrics = []
-            for row in rows:
-                roi_metrics.append(
-                    {
-                        "roi_name": row.get("roi_name"),
-                        "roi_mean": row.get("roi_mean"),
-                        "roi_median": row.get("roi_median"),
-                        "roi_p95": row.get("roi_p95"),
-                        "roi_p99": row.get("roi_p99"),
-                        "roi_max": row.get("roi_max"),
-                    }
-                )
             payload = {
                 "subject_id": subject_id,
                 "preset": preset,
@@ -585,8 +573,8 @@ def write_forward_results(old_root: Path, new_root: Path, forward_rows: list[dic
                 "ti_mesh_path": rewrite_migrated_path_value(old_root, new_root, first.get("ti_mesh_path")),
                 "ti_volume_path": rewrite_migrated_path_value(old_root, new_root, first.get("ti_volume_path")),
                 "final_labels_path": rewrite_migrated_path_value(old_root, new_root, first.get("final_labels_path")),
-                "hotspot_value": first.get("hotspot_value"),
-                "roi_metrics": roi_metrics,
+                "gm_peak_value": first.get("gm_peak_value"),
+                "gm_threshold_metrics": first.get("gm_threshold_metrics", []),
             }
         write_json(forward_result_path(paths, case_name), payload)
         write_json(forward_run_path(paths, case_name), migrated_run_payload("forward", {"subject_id": subject_id, "preset": preset, "case_name": case_name}))

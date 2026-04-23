@@ -169,9 +169,43 @@ def _ensure_merged_roi(
     return merged_path
 
 
+def _ensure_merged_roi_from_paths(
+    standardized_dir: Path, area_name: str, source_paths: list[Path]
+) -> Path:
+    """
+    Ensure a merged ROI exists for a list of ROI paths.
+    """
+    merged_dir = standardized_dir / "merged_rois"
+    merged_dir.mkdir(parents=True, exist_ok=True)
+    source_paths = sorted(source_paths, key=lambda path: path.name)
+    match_token = "_".join(path.stem.replace(".nii", "") for path in source_paths)
+    merged_path = merged_dir / f"{_slugify(area_name)}__merged__{match_token}.nii.gz"
+    if merged_path.exists():
+        merged_mtime = merged_path.stat().st_mtime
+        if all(
+            source_path.exists() and source_path.stat().st_mtime <= merged_mtime
+            for source_path in source_paths
+        ):
+            return merged_path
+
+    first_img = nib.load(str(source_paths[0]))
+    merged_mask = np.asarray(first_img.dataobj, dtype=np.uint8) > 0
+    for source_path in source_paths[1:]:
+        source_img = nib.load(str(source_path))
+        merged_mask |= np.asarray(source_img.dataobj, dtype=np.uint8) > 0
+
+    header = first_img.header.copy()
+    header.set_data_dtype(np.uint8)
+    nib.save(
+        nib.Nifti1Image(merged_mask.astype(np.uint8), first_img.affine, header),
+        merged_path,
+    )
+    return merged_path
+
+
 def get_standardized_roi_path(
     atlas_name: str,
-    area_name: str,
+    area_name: str | list[str],
     registry: dict[str, Any] | None = None,
 ) -> Path:
     """
@@ -200,6 +234,15 @@ def get_standardized_roi_path(
     -----
     重名脑区会自动合并。
     """
+    if isinstance(area_name, list):
+        spec = get_atlas_spec(atlas_name, registry)
+        source_paths = [get_standardized_roi_path(atlas_name, area, registry) for area in area_name]
+        return _ensure_merged_roi_from_paths(
+            Path(spec["standardized_dir"]),
+            "__".join(area_name),
+            source_paths,
+        )
+
     spec, matches = _find_matching_areas(atlas_name, area_name, registry)
     if len(matches) == 1:
         return Path(matches[0]["roi_path"])

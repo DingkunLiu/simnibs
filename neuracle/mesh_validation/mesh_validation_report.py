@@ -16,6 +16,7 @@ import numpy as np
 
 from neuracle.mesh_validation.mesh_validation_schema import load_stage_results, write_json
 from neuracle.mesh_validation.mesh_validation_stages import (
+    FORWARD_HOTSPOT_THRESHOLDS_ABS,
     FORWARD_THRESHOLDS,
     bidirectional_surface_distance,
     load_volume_data,
@@ -75,7 +76,6 @@ def sort_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
             str(row.get("case_name", "")),
             int(row.get("seed", -1)) if row.get("seed") is not None else -1,
             str(row.get("preset", "")),
-            str(row.get("roi_name", "")),
             str(row.get("status", "")),
         ),
     )
@@ -109,14 +109,122 @@ def flatten_forward_results(forward_results: list[dict[str, Any]]) -> list[dict[
             "failure_stage": result.get("failure_stage"),
             "error": result.get("error"),
             "traceback": result.get("traceback"),
-            "hotspot_value": result.get("hotspot_value"),
+            "gm_peak_value": result.get("gm_peak_value"),
+            "gm_threshold_metrics": result.get("gm_threshold_metrics", []),
         }
-        if result.get("status") != "ok":
-            rows.append(base)
-            continue
-        for roi in result.get("roi_metrics", []):
-            rows.append({**base, **roi})
+        rows.append(base)
     return sort_rows(rows)
+
+
+def _threshold_token(threshold: float) -> str:
+    return f"{int(round(float(threshold) * 100)):03d}"
+
+
+def _gm_threshold_columns(threshold: float) -> dict[str, str]:
+    token = _threshold_token(threshold)
+    return {
+        "tp": f"gm_threshold_tp_abs_{token}",
+        "fp": f"gm_threshold_fp_abs_{token}",
+        "fn": f"gm_threshold_fn_abs_{token}",
+        "tn": f"gm_threshold_tn_abs_{token}",
+        "tpr": f"gm_threshold_tpr_abs_{token}",
+        "fpr": f"gm_threshold_fpr_abs_{token}",
+        "precision": f"gm_threshold_precision_abs_{token}",
+        "dice": f"gm_threshold_dice_abs_{token}",
+        "jaccard": f"gm_threshold_jaccard_abs_{token}",
+        "baseline": f"baseline_gm_threshold_voxels_abs_{token}",
+        "current": f"current_gm_threshold_voxels_abs_{token}",
+    }
+
+
+def _gm_thresholds_for_row(row: dict[str, Any], baseline: dict[str, Any] | None = None) -> list[float]:
+    raw_current = row.get("gm_threshold_metrics", [])
+    raw_baseline = baseline.get("gm_threshold_metrics", []) if baseline else []
+    raw_metrics = raw_current or raw_baseline
+    if raw_metrics:
+        return [float(metric["threshold_abs"]) for metric in raw_metrics]
+    return list(FORWARD_HOTSPOT_THRESHOLDS_ABS)
+
+
+def _set_gm_threshold_columns(
+    row: dict[str, Any],
+    threshold_metrics: list[dict[str, Any]] | None,
+    thresholds: list[float],
+) -> None:
+    metrics_by_threshold = {}
+    for metric in threshold_metrics or []:
+        metrics_by_threshold[round(float(metric["threshold_abs"]), 6)] = metric
+    for threshold in thresholds:
+        metric = metrics_by_threshold.get(round(float(threshold), 6), {})
+        columns = _gm_threshold_columns(float(threshold))
+        row[columns["tp"]] = metric.get("tp")
+        row[columns["fp"]] = metric.get("fp")
+        row[columns["fn"]] = metric.get("fn")
+        row[columns["tn"]] = metric.get("tn")
+        row[columns["tpr"]] = metric.get("tpr")
+        row[columns["fpr"]] = metric.get("fpr")
+        row[columns["precision"]] = metric.get("precision")
+        row[columns["dice"]] = metric.get("dice")
+        row[columns["jaccard"]] = metric.get("jaccard")
+        row[columns["baseline"]] = metric.get("baseline_gm_threshold_voxels")
+        row[columns["current"]] = metric.get("current_gm_threshold_voxels")
+
+
+def _safe_rate(numerator: int, denominator: int, empty_value: float) -> float:
+    if denominator == 0:
+        return empty_value
+    return float(numerator / denominator)
+
+
+def _trapezoid_area(x: np.ndarray, y: np.ndarray) -> float:
+    if x.size < 2:
+        return 0.0
+    return float(np.sum((x[1:] - x[:-1]) * (y[1:] + y[:-1]) * 0.5))
+
+
+def compute_gm_threshold_consistency_metrics(
+    current_ti: np.ndarray,
+    baseline_ti: np.ndarray,
+    gm_mask: np.ndarray,
+    thresholds: list[float],
+) -> dict[str, Any]:
+    threshold_metrics: list[dict[str, Any]] = []
+    gm_voxels = int(np.count_nonzero(gm_mask))
+    for threshold in thresholds:
+        baseline_active = gm_mask & (baseline_ti >= float(threshold))
+        current_active = gm_mask & (current_ti >= float(threshold))
+        tp = int(np.count_nonzero(current_active & baseline_active))
+        fp = int(np.count_nonzero(current_active & ~baseline_active & gm_mask))
+        fn = int(np.count_nonzero(~current_active & baseline_active & gm_mask))
+        tn = gm_voxels - tp - fp - fn
+        threshold_metrics.append(
+            {
+                "threshold_abs": float(threshold),
+                "tp": tp,
+                "fp": fp,
+                "fn": fn,
+                "tn": tn,
+                "tpr": _safe_rate(tp, tp + fn, 1.0),
+                "fpr": _safe_rate(fp, fp + tn, 0.0),
+                "precision": _safe_rate(tp, tp + fp, 1.0),
+                "dice": _safe_rate(2 * tp, 2 * tp + fp + fn, 1.0),
+                "jaccard": _safe_rate(tp, tp + fp + fn, 1.0),
+                "baseline_gm_threshold_voxels": int(np.count_nonzero(baseline_active)),
+                "current_gm_threshold_voxels": int(np.count_nonzero(current_active)),
+            }
+        )
+    roc_points = sorted(
+        ((float(metric["fpr"]), float(metric["tpr"])) for metric in threshold_metrics),
+        key=lambda item: item[0],
+    )
+    roc_x = np.asarray([0.0, *[point[0] for point in roc_points], 1.0], dtype=float)
+    roc_y = np.asarray([0.0, *[point[1] for point in roc_points], 1.0], dtype=float)
+    return {
+        "gm_threshold_metrics_abs": threshold_metrics,
+        "gm_threshold_consistency_auc_abs": _trapezoid_area(roc_x, roc_y),
+        "gm_threshold_mean_dice_abs": float(np.mean([float(metric["dice"]) for metric in threshold_metrics])) if threshold_metrics else math.nan,
+        "gm_threshold_mean_jaccard_abs": float(np.mean([float(metric["jaccard"]) for metric in threshold_metrics])) if threshold_metrics else math.nan,
+    }
 
 
 def annotate_mesh_rows(mesh_rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -164,22 +272,22 @@ def mark_forward_baseline_unavailable(row: dict[str, Any]) -> None:
     -------
     None
     """
+    thresholds = _gm_thresholds_for_row(row)
     row.update(
         {
             "comparison_status": "baseline_unavailable",
-            "comparison_reason": "M0 baseline is unavailable for this subject/case/roi",
+            "comparison_reason": "M0 baseline is unavailable for this subject/case",
             "gm_pearson_r": None,
             "gm_nrmse": None,
-            "baseline_hotspot_value": None,
-            "roi_mean_rel_error": None,
-            "roi_median_rel_error": None,
-            "roi_p95_rel_error": None,
-            "roi_p99_rel_error": None,
-            "roi_max_rel_error": None,
-            "hotspot_rel_error": None,
+            "baseline_gm_peak_value": None,
+            "gm_peak_rel_error": None,
+            "gm_threshold_consistency_auc_abs": None,
+            "gm_threshold_mean_dice_abs": None,
+            "gm_threshold_mean_jaccard_abs": None,
             "forward_pass": None,
         }
     )
+    _set_gm_threshold_columns(row, None, thresholds)
 
 
 def evaluate_forward_pass(row: dict[str, Any], preset: str) -> bool | None:
@@ -206,10 +314,7 @@ def evaluate_forward_pass(row: dict[str, Any], preset: str) -> bool | None:
         return None
     threshold = FORWARD_THRESHOLDS[preset]
     checks = [
-        row.get("roi_mean_rel_error", 0.0) <= threshold["mean_median"],
-        row.get("roi_median_rel_error", 0.0) <= threshold["mean_median"],
-        max(row.get("roi_p95_rel_error", 0.0), row.get("roi_p99_rel_error", 0.0), row.get("roi_max_rel_error", 0.0)) <= threshold["tail"],
-        row.get("hotspot_rel_error", 0.0) <= threshold["hotspot"],
+        row.get("gm_peak_rel_error", 0.0) <= threshold["hotspot"],
         row.get("gm_pearson_r", 1.0) >= 0.95,
         row.get("gm_nrmse", 0.0) <= threshold["nrmse"],
     ]
@@ -231,29 +336,54 @@ def annotate_forward_rows(forward_rows: list[dict[str, Any]]) -> list[dict[str, 
         补充后的结果行。
     """
     baseline_by_key = {
-        (str(row["subject_id"]), str(row["case_name"]), str(row["roi_name"])): row
-        for row in forward_rows
-        if row.get("status") == "ok" and row.get("preset") == "M0"
+        (str(row["subject_id"]), str(row["case_name"])): row for row in forward_rows if row.get("status") == "ok" and row.get("preset") == "M0"
     }
-    gm_cache: dict[tuple[str, str], tuple[np.ndarray, np.ndarray]] = {}
+    gm_cache: dict[tuple[str, str], dict[str, np.ndarray]] = {}
     for row in forward_rows:
         if row.get("status") != "ok":
             continue
         if row.get("preset") == "M0":
+            thresholds = _gm_thresholds_for_row(row)
+            gm_voxels = next(
+                (
+                    int(metric.get("gm_voxels"))
+                    for metric in row.get("gm_threshold_metrics", [])
+                    if metric.get("gm_voxels") is not None
+                ),
+                0,
+            )
+            baseline_threshold_metrics = []
+            for metric in row.get("gm_threshold_metrics", []):
+                active_voxels = int(metric.get("current_gm_threshold_voxels", 0))
+                baseline_threshold_metrics.append(
+                    {
+                        "threshold_abs": float(metric["threshold_abs"]),
+                        "tp": active_voxels,
+                        "fp": 0,
+                        "fn": 0,
+                        "tn": gm_voxels - active_voxels,
+                        "tpr": 1.0,
+                        "fpr": 0.0,
+                        "precision": 1.0,
+                        "dice": 1.0,
+                        "jaccard": 1.0,
+                        "baseline_gm_threshold_voxels": active_voxels,
+                        "current_gm_threshold_voxels": active_voxels,
+                    }
+                )
             row["comparison_status"] = "baseline_reference"
             row["comparison_reason"] = None
             row["gm_pearson_r"] = 1.0
             row["gm_nrmse"] = 0.0
-            row["baseline_hotspot_value"] = row.get("hotspot_value")
-            row["roi_mean_rel_error"] = 0.0
-            row["roi_median_rel_error"] = 0.0
-            row["roi_p95_rel_error"] = 0.0
-            row["roi_p99_rel_error"] = 0.0
-            row["roi_max_rel_error"] = 0.0
-            row["hotspot_rel_error"] = 0.0
+            row["baseline_gm_peak_value"] = row.get("gm_peak_value")
+            row["gm_peak_rel_error"] = 0.0
+            row["gm_threshold_consistency_auc_abs"] = 1.0
+            row["gm_threshold_mean_dice_abs"] = 1.0
+            row["gm_threshold_mean_jaccard_abs"] = 1.0
+            _set_gm_threshold_columns(row, baseline_threshold_metrics, thresholds)
             row["forward_pass"] = True
             continue
-        baseline = baseline_by_key.get((str(row["subject_id"]), str(row["case_name"]), str(row["roi_name"])))
+        baseline = baseline_by_key.get((str(row["subject_id"]), str(row["case_name"])))
         if baseline is None:
             mark_forward_baseline_unavailable(row)
             continue
@@ -265,8 +395,15 @@ def annotate_forward_rows(forward_rows: list[dict[str, Any]]) -> list[dict[str, 
             current_labels = load_volume_data(Path(str(row["final_labels_path"])), reference_img)
             baseline_labels = load_volume_data(Path(str(baseline["final_labels_path"])), reference_img)
             gm_mask = (current_labels == ElementTags.GM) & (baseline_labels == ElementTags.GM)
-            gm_cache[gm_key] = (current_ti[gm_mask], baseline_ti[gm_mask])
-        current_gm, baseline_gm = gm_cache[gm_key]
+            gm_cache[gm_key] = {
+                "current_ti": current_ti,
+                "baseline_ti": baseline_ti,
+                "gm_mask": gm_mask,
+                "current_gm": current_ti[gm_mask],
+                "baseline_gm": baseline_ti[gm_mask],
+            }
+        current_gm = gm_cache[gm_key]["current_gm"]
+        baseline_gm = gm_cache[gm_key]["baseline_gm"]
         if current_gm.size > 1 and np.std(current_gm) > 0 and np.std(baseline_gm) > 0:
             pearson_r = float(np.corrcoef(current_gm, baseline_gm)[0, 1])
         else:
@@ -275,20 +412,29 @@ def annotate_forward_rows(forward_rows: list[dict[str, Any]]) -> list[dict[str, 
             nrmse = float(np.linalg.norm(current_gm - baseline_gm) / np.linalg.norm(baseline_gm))
         else:
             nrmse = math.nan
+        gm_threshold_consistency = compute_gm_threshold_consistency_metrics(
+            current_ti=gm_cache[gm_key]["current_ti"],
+            baseline_ti=gm_cache[gm_key]["baseline_ti"],
+            gm_mask=gm_cache[gm_key]["gm_mask"],
+            thresholds=_gm_thresholds_for_row(row, baseline),
+        )
         row.update(
             {
                 "comparison_status": "ok",
                 "comparison_reason": None,
                 "gm_pearson_r": pearson_r,
                 "gm_nrmse": nrmse,
-                "baseline_hotspot_value": baseline["hotspot_value"],
-                "roi_mean_rel_error": relative_error(float(row["roi_mean"]), float(baseline["roi_mean"])),
-                "roi_median_rel_error": relative_error(float(row["roi_median"]), float(baseline["roi_median"])),
-                "roi_p95_rel_error": relative_error(float(row["roi_p95"]), float(baseline["roi_p95"])),
-                "roi_p99_rel_error": relative_error(float(row["roi_p99"]), float(baseline["roi_p99"])),
-                "roi_max_rel_error": relative_error(float(row["roi_max"]), float(baseline["roi_max"])),
-                "hotspot_rel_error": relative_error(float(row["hotspot_value"]), float(baseline["hotspot_value"])),
+                "baseline_gm_peak_value": baseline["gm_peak_value"],
+                "gm_peak_rel_error": relative_error(float(row["gm_peak_value"]), float(baseline["gm_peak_value"])),
+                "gm_threshold_consistency_auc_abs": gm_threshold_consistency["gm_threshold_consistency_auc_abs"],
+                "gm_threshold_mean_dice_abs": gm_threshold_consistency["gm_threshold_mean_dice_abs"],
+                "gm_threshold_mean_jaccard_abs": gm_threshold_consistency["gm_threshold_mean_jaccard_abs"],
             }
+        )
+        _set_gm_threshold_columns(
+            row,
+            gm_threshold_consistency["gm_threshold_metrics_abs"],
+            _gm_thresholds_for_row(row, baseline),
         )
         row["forward_pass"] = evaluate_forward_pass(row, str(row["preset"]))
     return sort_rows(forward_rows)
