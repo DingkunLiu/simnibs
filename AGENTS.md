@@ -1,1 +1,1 @@
-neuracle/CLAUDE.md
+neuracle/AGENTS.md
