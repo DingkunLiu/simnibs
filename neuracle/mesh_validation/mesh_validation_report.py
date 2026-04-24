@@ -5,7 +5,6 @@ Mesh validation V2 报告聚合逻辑。
 from __future__ import annotations
 
 import csv
-import json
 import logging
 import math
 from pathlib import Path
@@ -20,7 +19,6 @@ from neuracle.mesh_validation.mesh_validation_stages import (
     FORWARD_THRESHOLDS,
     bidirectional_surface_distance,
     load_volume_data,
-    relative_error,
     scalp_surface_points,
 )
 from neuracle.mesh_validation.mesh_validation_workspace import PRESET_ORDER
@@ -227,6 +225,18 @@ def compute_gm_threshold_consistency_metrics(
     }
 
 
+def _percentile_or_nan(values: np.ndarray, percentile: float) -> float:
+    if values.size == 0:
+        return math.nan
+    return float(np.percentile(values, percentile))
+
+
+def _relative_error_or_nan(value: float, baseline: float) -> float:
+    if baseline in (0, 0.0) or math.isnan(baseline):
+        return math.nan
+    return float(abs(value - baseline) / abs(baseline))
+
+
 def annotate_mesh_rows(mesh_rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     """
     为 mesh 结果补充 M0 的头皮表面对比指标。
@@ -279,8 +289,9 @@ def mark_forward_baseline_unavailable(row: dict[str, Any]) -> None:
             "comparison_reason": "M0 baseline is unavailable for this subject/case",
             "gm_pearson_r": None,
             "gm_nrmse": None,
-            "baseline_gm_peak_value": None,
-            "gm_peak_rel_error": None,
+            "gm_99_percentile_value": None,
+            "baseline_gm_99_percentile_value": None,
+            "gm_99_percentile_rel_error": None,
             "gm_threshold_consistency_auc_abs": None,
             "gm_threshold_mean_dice_abs": None,
             "gm_threshold_mean_jaccard_abs": None,
@@ -314,7 +325,7 @@ def evaluate_forward_pass(row: dict[str, Any], preset: str) -> bool | None:
         return None
     threshold = FORWARD_THRESHOLDS[preset]
     checks = [
-        row.get("gm_peak_rel_error", 0.0) <= threshold["hotspot"],
+        row.get("gm_99_percentile_rel_error", math.nan) <= threshold["hotspot"],
         row.get("gm_pearson_r", 1.0) >= 0.95,
         row.get("gm_nrmse", 0.0) <= threshold["nrmse"],
     ]
@@ -375,8 +386,14 @@ def annotate_forward_rows(forward_rows: list[dict[str, Any]]) -> list[dict[str, 
             row["comparison_reason"] = None
             row["gm_pearson_r"] = 1.0
             row["gm_nrmse"] = 0.0
-            row["baseline_gm_peak_value"] = row.get("gm_peak_value")
-            row["gm_peak_rel_error"] = 0.0
+            reference_img = nib.load(str(Path(str(row["ti_volume_path"]))))
+            baseline_ti = load_volume_data(Path(str(row["ti_volume_path"])), reference_img)
+            baseline_labels = load_volume_data(Path(str(row["final_labels_path"])), reference_img)
+            baseline_gm = baseline_ti[baseline_labels == ElementTags.GM]
+            gm_99_percentile_value = _percentile_or_nan(baseline_gm, 99)
+            row["gm_99_percentile_value"] = gm_99_percentile_value
+            row["baseline_gm_99_percentile_value"] = gm_99_percentile_value
+            row["gm_99_percentile_rel_error"] = 0.0
             row["gm_threshold_consistency_auc_abs"] = 1.0
             row["gm_threshold_mean_dice_abs"] = 1.0
             row["gm_threshold_mean_jaccard_abs"] = 1.0
@@ -394,16 +411,22 @@ def annotate_forward_rows(forward_rows: list[dict[str, Any]]) -> list[dict[str, 
             baseline_ti = load_volume_data(Path(str(baseline["ti_volume_path"])), reference_img)
             current_labels = load_volume_data(Path(str(row["final_labels_path"])), reference_img)
             baseline_labels = load_volume_data(Path(str(baseline["final_labels_path"])), reference_img)
-            gm_mask = (current_labels == ElementTags.GM) & (baseline_labels == ElementTags.GM)
+            current_gm_mask = current_labels == ElementTags.GM
+            baseline_gm_mask = baseline_labels == ElementTags.GM
+            gm_mask = current_gm_mask & baseline_gm_mask
             gm_cache[gm_key] = {
                 "current_ti": current_ti,
                 "baseline_ti": baseline_ti,
                 "gm_mask": gm_mask,
                 "current_gm": current_ti[gm_mask],
                 "baseline_gm": baseline_ti[gm_mask],
+                "current_own_gm": current_ti[current_gm_mask],
+                "baseline_own_gm": baseline_ti[baseline_gm_mask],
             }
         current_gm = gm_cache[gm_key]["current_gm"]
         baseline_gm = gm_cache[gm_key]["baseline_gm"]
+        current_own_gm = gm_cache[gm_key]["current_own_gm"]
+        baseline_own_gm = gm_cache[gm_key]["baseline_own_gm"]
         if current_gm.size > 1 and np.std(current_gm) > 0 and np.std(baseline_gm) > 0:
             pearson_r = float(np.corrcoef(current_gm, baseline_gm)[0, 1])
         else:
@@ -412,6 +435,8 @@ def annotate_forward_rows(forward_rows: list[dict[str, Any]]) -> list[dict[str, 
             nrmse = float(np.linalg.norm(current_gm - baseline_gm) / np.linalg.norm(baseline_gm))
         else:
             nrmse = math.nan
+        current_p99 = _percentile_or_nan(current_own_gm, 99)
+        baseline_p99 = _percentile_or_nan(baseline_own_gm, 99)
         gm_threshold_consistency = compute_gm_threshold_consistency_metrics(
             current_ti=gm_cache[gm_key]["current_ti"],
             baseline_ti=gm_cache[gm_key]["baseline_ti"],
@@ -424,8 +449,9 @@ def annotate_forward_rows(forward_rows: list[dict[str, Any]]) -> list[dict[str, 
                 "comparison_reason": None,
                 "gm_pearson_r": pearson_r,
                 "gm_nrmse": nrmse,
-                "baseline_gm_peak_value": baseline["gm_peak_value"],
-                "gm_peak_rel_error": relative_error(float(row["gm_peak_value"]), float(baseline["gm_peak_value"])),
+                "gm_99_percentile_value": current_p99,
+                "baseline_gm_99_percentile_value": baseline_p99,
+                "gm_99_percentile_rel_error": _relative_error_or_nan(current_p99, baseline_p99),
                 "gm_threshold_consistency_auc_abs": gm_threshold_consistency["gm_threshold_consistency_auc_abs"],
                 "gm_threshold_mean_dice_abs": gm_threshold_consistency["gm_threshold_mean_dice_abs"],
                 "gm_threshold_mean_jaccard_abs": gm_threshold_consistency["gm_threshold_mean_jaccard_abs"],
