@@ -109,16 +109,62 @@ work_root/
 
 `mesh/result.json` 只保留原始结果，不写 M0 比较字段。
 
+`mesh/result.json` 原始字段：
+
+| 字段 | 说明 |
+|---|---|
+| `node_count` | 网格节点总数 |
+| `tetra_count` | 四面体单元总数 |
+| `tag_volume_<tag>` | 各组织标签（如 `1`=WM、`2`=GM）的四面体体积之和（mm³） |
+
+`report` 阶段追加（与 M0 头皮表面比较）：
+
+| 字段 | 说明 |
+|---|---|
+| `scalp_mean_distance_mm` | 当前 preset 与 M0 头皮表面双向最近邻距离的均值（mm） |
+| `scalp_hausdorff95_mm` | 双向最近邻距离的 95 百分位数（mm） |
+
 ### 5.2 forward
 
 职责：
 
 - 消费已存在的 workspace
 - 执行 TI 正向仿真
-- 导出 TI 体数据
-- 计算 `hotspot_value`
-- 计算 `roi_metrics[]`
+- 导出 TI 体数据（NIfTI）
+- 计算 GM 内的峰值与阈值激活指标
 - 写入 `forward/<case>/result.json`
+
+`forward/result.json` 原始字段：
+
+| 字段 | 说明 |
+|---|---|
+| `gm_peak_value` | GM 体素内 TI 最大值（V/m） |
+| `gm_threshold_metrics` | 各绝对阈值下的 GM 激活统计列表（见下） |
+
+`gm_threshold_metrics` 每项（阈值固定为 0.10 / 0.15 / 0.20 / 0.25 / 0.30 V/m，可在 manifest 的 `gm_thresholds_abs` 字段覆盖）：
+
+| 子字段 | 说明 |
+|---|---|
+| `threshold_abs` | 绝对阈值（V/m） |
+| `gm_voxels` | GM 体素总数 |
+| `current_gm_threshold_voxels` | TI ≥ 阈值的 GM 体素数 |
+| `current_gm_threshold_fraction` | 激活比例 = 激活数 / 总数 |
+
+`report` 阶段追加（与 M0 基线比较，在 shared GM mask 上计算）：
+
+| 字段 | 说明 |
+|---|---|
+| `gm_pearson_r` | 当前 preset 与 M0 GM 体素 TI 值的 Pearson 相关系数 |
+| `gm_nrmse` | 归一化 RMSE = ‖current − baseline‖ / ‖baseline‖ |
+| `gm_99_percentile_value` | 当前 preset 自身 GM 的 99 百分位 TI（热点强度） |
+| `baseline_gm_99_percentile_value` | M0 的 99 百分位 TI |
+| `gm_99_percentile_rel_error` | 热点强度相对误差 = \|current_p99 − baseline_p99\| / \|baseline_p99\| |
+| `gm_threshold_consistency_auc_abs` | 在各绝对阈值上构造 ROC，对应 AUC |
+| `gm_threshold_mean_dice_abs` | 各阈值 Dice 的均值 |
+| `gm_threshold_mean_jaccard_abs` | 各阈值 Jaccard 的均值 |
+| `forward_pass` | 是否通过（见§7）；M4–M8 无阈值定义，值为 `null` |
+
+每个阈值还展开为独立列（如 `gm_threshold_dice_abs_010`），包含 tp/fp/fn/tn/tpr/fpr/precision/dice/jaccard。
 
 forward comparison 不在本阶段落盘，而是在 `report` 中临时计算。
 
@@ -132,6 +178,17 @@ forward comparison 不在本阶段落盘，而是在 `report` 中临时计算。
 - 解析 `summary.hdf5`
 - 写入 `inverse/<case>/seeds/<seed>/result.json`
 
+`inverse/result.json` 原始字段：
+
+| 字段 | 说明 |
+|---|---|
+| `optimizer` | 优化器名称（如 `differential_evolution`） |
+| `optimizer_fopt` | 收敛时的最优目标函数值 |
+| `optimizer_n_test` | 候选解总评估次数 |
+| `optimizer_n_sim` | 实际执行的 FEM 仿真次数 |
+| `mapped_labels` | 竖线分隔的最终映射 EEG 通道标签 |
+| `mapping_distance_mean_mm` | 优化位置→最近 EEG 帽位置的平均映射距离（mm） |
+
 inverse 原始结果不再包含 replay/comparison/pass 字段。
 
 ### 5.4 replay
@@ -139,10 +196,32 @@ inverse 原始结果不再包含 replay/comparison/pass 字段。
 职责：
 
 - 消费正式 inverse 结果
-- 在 M0 workspace 上回放映射后的电极
+- 在 M0 mesh 上回放当前 preset 映射的电极布局
 - 计算 replay TI 指标
 - 与 M0 基线比较
 - 写入 `replay/<case>/seeds/<seed>/result.json`
+
+`replay/result.json` 字段：
+
+**ROI 目标指标**（所有 goal 类型均输出）：
+
+| 字段 | 说明 |
+|---|---|
+| `replay_roi_mean` | ROI 内 TI 均值（V/m） |
+| `replay_roi_p999` | ROI 内 TI 99.9 百分位（V/m） |
+| `replay_goal` | 优化目标值：mean→`−roi_mean`，max→`−roi_p999`，focality→`−100·(√2 − roc)` |
+| `replay_non_roi_mean` | 非 ROI 区域 TI 均值（仅 focality） |
+| `replay_roc` | SimNIBS ROC 指标（仅 focality） |
+
+**与 M0 基线比较**：
+
+| 字段 | 说明 |
+|---|---|
+| `goal_gap_on_m0` | `|replay_goal − M0_replay_goal| / |M0_replay_goal|`（目标函数相对误差） |
+| `label_consistent` | 当前 preset 与 M0 电极标签是否完全一致 |
+| `optimized_center_drift_mean_mm` / `_max_mm` | 优化器连续中心位置与 M0 的均值/最大漂移（mm） |
+| `mapped_center_drift_mean_mm` / `_max_mm` | 映射后 EEG 帽位置与 M0 的均值/最大漂移（mm） |
+| `inverse_pass` | 是否通过（见§7）；M5–M8 无阈值定义，值为 `null` |
 
 replay comparison 和 `inverse_pass` 全部在本阶段产出。
 
@@ -181,7 +260,103 @@ report 不会执行 replay，也不会复用旧版 `reports/*.json`。
 - 轮询间隔固定为 10 秒
 - 若 `updated_at` 超过 5 分钟未刷新，视为僵死任务并失败退出
 
-## 7. 迁移脚本
+## 7. Manifest 格式
+
+```json
+{
+  "schema_version": 2,
+  "work_root": "/path/to/work_root",
+  "subjects": [
+    {
+      "id": "ernie",
+      "m2m_dir": "/path/to/m2m_ernie",
+      "reference_t1": "/path/to/m2m_ernie/T1.nii.gz"
+    }
+  ],
+  "forward_cases": [
+    {
+      "name": "ti_demo",
+      "eeg_cap": "EEG10-20_extended_SPM12",
+      "pair1": ["F5", "P5"],
+      "pair2": ["F6", "P6"],
+      "current1": [0.001, -0.001],
+      "current2": [0.001, -0.001],
+      "n_workers": 16,
+      "gm_thresholds_abs": [0.10, 0.15, 0.20, 0.25, 0.30]
+    }
+  ],
+  "inverse_cases": [
+    {
+      "name": "m1_focality_lh",
+      "goal": "focality",
+      "net_electrode_file": "EEG10-20_extended_SPM12",
+      "roi": { "type": "sphere", "center": [-41.0, -13.0, 66.0], "radius": 20.0 },
+      "non_roi": { "type": "sphere", "center": [-41.0, -13.0, 66.0], "radius": 25.0 },
+      "threshold": [0.1, 0.2],
+      "optimizer": "differential_evolution",
+      "seeds": [7, 11, 19],
+      "n_workers": 16
+    }
+  ]
+}
+```
+
+**ROI 类型：**
+
+| `type` | 必填字段 | 说明 |
+|---|---|---|
+| `sphere` | `center`（XYZ，mm）、`radius`（mm）、可选 `space`（默认 `subject`） | 球形 ROI |
+| `atlas` | `atlas_name`、`areas`（列表）、可选 `space`（默认 `mni`） | 标准图谱 ROI，自动查找预构建 mask |
+| `mask` | `path`（NIfTI 路径）、可选 `space`（默认 `subject`）、可选 `value`（默认 `1`） | 自定义 mask |
+
+atlas ROI 在运行时会被展开为 mask ROI，`mni` space 的 mask 会自动 warp 到 subject 空间。
+
+## 8. Preset 参数表
+
+Mesh 精度梯度，M0 为最高精度基线，数字越大元素越粗、计算越快。M4 / M8 在同等 `elem_sizes` 基础上额外收紧 `facet_distances`（表面离散化距离），代表不同曲面采样策略的组合变体。
+
+| Preset | GM range (mm) | Standard range (mm) | skin_facet_size (mm) | facet_distances |
+|---|---|---|---|---|
+| M0 | [1.0, 2.0] | [1.0, 5.0] | 2.0 | — |
+| M1 | [1.0, 2.5] | [1.25, 6.0] | 2.5 | — |
+| M2 | [1.2, 3.0] | [1.5, 7.0] | 3.0 | — |
+| M3 | [1.5, 3.5] | [2.0, 8.0] | 4.0 | — |
+| M4 | [1.2, 3.0] | [1.5, 7.0] | 3.0 | standard [0.2, 4.0] slope 0.7 |
+| M5 | [1.5, 3.75] | [2.25, 9.0] | 4.5 | — |
+| M6 | [1.5, 4.0] | [2.5, 10.0] | 5.0 | — |
+| M7 | [1.5, 4.5] | [3.0, 11.0] | 6.0 | — |
+| M8 | [1.5, 4.5] | [3.0, 11.0] | 6.0 | standard [0.3, 5.0] slope 0.9 |
+
+所有 preset 的 `slope` 均随 range 单调递增（见 `PRESET_CONFIGS`）。`facet_distances` 仅 M4 / M8 设置，影响曲面网格的离散化精度。
+
+## 9. 通过/失败阈值
+
+### Forward（`forward_pass`）
+
+仅 M1–M3 有定义；以下三条件须**全部**满足：
+
+| Preset | `gm_99_percentile_rel_error` ≤ | `gm_pearson_r` ≥ | `gm_nrmse` ≤ |
+|---|---|---|---|
+| M1 | 0.10 | 0.95 | 0.08 |
+| M2 | 0.15 | 0.95 | 0.12 |
+| M3 | 0.20 | 0.95 | 0.12 |
+
+M4–M8：`forward_pass = null`（无阈值定义）。
+
+### Inverse/Replay（`inverse_pass`）
+
+仅 M1–M4 有定义；单条件：
+
+| Preset | `goal_gap_on_m0` ≤ |
+|---|---|
+| M1 | 0.05 |
+| M2 | 0.08 |
+| M3 | 0.12 |
+| M4 | 0.12 |
+
+M5–M8：`inverse_pass = null`（无阈值定义）。
+
+## 10. 迁移脚本
 
 旧版 workspace 迁移命令：
 
@@ -201,7 +376,7 @@ conda run -n simnibs_env python -m neuracle.mesh_validation.migrate_workspace_sc
 
 迁移完成后，新运行器只使用 V2 目录，不再读取旧 `reports/*.json`
 
-## 8. 推荐运行顺序
+## 11. 推荐运行顺序
 
 如需只验证 `M8` 并使用 M0 作为基线，建议按下面顺序：
 
@@ -238,7 +413,7 @@ conda run -n simnibs_env python -m neuracle.mesh_validation.run_mesh_validation 
   --presets M8
 ```
 
-## 9. 兼容性结论
+## 12. 兼容性结论
 
 - V2 运行器：只认 V2 schema
 - V1 历史结果：必须迁移
