@@ -20,7 +20,6 @@ conda activate simnibs_env
 - 示例类运行代码放在 `neuracle/demo` 下
 - 临时脚本和临时文件放在 `neuracle/private_gitignore` 下
 - SimNIBS网格尺度参数验证文件在 `neuracle/mesh_validation`下
-- 不要生成测试代码
 
 ## 代码风格
 
