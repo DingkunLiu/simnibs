@@ -161,3 +161,4 @@ neuracle/atlas/standardized/*
 neuracle/atlas/validation/*
 neuracle/mesh_validation/_docx_node/*
 neuracle/mesh_validation/_remote_report_data/*
+neuracle/private_gitignore/*
