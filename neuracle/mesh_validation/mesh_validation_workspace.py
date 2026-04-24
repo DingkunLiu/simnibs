@@ -104,8 +104,8 @@ PRESET_CONFIGS = {
 SIMNIBS_TISSUE_NAME_TO_TAG = {"WM": "1", "GM": "2", "Scalp": "5"}
 TO_MNI_TRANSFORM_FILES = ("Conform2MNI_nonl.nii.gz", "MNI2Conform_nonl.nii.gz")
 MESH_SOURCE_REQUIRED_PATHS = (
-    Path("segmentation") / "tissue_labeling_upsampled.nii.gz",
-    Path("segmentation") / "norm_image.nii.gz",
+    Path("label_prep") / "tissue_labeling_upsampled.nii.gz",
+    Path("label_prep") / "T1_upsampled.nii.gz",
     Path("toMNI") / "Conform2MNI_nonl.nii.gz",
     Path("toMNI") / "MNI2Conform_nonl.nii.gz",
 )
