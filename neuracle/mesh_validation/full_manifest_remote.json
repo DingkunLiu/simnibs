@@ -88,28 +88,7 @@
       },
       "threshold": [0.1, 0.2],
       "optimizer": "differential_evolution",
-      "seeds": [7, 11, 19],
-      "n_workers": 16
-    },
-    {
-      "name": "hippocampus_focality_lh",
-      "goal": "focality",
-      "net_electrode_file": "EEG10-20_extended_SPM12",
-      "roi": {
-        "type": "atlas",
-        "atlas_name": "BN_Atlas_246_1mm",
-        "areas": ["rHipp_L", "cHipp_L"],
-        "space": "mni"
-      },
-      "non_roi": {
-        "type": "sphere",
-        "center": [-30.0, -20.0, -18.0],
-        "radius": 25.0,
-        "space": "mni"
-      },
-      "threshold": [0.1, 0.2],
-      "optimizer": "differential_evolution",
-      "seeds": [7, 11, 19],
+      "seeds": [7],
       "n_workers": 16
     },
     {
@@ -130,7 +109,7 @@
       },
       "threshold": [0.1, 0.2],
       "optimizer": "differential_evolution",
-      "seeds": [7, 11, 19],
+      "seeds": [7],
       "n_workers": 16
     }
   ]

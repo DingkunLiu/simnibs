@@ -294,7 +294,7 @@ report 不会执行 replay，也不会复用旧版 `reports/*.json`。
       "non_roi": { "type": "sphere", "center": [-41.0, -13.0, 66.0], "radius": 25.0 },
       "threshold": [0.1, 0.2],
       "optimizer": "differential_evolution",
-      "seeds": [7, 11, 19],
+      "seeds": [7],
       "n_workers": 16
     }
   ]
@@ -411,6 +411,26 @@ conda run -n simnibs_env python -m neuracle.mesh_validation.run_mesh_validation 
   --work-root <work_root> `
   --phases report `
   --presets M8
+```
+
+### 11.1 远端 full manifest 当前范围
+
+`neuracle/mesh_validation/full_manifest_remote.json` 当前用于远端全量 forward/report 复跑：
+
+- subjects：`ernie`、`sub-MSC01`、`sub-MSC02`、`sub-MSC03`、`sub-MSC04`、`sub-MSC05`
+- forward cases：`ti_demo`、`motor_rampersad2019`、`hippocampus_rampersad2019`、`thalamus_lee2021`
+- inverse cases：`m1_focality_lh`、`thalamus_focality_lh`
+- inverse seeds：仅 `7`
+
+远端执行命令：
+
+```bash
+conda run -n simnibs_env python -m neuracle.mesh_validation.run_mesh_validation \
+  --manifest /home/dell/simnibs/neuracle/mesh_validation/full_manifest_remote.json \
+  --phases forward report \
+  --presets M0 M1 M2 M3 M4 M5 M6 M7 M8 \
+  --subject-ids ernie sub-MSC01 sub-MSC02 sub-MSC03 sub-MSC04 sub-MSC05 \
+  --preset-workers 9
 ```
 
 ## 12. 兼容性结论
