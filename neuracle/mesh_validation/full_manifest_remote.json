@@ -88,7 +88,7 @@
       },
       "threshold": [0.1, 0.2],
       "optimizer": "differential_evolution",
-      "seeds": [7],
+      "seeds": [7, 19, 31],
       "n_workers": 16
     },
     {
@@ -109,7 +109,7 @@
       },
       "threshold": [0.1, 0.2],
       "optimizer": "differential_evolution",
-      "seeds": [7],
+      "seeds": [7, 19, 31],
       "n_workers": 16
     }
   ]

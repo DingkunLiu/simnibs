@@ -420,7 +420,7 @@ conda run -n simnibs_env python -m neuracle.mesh_validation.run_mesh_validation 
 - subjects：`ernie`、`sub-MSC01`、`sub-MSC02`、`sub-MSC03`、`sub-MSC04`、`sub-MSC05`
 - forward cases：`ti_demo`、`motor_rampersad2019`、`hippocampus_rampersad2019`、`thalamus_lee2021`
 - inverse cases：`m1_focality_lh`、`thalamus_focality_lh`
-- inverse seeds：仅 `7`
+- inverse seeds：`7`、`19`、`31`
 
 远端执行命令：
 
